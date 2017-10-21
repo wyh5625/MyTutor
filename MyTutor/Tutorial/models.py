@@ -16,25 +16,25 @@ class User(models.Model):
 class Student(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     def __str__(self):
-        return self.name
+        return self.user.name
 
 class Tutor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     timeslot = models.CharField(max_length=336)
     # 0-unavailable, 1-available, half an hour per digit, 336 timeslots is a week  
     def __str__(self):
-        return self.name
+        return self.user.name
 
 class PrivateTutor(models.Model):
 	tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
 	hourly_rate = models.IntegerField(max_length=5)
 	def __str__(self):
-		return self.name
+		return self.tutor.user.name
 
 class Notification(models.Model):
 	content = models.CharField(max_length=500)
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	def __str__(self):
-		return self.name
+		return self.user.name
 
 		
