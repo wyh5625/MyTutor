@@ -31,9 +31,10 @@ class Tutor(models.Model):
 	#def __str__(self):
 		#return self.tutor.user.name
 """
+		
 class PrivateTutor(models.Model):
 	tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
-	hourly_rate = models.IntegerField(max_length=5)
+	hourly_rate = models.IntegerField()
 	def __str__(self):
 		return self.tutor.user.name
 
@@ -43,4 +44,4 @@ class Notification(models.Model):
 	def __str__(self):
 		return self.user.name
 
-		
+

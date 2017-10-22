@@ -10,3 +10,4 @@ admin.site.register(Student)
 admin.site.register(Tutor)
 admin.site.register(User)
 admin.site.register(Wallet)
+
