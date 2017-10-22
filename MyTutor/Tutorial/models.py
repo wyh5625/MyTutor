@@ -25,12 +25,12 @@ class Tutor(models.Model):
     def __str__(self):
         return self.user.name
 
-"""class Tutor2(models.Model):
+class Tutor2(models.Model):
 	#tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
 	hourly_rate = models.IntegerField(max_length=5)
 	#def __str__(self):
 		#return self.tutor.user.name
-"""
+
 class PrivateTutor(models.Model):
 	tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
 	hourly_rate = models.IntegerField(max_length=5)

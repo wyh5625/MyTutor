@@ -18,5 +18,6 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-	url(r'^Tutorial/', include('Tutorial.urls')),
+	url(r'^', include('Tutorial.urls')), #default page is searchTutor
+    url(r'^searchTutors/', include('Tutorial.urls')),  #when someone clicks search tutor
 ]
