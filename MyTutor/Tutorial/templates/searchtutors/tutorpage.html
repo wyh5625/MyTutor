@@ -49,8 +49,23 @@
         showStr += "\r Time : ";
         slot = slot.substring(0,2) + "-" + slot.substring(2,4) +" , "+ slot.substring(5,7) + ":00";
         showStr += slot;
-        confirm(showStr);
+        if (confirm(showStr)){
+            alert ("What a fucking project!");
+            var url  = "/timeslot?date="+slot;
+            window.location=url;
+        }
 
+    }
+
+    function get(URL, elem) {
+        var temp = document.createElement("form");
+        temp.action = URL;
+        temp.method = "get";
+        temp.style.display = "none";
+        temp.value = elem.getAttribute('id');
+        temp.name = "{{ tutor.user.name }}";
+        document.body.appendChild(temp);
+        temp.submit();
     }
 {% endblock %}
 {% block content %}
