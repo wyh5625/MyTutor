@@ -23,5 +23,4 @@ urlpatterns = [
 	url(r'^Tutorial/login/$', auth_views.login, name='login'),
     url(r'^Tutorial/logout/$', auth_views.logout, name='logout'),
     url(r'^searchTutors/', include('Tutorial.urls')),  #when someone clicks search tutor
-
 ]
