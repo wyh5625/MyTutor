@@ -19,12 +19,7 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-<<<<<<< HEAD
 	url(r'^Tutorial/', include('Tutorial.urls')),
 	url(r'^Tutorial/login/$', auth_views.login, name='login'),
     url(r'^Tutorial/logout/$', auth_views.logout, name='logout'),
-=======
-	url(r'^', include('Tutorial.urls')), #default page is searchTutor
-    url(r'^searchTutors/', include('Tutorial.urls')),  #when someone clicks search tutor
->>>>>>> c74c700b240398f2068d0914e111de44a26710c8
 ]
