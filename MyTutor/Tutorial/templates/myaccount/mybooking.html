@@ -1,5 +1,22 @@
 {% extends "myaccount/myaccount.html" %}
 {% block title %}: my booking{% endblock %}
 {% block right %}
-    {{user.id}} {{user.name}} my booking
+     <div id="content" style="width: 70%; float : right;">
+        <table>
+            <tr class="title" style="width:100%;">
+                <th>Time</th>
+                <th>Tutor</th>
+                <th>Rate</th>
+                <th>Status</th>
+                <th>Cancel / Evaluate</th>
+            </tr>
+            {% for session in  %}
+                <td>{{ session.starttime }}</td>
+                <td>{{ session.tutor.user.name }}</td>
+                <td>{{ session.tutor.hourly_rate}}</td>
+                 <td>{{ session.status}}</td>
+                <td>{{ session.status }}</td>
+            {% endfor %}
+        </table>
+    </div>
 {% endblock %}
