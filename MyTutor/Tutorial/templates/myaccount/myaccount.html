@@ -1,30 +1,5 @@
-</html>
-<!-- howdy/templates/index.html -->
-<!DOCTYPE html>
-<html style="height : 100%;">
-	<head>
-		<title>Main page</title>
-		<meta name="viewport" content="width=device-width,maximum-scale=2">
-	</head>
-
-	<body style="height : 100%;">
-		<div id="header" class="header" style=" background-color: #191970;  margin : auto; font-size : 14pt; padding: 10px; text-align : center; font-family : Futura, Arial;">
-			<table style="width : 100%;">
-				<tr>
-					<th><a id="Home" href="" style="color : white; text-decoration:none;">Home</a></th>
-					<th><a id="SearchTutors" href="" style="color : white; text-decoration:none;">Search Tutors</a></th>
-					<th><a id="MyAccount" href="{% url 'Tutorial:myaccount' 1 %}" style="color : white; text-decoration:none;">My Account</a></th>
-					<th><a id="Messages" href="" style="color : white; text-decoration:none;">Messages</a></th>
-					<th><a id="Mode" href="" style="color : white; text-decoration:none;">Student Mode</a></th>
-				</tr>
-			</table>
-		</div>
-		<h3 style="background-color: #B0C4DE; color : #2F4F4F;  padding : 5px; text-align : center; border : 0px solid #708090; margin : 0;">Latest tutor information</h3>
-		<div id="TutoInfo" style="background-color : #F8F8FF; padding : 7px; height : 60%;">
-			<img src="logo.jpg" style="width : 20%; ">
-			<ul style="float : right;  text-align : left; color : #778899;">
-                myaccount {{user.id}} {{user.name}}
-			</ul>
-		</div>
-	</body>
-</html>
+{% extends "index.html" %}
+{% block title %}首页{% endblock %}
+{% block content %}
+    <p>testing</p>
+{% endblock %}
