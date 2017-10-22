@@ -11,7 +11,7 @@
         <div id="booking"><a href="{% url 'Tutorial:mybooking' 3 %}">MY BOOKING</a></div>
         <div class="profile"><a href="{% url 'Tutorial:myprofile' 1 %}">MY PROFILE</a></div>
         <div class="wallet"><a href="{% url 'Tutorial:mywallet' 1 %}">MY WALLET</a></div>
-        <div class="logout">LOGOUT</div>
+        <div class="logout"><a href="http://localhost:8000/Tutorial/logout">LOGOUT</a></div> <!--currently just hard code-->
     </div>
     {% block right %}
 {% endblock %}
