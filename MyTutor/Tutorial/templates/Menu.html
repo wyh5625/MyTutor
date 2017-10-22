@@ -1,9 +1,9 @@
-<!-- howdy/templates/index.html -->
 <!DOCTYPE html>
 <html style="height : 100%;">
 	<head>
 		<title>Main page</title>
 		<meta name="viewport" content="width=device-width,maximum-scale=2">
+        <script>{% block script %}{% endblock %}</script>
 	</head>
 
 	<body style="height : 100%;">
@@ -17,8 +17,7 @@
 					<th><a id="Mode" href="" style="color : white; text-decoration:none;">Student Mode</a></th>
 				</tr>
 			</table>
-		{% block content %}{% endblock %}
         </div>
-
+        {% block content %}{% endblock %}
 	</body>
 </html>
