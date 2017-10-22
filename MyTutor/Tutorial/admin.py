@@ -1,9 +1,10 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Notification, PrivateTutor, ContractedTutor, Student, Tutor, User, Wallet
+from .models import Notification, PrivateTutor, ContractedTutor, Student, Tutor, User, Wallet, TutorialSession
 
 admin.site.register(Notification)
+admin.site.register(TutorialSession)
 admin.site.register(PrivateTutor)
 admin.site.register(ContractedTutor)
 admin.site.register(Student)
