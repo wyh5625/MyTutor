@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
-from .models import Tutor, PrivateTutor, User
+from .models import Tutor, PrivateTutor, User, Notification
 
 # Create your views here.
 class HomePageView(TemplateView):
@@ -31,4 +31,7 @@ def myaccount(request, user_id):
 	user = get_object_or_404(User, pk=user_id)
 	return render(request, 'myaccount/myaccount.html', {'user':user })
 
-	
+def message(request, user_id):
+	user = get_object_or_404(User, pk=user_id)
+	messages = Notification.objects.filter(id=user.id)
+	return render(request, 'message/message.html', {'user': user, 'messages': messages})
