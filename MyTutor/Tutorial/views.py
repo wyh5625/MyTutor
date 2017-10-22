@@ -23,4 +23,8 @@ def index(request):
 	params = {"latest_Tutor_list": all_tutors, "private_Tutor_list" : private_tutors}
 	return render(request, 'index.html', params)
 
+def tutorpage(request, tutor_id):
+	tutor = get_object_or_404(Tutor, pk=tutor_id)
+	return render(request, 'tutorpage.html', {'tutor': tutor})
+
 	
