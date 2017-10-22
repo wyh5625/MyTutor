@@ -10,6 +10,7 @@ class HomePageView(TemplateView):
     def get(self, request, **kwargs):
         return render(request, 'index.html', context=None)
 
+####search tutor####
 def index(request):
 	"""all_users = User.objects.all()
 	list = []
@@ -23,7 +24,7 @@ def index(request):
 	params = {"latest_Tutor_list": all_tutors, "private_Tutor_list" : private_tutors}
 	return render(request, 'searchtutors/index.html', params)
 
-####search tutor####
+
 def tutorpage(request, tutor_id):
 	tutor = get_object_or_404(Tutor, pk=tutor_id)
 	return render(request, 'searchtutors/tutorpage.html', {'tutor': tutor})
