@@ -21,7 +21,7 @@ def index(request):
 	return HttpResponse(output)"""
 	all_tutors = Tutor.objects.all()
 	private_tutors = PrivateTutor.objects.all()
-	params = {"latest_Tutor_list": all_tutors, "private_Tutor_list" : private_tutors}
+	params = {"latest_Tutor_list": all_tutors}
 	return render(request, 'searchtutors/index.html', params)
 
 
