@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
-from .models import Tutor, PrivateTutor, User, Notification
+from .models import Tutor, PrivateTutor, User, Notification, TutorialSession
 
 # Create your views here.
 class HomePageView(TemplateView):
@@ -39,8 +39,9 @@ def myprofile(request, user_id):
 	return render(request, 'myaccount/myprofile.html', {'user':user })
 
 def mybooking(request, user_id):
-	user = get_object_or_404(User, pk=user_id)
-	return render(request, 'myaccount/mybooking.html', {'user':user })
+	myuser = get_object_or_404(User, pk=user_id)
+	booking = TutorialSession.objects.filter(user=myuser)
+	return render(request, 'myaccount/mybooking.html', {'session_list': booking })
 
 def mywallet(request, user_id):
 	user = get_object_or_404(User, pk=user_id)
