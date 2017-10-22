@@ -2,8 +2,14 @@
 {% block title %}: tutor page{% endblock %}
 {% block script %}
     function timeSlots(){
-        var d= "<table width=\"100%\" style=\"border: 1px solid grey ; \" ><tbody>";
-        var showValue;
+        var d= "<form action=\"\" method=\"\"><table width=\"100%\" style=\"border: 1px solid grey ; \" ><tbody>";
+        var date = new Date();
+        var month = date.getMonth();
+        var strDate = date.getDate();
+        month ++;
+        if (month == 13){
+            month = 12;
+        }
         for (var i =0;i < 8;i++){
             d += "<tr class=\"titleTime\">";
             if(i == 0){
@@ -12,16 +18,39 @@
                          d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"4%\" style=\"background-color : #191970 ; color : white;margin : 1px;\">"+j+"</td>";
                 }
                 }else{
-                    d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"4%\" style=\"background-color : #191970 ; color : white;margin : 1px;\">"+i+"</td>";
-                    for (var j = 0;j<24;j++){
-                         d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"4%\" style=\"background-color : #B0C4DE ; color : white;margin : 1px;\"></td>";
+
+                    if (month >= 1 && month <= 9) {
+                         month = "0" + month;
+                     }
+                    if (strDate >= 0 && strDate <= 9) {
+                        strDate = "0" + strDate;
                     }
+                    d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"4%\" style=\"background-color : #191970 ; color : white;margin : 1px;\">"+month + " - " +strDate+"</td>";
+                    for (var j = 0;j<24;j++){
+                        if (j < 9){
+                            j = "0" + j;
+                        }
+                         d+= "<td rowspan=\"1\" id=\""+month+strDate+"_"+j+"\" height=\"10%\" width=\"4%\" style=\"background-color : #B0C4DE ; color : white;margin : 1px;\" onclick=\"select(this)\"></td>";
+                    }
+                    date.setTime(date.getTime()+24*60*60*1000);
+                    strDate = date.getDate();
                 }
            d+="</tr>";
 
         }
-    d += "</tbody></table>";
+        d += "</tbody></table></form>";
         document.getElementById('timeSlots').innerHTML= d;
+    }
+
+    function select(elem){
+       var slot = elem.getAttribute('id');
+       var showStr = "Create a new booking : \r Name : ";
+       //showStr += {{ tutor.user.name }};
+        showStr += "\r Time : ";
+        slot = slot.substring(0,2) + "-" + slot.substring(2,4) +" , "+ slot.substring(5,7) + ":00";
+        showStr += slot;
+        confirm(showStr);
+
     }
 {% endblock %}
 {% block content %}

@@ -2,7 +2,7 @@
 {% block title %}: my booking{% endblock %}
 {% block right %}
      <div id="content" style="width: 70%; float : right;">
-        <table>
+     <table>
             <tr class="title" style="width:100%;">
                 <th>Time</th>
                 <th>Tutor</th>
@@ -10,12 +10,20 @@
                 <th>Status</th>
                 <th>Cancel / Evaluate</th>
             </tr>
-            {% for session in  %}
-                <td>{{ session.starttime }}</td>
-                <td>{{ session.tutor.user.name }}</td>
+            {% for session in  session_list %}
+                <tr>
+                <script type="text/javascript">
+                    var a = {{ session.starttime }};
+                    //var date = a.substring(0,3) + "-" + a.substring(4, 5) + "-" + a.substring(5,6);
+                    //alert(date);
+                    document.write("<td>"+a+"</td>");
+                </script>
+
+                <td>{{ session.tutor }}</td>
                 <td>{{ session.tutor.hourly_rate}}</td>
-                 <td>{{ session.status}}</td>
+                    <td>{{ session.status}}</td>
                 <td>{{ session.status }}</td>
+                </tr>
             {% endfor %}
         </table>
     </div>
