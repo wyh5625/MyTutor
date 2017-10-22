@@ -8,7 +8,7 @@
 {% endblock %}
 {% block content %}
     <div class="navi" style="float: left; background-color : grey; ">
-        <div id="booking" onclick="bookInfo()"><a href="{% url 'Tutorial:mybooking' 5 %}">MY BOOKING</a></div>
+        <div id="booking"><a href="{% url 'Tutorial:mybooking' 5 %}">MY BOOKING</a></div>
         <div class="profile"><a href="{% url 'Tutorial:myprofile' 5 %}">MY PROFILE</a></div>
         <div class="wallet"><a href="{% url 'Tutorial:mywallet' 5 %}">MY WALLET</a></div>
         <div class="logout">LOGOUT</div>
@@ -18,3 +18,4 @@
         {{user.id}} {{user.name}}
     </div>
 {% endblock %}
+{% block right %}{% endblock %}
