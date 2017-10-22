@@ -1,5 +1,33 @@
 {% extends "index.html" %}
-{% block title %}首页{% endblock %}
+{% block title %}: tutor page{% endblock %}
+{% block script %}
+    function timeSlots(){
+        var d= "<table width=\"100%\" style=\"border: 1px solid grey ; \" ><tbody>";
+        var showValue;
+        for (var i =0;i < 8;i++){
+            d += "<tr class=\"titleTime\">";
+            if(i == 0){
+                 d+= "<td rowspan=\"1\" class=\"hour_\" height=\"10%\" width=\"4%\"  style=\"background-color : #191970 ; color : white;margin : 1px;\">Date/Time</td>";
+                for (var j = 0;j<24;j++){
+                         d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"4%\" style=\"background-color : #191970 ; color : white;margin : 1px;\">"+j+"</td>";
+                }
+                }else{
+                    d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"4%\" style=\"background-color : #191970 ; color : white;margin : 1px;\">"+i+"</td>";
+                    for (var j = 0;j<24;j++){
+                         d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"4%\" style=\"background-color : #B0C4DE ; color : white;margin : 1px;\"></td>";
+                    }
+                }
+           d+="</tr>";
+
+        }
+    d += "</tbody></table>";
+        document.getElementById('timeSlots').innerHTML= d;
+    }
+{% endblock %}
 {% block content %}
-    <p>testing</p>
+    <div class="tutorInfo">
+        <p>{{ tutor.user.name }}</p >
+        <h4>Timeslots : <h4>
+            <div id="timeSlots" onclick="timeSlots()">1</div>
+    </div>
 {% endblock %}

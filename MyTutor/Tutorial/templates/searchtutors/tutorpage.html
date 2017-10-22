@@ -1,32 +1,33 @@
-<!DOCTYPE html>
-<html style="height : 100%;">
-	<head>
-		<title>Main page</title>
-		<meta name="viewport" content="width=device-width,maximum-scale=2">
-	</head>
+{% extends "index.html" %}
+{% block title %}: tutor page{% endblock %}
+{% block script %}
+    function timeSlots(){
+        var d= "<table width=\"100%\" style=\"border: 1px solid grey ; \" ><tbody>";
+        var showValue;
+        for (var i =0;i < 8;i++){
+            d += "<tr class=\"titleTime\">";
+            if(i == 0){
+                 d+= "<td rowspan=\"1\" class=\"hour_\" height=\"10%\" width=\"4%\"  style=\"background-color : #191970 ; color : white;margin : 1px;\">Date/Time</td>";
+                for (var j = 0;j<24;j++){
+                         d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"4%\" style=\"background-color : #191970 ; color : white;margin : 1px;\">"+j+"</td>";
+                }
+                }else{
+                    d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"4%\" style=\"background-color : #191970 ; color : white;margin : 1px;\">"+i+"</td>";
+                    for (var j = 0;j<24;j++){
+                         d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"4%\" style=\"background-color : #B0C4DE ; color : white;margin : 1px;\"></td>";
+                    }
+                }
+           d+="</tr>";
 
-	<body style="height : 100%;">
-		<div id="header" class="header" style=" background-color: #191970;  margin : auto; font-size : 14pt; padding: 10px; text-align : center; font-family : Futura, Arial;">
-			<table style="width : 100%;">
-				<tr>
-					<th><a id="Home" href="" style="color : white; text-decoration:none;">Home</a></th>
-					<th><a id="SearchTutors" href="" style="color : white; text-decoration:none;">Search Tutors</a></th>
-					<th><a id="MyAccount" href="" style="color : white; text-decoration:none;">My Account</a></th>
-					<th><a id="Messages" href="" style="color : white; text-decoration:none;">Messages</a></th>
-					<th><a id="Mode" href="" style="color : white; text-decoration:none;">Student Mode</a></th>
-				</tr>
-			</table>
-		</div>
-		<h3 style="background-color: #B0C4DE; color : #2F4F4F;  padding : 5px; text-align : center; border : 0px solid #708090; margin : 0;">Latest tutor information</h3>
-		<div id="TutoInfo" style="background-color : #F8F8FF; padding : 7px; height : 60%;">
-
-			<ul style="float : right;  text-align : left; color : #778899;">
-				<div>
-					<p>{{tutor.user.name}}</p>
-                    <p>{{tutor.timeslot}}</p>
-					<!--<p>{{Tutor.hourly_rate}}</p>-->
-				</div>
-			</ul>
-		</div>
-	</body>
-</html>
+        }
+    d += "</tbody></table>";
+        document.getElementById('timeSlots').innerHTML= d;
+    }
+{% endblock %}
+{% block content %}
+    <div class="tutorInfo">
+        <p>{{ tutor.user.name }}</p >
+        <h4>Timeslots : <h4>
+            <div id="timeSlots" onclick="timeSlots()">1</div>
+    </div>
+{% endblock %}
