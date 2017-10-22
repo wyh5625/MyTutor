@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 class Wallet(models.Model):
 	balance = models.DecimalField(max_digits=10, decimal_places=2)
-		
+
 class User(models.Model):
     user_name = models.CharField(max_length=200)
     name = models.CharField(max_length=200)
@@ -24,8 +24,8 @@ class Tutor(models.Model):
     # 0-unavailable, 1-available, half an hour per digit, 336 timeslots is a week  
     def __str__(self):
         return self.user.name
-
-"""class Tutor2(models.Model):
+"""
+class Tutor2(models.Model):
 	#tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
 	hourly_rate = models.IntegerField(max_length=5)
 	#def __str__(self):
