@@ -21,7 +21,7 @@ def index(request):
 	all_tutors = Tutor.objects.all()
 	private_tutors = PrivateTutor.objects.all()
 	params = {"latest_Tutor_list": all_tutors, "private_Tutor_list" : private_tutors}
-	return render(request, 'index.html', params)
+	return render(request, 'searchtutors/index.html', params)
 
 ####search tutor####
 def tutorpage(request, tutor_id):

@@ -1,33 +1,19 @@
-{% extends "index.html" %}
-{% block title %}: tutor page{% endblock %}
+{% extends "Menu.html" %}
+{% block title %}: my account{% endblock %}
 {% block script %}
-    function timeSlots(){
-        var d= "<table width=\"100%\" style=\"border: 1px solid grey ; \" ><tbody>";
-        var showValue;
-        for (var i =0;i < 8;i++){
-            d += "<tr class=\"titleTime\">";
-            if(i == 0){
-                 d+= "<td rowspan=\"1\" class=\"hour_\" height=\"10%\" width=\"4%\"  style=\"background-color : #191970 ; color : white;margin : 1px;\">Date/Time</td>";
-                for (var j = 0;j<24;j++){
-                         d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"4%\" style=\"background-color : #191970 ; color : white;margin : 1px;\">"+j+"</td>";
-                }
-                }else{
-                    d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"4%\" style=\"background-color : #191970 ; color : white;margin : 1px;\">"+i+"</td>";
-                    for (var j = 0;j<24;j++){
-                         d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"4%\" style=\"background-color : #B0C4DE ; color : white;margin : 1px;\"></td>";
-                    }
-                }
-           d+="</tr>";
-
-        }
-    d += "</tbody></table>";
-        document.getElementById('timeSlots').innerHTML= d;
+    function bookInfo(){
+    var d= "<p>aaaaaaaaaaaaaaa</p >";
+    document.getElementById('content').innerHTML= "<p>book info</p >";
     }
 {% endblock %}
 {% block content %}
-    <div class="tutorInfo">
-        <p>{{ tutor.user.name }}</p >
-        <h4>Timeslots : <h4>
-            <div id="timeSlots" onclick="timeSlots()">1</div>
+    <div class="navi" style="float: left; background-color : grey; ">
+        <div id="booking" onclick="bookInfo()">MY BOOKING</div>
+        <div class="profile">MY PROFILE</div>
+        <div class="wallet">MY WALLET</div>
+        <div class="logout">LOGOUT</div>
+    </div>
+
+    <div id="content">
     </div>
 {% endblock %}

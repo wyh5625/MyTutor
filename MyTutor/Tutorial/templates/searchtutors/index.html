@@ -1,13 +1,14 @@
 {% extends "Menu.html" %}
-{% block title %}: tutor page{% endblock %}
+{% block title %}: search tutor{% endblock %}
 {% block content %}
+<h3 style="background-color: #B0C4DE; color : #2F4F4F;  padding : 5px; text-align : center; border : 0px solid #708090; margin : 0;">Latest tutor information</h3>
 		<div id="TutoInfo" style="background-color : #F8F8FF; padding : 7px; height : 60%;">
 			<img src="logo.jpg" style="width : 20%; ">
 			<ul style="float : right;  text-align : left; color : #778899;">
-                System Notification: {{user.name}}
-                {%for msg in messages%}
+
+				{%for Tutor in latest_Tutor_list%}
 				<div>
-					<p><a href="">{{msg.content}}</a></p>
+					<p><a href="{% url 'Tutorial:tutorpage' Tutor.id %}">{{Tutor.id}}   {{Tutor.user.name}}</a></p>
 
 					<!--<p>{{Tutor.hourly_rate}}</p>-->
 				</div>
