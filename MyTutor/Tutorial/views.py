@@ -48,6 +48,6 @@ def mywallet(request, user_id):
 
 ####message####
 def message(request, user_id):
-	user = get_object_or_404(User, pk=user_id)
-	messages = Notification.objects.filter(id=user.id)
-	return render(request, 'message/message.html', {'user': user, 'messages': messages})
+	msguser = get_object_or_404(User, pk=user_id)
+	messages = Notification.objects.filter(user=msguser)
+	return render(request, 'message/message.html', {'user': msguser, 'messages': messages})
