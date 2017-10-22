@@ -1,4 +1,4 @@
-
+from django.contrib import auth
 from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponse
@@ -10,6 +10,25 @@ class HomePageView(TemplateView):
     def get(self, request, **kwargs):
         return render(request, 'index.html', context=None)
 
+####login####
+def login(request):
+	if request.user.is_authenticated(): #visitor or client
+		return HttpResponseRedirect('/Tutorial/') #searchTutors/'+str(request.user.id)
+
+	username = request.POST.get('username', '')
+	password = request.POST.get('password', '')
+
+	user = auth.authenticate(username=username, password=password) #if sucess, should get not none
+
+	if user is not None and user.is_active:
+		auth.login(request, user)
+		return HttpResponseRedirect('/Tutorial/searchTutors/')
+	else:
+		return render(request, 'registration/login.html')
+
+def logout(request):
+	auth.logout(request)
+	return HttpResponseRedirect('/Tutorial/searchTutors/')
 ####search tutor####
 def index(request):
 	"""all_users = User.objects.all()
