@@ -1,5 +1,8 @@
 {% extends "myaccount/myaccount.html" %}
 {% block title %}: my booking{% endblock %}
+{% block script %}
+
+{% endblock %}
 {% block right %}
      <div id="content" style="width: 70%; float : right;">
      <table>
@@ -11,19 +14,13 @@
                 <th>Cancel / Evaluate</th>
             </tr>
             {% for session in  session_list %}
-                <tr>
-                <script type="text/javascript">
-                    var a = {{ session.starttime }};
-                    //var date = a.substring(0,3) + "-" + a.substring(4, 5) + "-" + a.substring(5,6);
-                    //alert(date);
-                    document.write("<td>"+a+"</td>");
-                </script>
-
-                <td>{{ session.tutor }}</td>
-                <td>{{ session.tutor.hourly_rate}}</td>
-                    <td>{{ session.status}}</td>
-                <td>{{ session.status }}</td>
-                </tr>
+            <tr class="row" id={{ session.id }}>
+                <td class="starttime">{{ session.starttime }}</td>
+                <td class="tutor">{{ session.tutor }}</td>
+                <td class="rate">{{ session.tutor.hourly_rate }}</td>
+                {% if session.status %}
+                <td class="status">{{ session.status }}</td>
+            </tr>
             {% endfor %}
         </table>
     </div>
