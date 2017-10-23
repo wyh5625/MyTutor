@@ -15,5 +15,5 @@ urlpatterns = [
     url(r'^(?P<student_id>[0-9]+)/timeslot/(?P<tutor_id>[0-9]+)/$', views.selectbooking, name='timeslot'),
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.logout, name='logout'),
-
+    #test
 ]
