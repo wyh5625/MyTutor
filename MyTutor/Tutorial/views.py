@@ -4,7 +4,8 @@ from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
-from .models import Tutor, PrivateTutor, User, Notification, TutorialSession, Student, Tutor
+from .models import Tutor, PrivateTutor, MyUser, Notification, TutorialSession, Student, Tutor
+from django.contrib.auth.models import User
 
 # Create your views here.
 class HomePageView(TemplateView):
@@ -16,8 +17,8 @@ def home(request):
 ####login####
 def login(request):
 	if request.user.is_authenticated(): #visitor or client
-
-		return HttpResponseRedirect('/Tutorial/' + str(request.user.id)) #searchTutors/'+str(request.user.id)
+		myuser = MyUser.objects.get(user=request.user)
+		return HttpResponseRedirect('/Tutorial/' + str(myuser.id)) #searchTutors/'+str(request.user.id)
 
 	username = request.POST.get('username', '')
 	password = request.POST.get('password', '')
@@ -26,7 +27,8 @@ def login(request):
 
 	if user is not None and user.is_active:
 		auth.login(request, user)
-		return HttpResponseRedirect('/Tutorial/' + str(request.user.id))
+		myuser = MyUser.objects.get(user=request.user)
+		return HttpResponseRedirect('/Tutorial/' + str(myuser.id))
 	else:
 		return render(request, 'registration/login.html')
 
@@ -34,7 +36,7 @@ def logout(request):
 	auth.logout(request)
 	return HttpResponseRedirect('/Tutorial/')
 ####search tutor####
-def index(request, student_id):
+def index(request, myuser_id):
 	"""all_users = User.objects.all()
 	list = []
 	for user in all_users:
@@ -44,30 +46,32 @@ def index(request, student_id):
 	return HttpResponse(output)"""
 	all_tutors = Tutor.objects.all()
 	private_tutors = PrivateTutor.objects.all()
-	student = get_object_or_404(Student, pk=student_id)
-	params = {"latest_Tutor_list": all_tutors, 'student': student}
+	myuser = get_object_or_404(MyUser, pk=myuser_id)
+	student = get_object_or_404(Student, myuser=myuser)
+	params = {"user": myuser, "latest_Tutor_list": all_tutors, 'student': student}
 	return render(request, 'searchtutors/index.html', params)
 
 
-def tutorpage(request, tutor_id, student_id):
+def tutorpage(request, myuser_id, tutor_id):
 	tutor = get_object_or_404(Tutor, pk=tutor_id)
-	student = get_object_or_404(Student, pk=student_id)
-	return render(request, 'searchtutors/tutorpage.html', {'tutor': tutor, 'student':student})
+	myuser = get_object_or_404(MyUser, pk=myuser_id)
+	student = get_object_or_404(Student, myuser=myuser)
+	return render(request, 'searchtutors/tutorpage.html', {'user':myuser, 'tutor': tutor, 'student':student})
 
 ####my account####
-def myaccount(request, user_id):
-	user = get_object_or_404(User, pk=user_id)
-	return render(request, 'myaccount/myaccount.html', {'user':user })
+def myaccount(request, myuser_id):
+	myuser = get_object_or_404(MyUser, pk=myuser_id)
+	return render(request, 'myaccount/myaccount.html', {'user':myuser })
 
-def myprofile(request, user_id):
-	user = get_object_or_404(User, pk=user_id)
-	return render(request, 'myaccount/myprofile.html', {'user':user })
+def myprofile(request, myuser_id):
+	myuser = get_object_or_404(MyUser, pk=myuser_id)
+	return render(request, 'myaccount/myprofile.html', {'user':myuser })
 
-def mybooking(request, user_id):
-	myuser = get_object_or_404(User, pk=user_id)
-	mystudent = get_object_or_404(Student,user=myuser)
+def mybooking(request, myuser_id):
+	myuser = get_object_or_404(MyUser, pk=myuser_id)
+	mystudent = get_object_or_404(Student,myuser=myuser)
 	booking = TutorialSession.objects.filter(student=mystudent)
-	return render(request, 'myaccount/mybooking.html', {'session_list': booking })
+	return render(request, 'myaccount/mybooking.html', {'user':myuser, 'session_list': booking })
 
 def selectbooking(request, tutor_id, student_id):	#receive data: starttime (yyyymmddhhmm string)
 	begintime = request.POST['starttime']
@@ -81,12 +85,12 @@ def selectbooking(request, tutor_id, student_id):	#receive data: starttime (yyyy
 		return render(request, 'searchtutors/tutorpage.html', {'fail': tutorial_session, 'tutor': tutor})
 
 
-def mywallet(request, user_id):
-	user = get_object_or_404(User, pk=user_id)
-	return render(request, 'myaccount/mywallet.html', {'user':user })
+def mywallet(request, myuser_id):
+	myuser = get_object_or_404(MyUser, pk=myuser_id)
+	return render(request, 'myaccount/mywallet.html', {'user':myuser })
 
 ####message####
-def message(request, user_id):
-	msguser = get_object_or_404(User, pk=user_id)
-	messages = Notification.objects.filter(user=msguser)
-	return render(request, 'message/message.html', {'user': msguser, 'messages': messages})
+def message(request, myuser_id):
+	myuser = get_object_or_404(MyUser, pk=myuser_id)
+	messages = Notification.objects.filter(myuser=myuser)
+	return render(request, 'message/message.html', {'user': myuser, 'messages': messages})

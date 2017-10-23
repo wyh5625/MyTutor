@@ -1,18 +1,8 @@
 {% extends "myaccount/myaccount.html" %}
 {% block title %}: my booking{% endblock %}
-{% block script %}
-function cancelHandler() {
-    alert("cancel clicked");
-}
-
-function reviewHandler() {
-    alert("review clicked");
-}
-{% endblock %}
 {% block right %}
-<<<<<<< HEAD
-     <div id="content" style="width: 85%; float : right;">
-     <table style="width:90%;  margin: auto; margin-top: 10%;">
+<div id="content" style="width: 70%; float : right;">
+     <table style="text-align: center;">
             <tr class="title" style="width:100%; background-color: #005B98; color: white; font-size: 16pt;">
                 <th>Time</th>
                 <th>Tutor</th>
@@ -29,8 +19,8 @@ function reviewHandler() {
                     document.write("<td>"+a+"</td>");
                 </script>
                 <td>{{ session.tutor }}</td>
-                <td>{{ session.tutor.hourly_rate}}</td>
-                    <td>{{ session.status}}</td>
+                <td>{{ session.tutor.hourly_rate }}</td>
+                    <td>{{ session.status }}</td>
                 <script>
                     var cancelStatus;
                     if ({{ session.status }} == 'upcoming')
@@ -38,9 +28,9 @@ function reviewHandler() {
                         alert("cancel!");
                     }
                 </script>
-                    <td></td>
+                    <td>Cancel/Evaluate</td>
                 </tr>
-=======
+            {% endfor %}
      <div id="content" style="width: 70%; float : right; text-align: center;">
      <table style="text-align: center;">
             <tr class="title" style="width:100%;">
@@ -57,14 +47,13 @@ function reviewHandler() {
                 <td class="rate">{{ session.tutor.hourly_rate }}</td>
                 <td class="status">{{ session.status }}</td>
                 {% if session.status == 'cancel' %}
-                <td class="coe" onclick="cancelHandler();">Cancel</a></td>
+                <td class="coe" onclick="cancelHandler();">Cancel</ a></td>
                 {% elif session.status == 'attended' %}
-                <td class="coe" onclick="reviewHandler();">Click to Review</a></td>
+                <td class="coe" onclick="reviewHandler();">Click to Review</ a></td>
                 {% elif session.status == 'upcoming' %}
                 <td class="coe">Cancel</td>
                 {% endif %}
             </tr>
             {% endfor %}
         </table>
-    </div>
 {% endblock %}

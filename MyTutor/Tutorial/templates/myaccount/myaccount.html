@@ -8,9 +8,10 @@
 {% endblock %}
 {% block content %}
     <div class="navi" style="float: left; background-color : #B0C4DE; width :15%;  height: 100%; text-align: center; ">
-        <div id="booking" style="height: 10%; padding: 15px; font-size: 18pt; margin-top: 15%;"><a href="{% url 'Tutorial:mybooking' 3 %}" style="text-decoration: none; font-weight: bold; color: #005B98">MY BOOKING</a></div>
-        <div class="profile" style="height: 10%; padding: 15px; font-size: 18pt; "><a href="{% url 'Tutorial:myprofile' 1 %}" style="text-decoration: none; font-weight: bold; color: #005B98"">MY PROFILE</a></div>
-        <div class="wallet" style="height: 10%; padding: 15px; font-size: 18pt; "><a href="{% url 'Tutorial:mywallet' 1 %}" style="text-decoration: none; font-weight: bold; color: #005B98"">MY WALLET</a></div>
+        I know my user id {{ user.id }}
+        <div id="booking" style="height: 10%; padding: 15px; font-size: 18pt; margin-top: 15%;"><a href="{% url 'Tutorial:mybooking' user.id %}" style="text-decoration: none; font-weight: bold; color: #005B98">MY BOOKING</a></div>
+        <div class="profile" style="height: 10%; padding: 15px; font-size: 18pt; "><a href="{% url 'Tutorial:myprofile' user.id %}" style="text-decoration: none; font-weight: bold; color: #005B98"">MY PROFILE</a></div>
+        <div class="wallet" style="height: 10%; padding: 15px; font-size: 18pt; "><a href="{% url 'Tutorial:mywallet' user.id %}" style="text-decoration: none; font-weight: bold; color: #005B98"">MY WALLET</a></div>
         <div class="logout" style="height: 10%; padding: 15px; font-size: 18pt; color: #005B98"><a href="{% url 'Tutorial:logout' %}">LOGOUT</a></div>
     <div class="navi" style="float: left; background-color : grey; width : 30%; ">
         <div id="booking"><a href="{% url 'Tutorial:mybooking' request.user.id %}">MY BOOKING</a></div>

@@ -1,48 +1,62 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 # Create your models here.
 class Wallet(models.Model):
 	balance = models.DecimalField(max_digits=10, decimal_places=2)
 
-class User(models.Model):
+"""class User(models.Model):
     user_name = models.CharField(max_length=200)
     name = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
     #tutorial_session = models.CharField(max_length=336)
     wallet = models.ForeignKey(Wallet, on_delete = models.CASCADE)
     def __str__(self):
-        return self.name
+        return self.name"""
+
+class MyUser(models.Model):
+    user = models.ForeignKey(User, on_delete = models.CASCADE )
+    wallet = models.ForeignKey(Wallet, on_delete = models.CASCADE)
+    def __str__(self):
+        return self.user.username
 
 class Student(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    myuser = models.ForeignKey(MyUser, on_delete=models.CASCADE,null=True)
     def __str__(self):
-        return self.user.name
+        if self.myuser is None:
+            return "null"
+        else:
+            return self.myuser.user.username
 
 class Tutor(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    myuser = models.ForeignKey(MyUser, on_delete=models.CASCADE,null=True)
     timeslot = models.CharField(max_length=336) #todo: should update every half an hour
-    # 0 - available, 1 - unavailable, half an hour per digit, 336 timeslots is a week
+    # 0-unavailable, 1-available, half an hour per digit, 336 timeslots is a week
     def __str__(self):
-        return self.user.name
+        if self.myuser is None:
+            return "null"
+        else:
+            return self.myuser.user.username
 
 class PrivateTutor(models.Model):
 	tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
 	hourly_rate = models.IntegerField()
 	def __str__(self):
-		return self.tutor.user.name
+		return self.tutor.myuser.user.username
 
 class ContractedTutor(models.Model):
 	tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
 	hourly_rate = 0
 	def __str__(self):
-		return self.tutor.user.name
+		return self.tutor.myuser.user.username
 
 class Notification(models.Model):
-	content = models.CharField(max_length=500)
-	user = models.ForeignKey(User, on_delete=models.CASCADE)
-	def __str__(self):
-		return self.user.name
-
+    content = models.CharField(max_length=500)
+    myuser = models.ForeignKey(MyUser, on_delete=models.CASCADE,null=True)
+    def __str__(self):
+        if self.myuser is None:
+            return "null"
+        else:
+            return self.myuser.user.username
 class TutorialSession(models.Model):
     starttime = models.CharField(max_length=12)  # yyyymmddhhmm
     status = models.CharField(max_length=10)
