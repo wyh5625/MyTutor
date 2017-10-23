@@ -1,15 +1,35 @@
-
+from ast import literal_eval
+from django.contrib import auth
 from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
-from .models import Tutor, PrivateTutor, User, Notification, TutorialSession, Student
+from .models import Tutor, PrivateTutor, User, Notification, TutorialSession, Student, Tutor
 
 # Create your views here.
 class HomePageView(TemplateView):
     def get(self, request, **kwargs):
         return render(request, 'index.html', context=None)
 
+####login####
+def login(request):
+	if request.user.is_authenticated(): #visitor or client
+		return HttpResponseRedirect('/Tutorial/') #searchTutors/'+str(request.user.id)
+
+	username = request.POST.get('username', '')
+	password = request.POST.get('password', '')
+
+	user = auth.authenticate(username=username, password=password) #if sucess, should get not none
+
+	if user is not None and user.is_active:
+		auth.login(request, user)
+		return HttpResponseRedirect('/Tutorial/searchTutors/')
+	else:
+		return render(request, 'registration/login.html')
+
+def logout(request):
+	auth.logout(request)
+	return HttpResponseRedirect('/Tutorial/searchTutors/')
 ####search tutor####
 def index(request):
 	"""all_users = User.objects.all()
@@ -25,9 +45,10 @@ def index(request):
 	return render(request, 'searchtutors/index.html', params)
 
 
-def tutorpage(request, tutor_id):
+def tutorpage(request, tutor_id, student_id):
 	tutor = get_object_or_404(Tutor, pk=tutor_id)
-	return render(request, 'searchtutors/tutorpage.html', {'tutor': tutor})
+	student = get_object_or_404(Student, pk=student_id)
+	return render(request, 'searchtutors/tutorpage.html', {'tutor': tutor, 'student':student})
 
 ####my account####
 def myaccount(request, user_id):
@@ -44,8 +65,17 @@ def mybooking(request, user_id):
 	booking = TutorialSession.objects.filter(student=mystudent)
 	return render(request, 'myaccount/mybooking.html', {'session_list': booking })
 
-"""def selectbooking(request, tutorialSession_id):
-	tutorialSession = get_object_or_404(TutorialSession, )"""
+def selectbooking(request, tutor_id, student_id):	#receive data: starttime (yyyymmddhhmm string)
+	begintime = request.POST['starttime']
+	tutor = get_object_or_404(Tutor, pk=tutor_id)
+	student = get_object_or_404(Student, pk=student_id)
+	tutorial_session = tutor.tutorialsession_set.filter(starttime=begintime)
+	if tutorial_session:
+		tutor.tutorialsession_set.create(begintime, "Occupied", tutor, student)
+		return render(request, 'searchtutors/tutorpage.html', {'success': "succcess", 'tutor': tutor})
+	else:
+		return render(request, 'searchtutors/tutorpage.html', {'fail': "fail", 'tutor': tutor})
+
 
 def mywallet(request, user_id):
 	user = get_object_or_404(User, pk=user_id)

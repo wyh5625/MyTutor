@@ -21,7 +21,7 @@ class Student(models.Model):
 class Tutor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     timeslot = models.CharField(max_length=336) #todo: should update every half an hour
-    # 0-unavailable, 1-available, half an hour per digit, 336 timeslots is a week  
+    # 0 - available, 1 - unavailable, half an hour per digit, 336 timeslots is a week
     def __str__(self):
         return self.user.name
 
@@ -44,9 +44,8 @@ class Notification(models.Model):
 		return self.user.name
 
 class TutorialSession(models.Model):
+    starttime = models.CharField(max_length=12)  # yyyymmddhhmm
+    status = models.CharField(max_length=10)
     tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
     student =  models.ForeignKey(Student, on_delete=models.CASCADE)
-    starttime = models.CharField(max_length=12) #yyyymmddhhmm
-    status = models.CharField(max_length=10)
-
 
