@@ -10,7 +10,9 @@ from .models import Tutor, PrivateTutor, User, Notification, TutorialSession, St
 class HomePageView(TemplateView):
     def get(self, request, **kwargs):
         return render(request, 'index.html', context=None)
-
+#####homepage###
+def home(reguest):
+	return HttpResponseRedirect('/Tutorial/')
 ####login####
 def login(request):
 	if request.user.is_authenticated(): #visitor or client
@@ -31,7 +33,7 @@ def logout(request):
 	auth.logout(request)
 	return HttpResponseRedirect('/Tutorial/searchTutors/')
 ####search tutor####
-def index(request):
+def index(request, student_id):
 	"""all_users = User.objects.all()
 	list = []
 	for user in all_users:
@@ -41,7 +43,8 @@ def index(request):
 	return HttpResponse(output)"""
 	all_tutors = Tutor.objects.all()
 	private_tutors = PrivateTutor.objects.all()
-	params = {"latest_Tutor_list": all_tutors}
+	student = get_object_or_404(Student, pk=student_id)
+	params = {"latest_Tutor_list": all_tutors, 'student': student}
 	return render(request, 'searchtutors/index.html', params)
 
 

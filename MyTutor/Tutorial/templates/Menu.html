@@ -9,23 +9,21 @@
 	<body style="height : 100%;">
 		<div id="header" class="header" style=" background-color: #191970;  margin : auto; font-size : 14pt; padding: 10px; text-align : center; font-family : Futura, Arial;">
 			<table style="width : 100%;">
-				{% if request.user.is_authenticated %}
-				<tr>
+
 					<th><a id="Home" href="" style="color : white; text-decoration:none;">Home</a></th>
-					<th><a id="SearchTutors" href="{% url 'Tutorial:index' %}" style="color : white; text-decoration:none;">Search Tutors</a></th>
+					<th><a id="SearchTutors" href="{% url 'Tutorial:index' 1 %}" style="color : white; text-decoration:none;">Search Tutors</a></th>
 					<th><a id="MyAccount" href="{% url 'Tutorial:myaccount' request.user.id %}" style="color : white; text-decoration:none;">My Account</a></th>
 					<th><a id="Messages" href="{% url 'Tutorial:message' request.user.id %}" style="color : white; text-decoration:none;">Messages</a></th>
 					<th><a id="Mode" href="" style="color : white; text-decoration:none;">Student Mode</a></th>
-				</tr>
-				{% else %}
-				<tr>
+
+
+				<!-- tr>
 					<th><a id="Home" href="" style="color : white; text-decoration:none;">Home</a></th>
 					<th><a id="SearchTutors" href="{% url 'Tutorial:login'%}" style="color : white; text-decoration:none;">Search Tutors</a></th>
 					<th><a id="MyAccount" href="{% url 'Tutorial:login' %}" style="color : white; text-decoration:none;">My Account</a></th>
 					<th><a id="Messages" href="{% url 'Tutorial:login' %}" style="color : white; text-decoration:none;">Messages</a></th>
 					<th><a id="Mode" href="{% url 'Tutorial:login' %}" style="color : white; text-decoration:none;">Login</a></th>
-				</tr>
-				{% endif %}
+				</tr--->
 			</table>
         </div>
         {% block content %}{% endblock %}
