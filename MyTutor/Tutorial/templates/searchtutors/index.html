@@ -8,8 +8,7 @@
 
 				{%for Tutor in latest_Tutor_list%}
 				<div>
-					<p><a href="{% url 'Tutorial:tutorpage' Tutor.id  1 %}">{{Tutor.id}}{{ student.id }}   {{Tutor.user.name}}</a></p>
-
+					<p><a href="{% url 'Tutorial:tutorpage' Tutor.id  1%}">{{Tutor.id}}{{ student.id }}   {{Tutor.user.name}}</a></p>
 					<!--<p>{{Tutor.hourly_rate}}</p>-->
 				</div>
 				{%endfor%}
