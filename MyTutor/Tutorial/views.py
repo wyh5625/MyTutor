@@ -11,8 +11,8 @@ class HomePageView(TemplateView):
     def get(self, request, **kwargs):
         return render(request, 'index.html', context=None)
 #####homepage###
-def home(reguest):
-	return HttpResponseRedirect('/Tutorial/')
+def home(request):
+	return render(request, 'home.html')
 ####login####
 def login(request):
 	if request.user.is_authenticated(): #visitor or client
@@ -32,7 +32,7 @@ def login(request):
 
 def logout(request):
 	auth.logout(request)
-	return HttpResponseRedirect('/Tutorial/searchTutors/')
+	return HttpResponseRedirect('/Tutorial/')
 ####search tutor####
 def index(request, student_id):
 	"""all_users = User.objects.all()
