@@ -33,7 +33,7 @@ def logout(request):
 	auth.logout(request)
 	return HttpResponseRedirect('/Tutorial/searchTutors/')
 ####search tutor####
-def index(request, student_id):
+def index(request):
 	"""all_users = User.objects.all()
 	list = []
 	for user in all_users:
@@ -41,11 +41,14 @@ def index(request, student_id):
 		list.append(html.format(name=user.name, user_name = user.user_name))
 	output = '<hr>'.join(list)
 	return HttpResponse(output)"""
+	"""
 	all_tutors = Tutor.objects.all()
 	private_tutors = PrivateTutor.objects.all()
 	student = get_object_or_404(Student, pk=student_id)
 	params = {"latest_Tutor_list": all_tutors, 'student': student}
-	return render(request, 'searchtutors/index.html', params)
+	"""
+	return HttpResponse("homepage")
+	#return render(request, 'searchtutors/index.html', params)
 
 
 def tutorpage(request, tutor_id, student_id):
