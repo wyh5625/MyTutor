@@ -50,7 +50,6 @@
         slot = slot.substring(0,2) + "-" + slot.substring(2,4) +" , "+ slot.substring(5,7) + ":00";
         showStr += slot;
         if (confirm(showStr)){
-            alert ("What a fucking project!");
             var url  = "/timeslot?date="+slot;
             window.location=url;
         }
