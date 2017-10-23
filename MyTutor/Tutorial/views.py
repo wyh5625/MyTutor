@@ -73,16 +73,16 @@ def mybooking(request, myuser_id):
 	booking = TutorialSession.objects.filter(student=mystudent)
 	return render(request, 'myaccount/mybooking.html', {'user':myuser, 'session_list': booking })
 
-def selectbooking(request, tutor_id, student_id):	#receive data: starttime (yyyymmddhhmm string)
+def selectbooking(request, student_id, tutor_id ):	#receive data: starttime (yyyymmddhhmm string)
 	begintime = request.POST['starttime']
 	tutor = get_object_or_404(Tutor, pk=tutor_id)
 	student = get_object_or_404(Student, pk=student_id)
 	tutorial_session = tutor.tutorialsession_set.filter(starttime=begintime)
 	if tutorial_session:
 		tutor.tutorialsession_set.create(begintime, "Occupied", tutor, student)
-		return render(request, 'searchtutors/tutorpage.html', {'success': tutorial_session, 'tutor': tutor})
+		return render(request, 'searchtutors/index.html', {'success': tutorial_session, 'tutor': tutor})
 	else:
-		return render(request, 'searchtutors/tutorpage.html', {'fail': tutorial_session, 'tutor': tutor})
+		return render(request, 'searchtutors/index.html', {'fail': tutorial_session, 'tutor': tutor})
 
 
 def mywallet(request, myuser_id):
