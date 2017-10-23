@@ -4,7 +4,7 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import login, logout
 app_name = 'Tutorial'
 urlpatterns = [
-    url(r'^$', views.index, name='home'),
+    url(r'^$', views.home, name='home'),
     url(r'^(?P<student_id>[0-9]+)/$', views.index, name='index'),
     url(r'^(?P<student_id>[0-9]+)/searchTutors/(?P<tutor_id>[0-9]+)/$', views.tutorpage, name='tutorpage'),
     url(r'^(?P<user_id>[0-9]+)/myAccount/$', views.myaccount, name='myaccount'),
