@@ -20,7 +20,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 	url(r'^Tutorial/', include('Tutorial.urls')),
-	#url(r'^Tutorial/login/$', auth_views.login, name='login'),
+	#rl(r'^Tutorial/login/$', auth_views.login, name='login'),
     #url(r'^Tutorial/logout/$', auth_views.logout, {'next_page': '/Tutorial/searchTutor/'}, name='logout'),
-    url(r'^Tutorial/searchTutors/', include('Tutorial.urls')),  #when someone clicks search tutor
+    #url(r'^Tutorial/searchTutors/', include('Tutorial.urls')),  #when someone clicks search tutor
 ]
