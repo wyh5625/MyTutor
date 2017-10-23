@@ -11,12 +11,13 @@ class HomePageView(TemplateView):
     def get(self, request, **kwargs):
         return render(request, 'index.html', context=None)
 #####homepage###
-def home(reguest):
-	return HttpResponseRedirect('/Tutorial/')
+def home(request):
+	return render(request, 'home.html')
 ####login####
 def login(request):
 	if request.user.is_authenticated(): #visitor or client
-		return HttpResponseRedirect('/Tutorial/') #searchTutors/'+str(request.user.id)
+
+		return HttpResponseRedirect('/Tutorial/' + str(request.user.id)) #searchTutors/'+str(request.user.id)
 
 	username = request.POST.get('username', '')
 	password = request.POST.get('password', '')
@@ -25,13 +26,13 @@ def login(request):
 
 	if user is not None and user.is_active:
 		auth.login(request, user)
-		return HttpResponseRedirect('/Tutorial/searchTutors/')
+		return HttpResponseRedirect('/Tutorial/' + str(request.user.id))
 	else:
 		return render(request, 'registration/login.html')
 
 def logout(request):
 	auth.logout(request)
-	return HttpResponseRedirect('/Tutorial/searchTutors/')
+	return HttpResponseRedirect('/Tutorial/')
 ####search tutor####
 def index(request):
 	"""all_users = User.objects.all()
