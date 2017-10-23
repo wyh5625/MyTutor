@@ -10,5 +10,5 @@ urlpatterns = [
     url(r'^myAccount/myprofile/(?P<user_id>[0-9]+)/$', views.myprofile, name='myprofile'),
     url(r'^myAccount/mywallet/(?P<user_id>[0-9]+)/$', views.mywallet, name='mywallet'),
     url(r'^message/(?P<user_id>[0-9]+)/$', views.message, name='message'),
-    url(r'^timeslot/$', views.selectbooking, name='timeslot'),
+    url(r'^timeslot/(?P<tutor_id>[0-9]+)/(?P<student_id>[0-9]+)$', views.selectbooking, name='timeslot'),
 ]

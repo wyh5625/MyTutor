@@ -2,7 +2,7 @@
 {% block title %}: tutor page{% endblock %}
 {% block script %}
     function timeSlots(){
-        var d= "<form action=\"\" method=\"\"><table width=\"100%\" style=\"border: 1px solid grey ; \" ><tbody>";
+        var d= "<form action="{% url 'Tutorial:timeslot' tutor.id, student.id %}" method="post"><table width=\"100%\" style=\"border: 1px solid grey ; \"><tbody>";
         var date = new Date();
         var month = date.getMonth();
         var strDate = date.getDate();

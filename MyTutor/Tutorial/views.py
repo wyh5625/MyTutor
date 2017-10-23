@@ -1,9 +1,9 @@
-
+from ast import literal_eval
 from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
-from .models import Tutor, PrivateTutor, User, Notification, TutorialSession, Student
+from .models import Tutor, PrivateTutor, User, Notification, TutorialSession, Student, Tutor
 
 # Create your views here.
 class HomePageView(TemplateView):
@@ -44,8 +44,16 @@ def mybooking(request, user_id):
 	booking = TutorialSession.objects.filter(student=mystudent)
 	return render(request, 'myaccount/mybooking.html', {'session_list': booking })
 
-def selectbooking(request, tutorialSession_id):
-	tutorialSession = get_object_or_404(TutorialSession, pk=tutorialSession_id)
+def selectbooking(request, tutor_id, student_id):	#receive data: starttime (yyyymmddhhmm string)
+	begintime = request.GET['starttime']
+	tutor = get_object_or_404(Tutor, pk=tutor_id)
+	student = get_object_or_404(Student, pk=student_id)
+	tutorial_session = tutor.tutorialsession_set.filter(starttime=begintime)
+	if tutorial_session:
+		tutor.tutorialsession_set.create(begintime, "Occupied", tutor, student)
+		return render(request, 'searchtutors/tutorpage.html', {'success': "succcess", 'tutor': tutor})
+	else:
+		return render(request, 'searchtutors/tutorpage.html', {'fail': "fail", 'tutor': tutor})
 
 
 def mywallet(request, user_id):
