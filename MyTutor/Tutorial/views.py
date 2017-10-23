@@ -72,9 +72,9 @@ def selectbooking(request, tutor_id, student_id):	#receive data: starttime (yyyy
 	tutorial_session = tutor.tutorialsession_set.filter(starttime=begintime)
 	if tutorial_session:
 		tutor.tutorialsession_set.create(begintime, "Occupied", tutor, student)
-		return render(request, 'searchtutors/tutorpage.html', {'success': "succcess", 'tutor': tutor})
+		return render(request, 'searchtutors/tutorpage.html', {'success': tutorial_session, 'tutor': tutor})
 	else:
-		return render(request, 'searchtutors/tutorpage.html', {'fail': "fail", 'tutor': tutor})
+		return render(request, 'searchtutors/tutorpage.html', {'fail': tutorial_session, 'tutor': tutor})
 
 
 def mywallet(request, user_id):
