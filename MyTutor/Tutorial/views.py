@@ -4,11 +4,13 @@ from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
-from .models import Tutor, PrivateTutor, MyUser, Notification, TutorialSession, Student, Tutor
 from django.contrib.auth.models import User
 from datetime import date, datetime, time, timedelta
 import time
+from .models import Tutor, PrivateTutor, ContractedTutor, MyUser, Notification, TutorialSession, Student, Tutor, Wallet
+from decimal import Decimal
 
+COMMISION = 1.05
 # Create your views here.
 class HomePageView(TemplateView):
     def get(self, request, **kwargs):
@@ -86,10 +88,19 @@ def selectbooking(request, student_id, tutor_id ):	#receive data: starttime (yyy
 					  {'fail': tutorial_session, 'tutor': tutor, 'student': student, 'begintime': begintime})
 	else:
 		# time solving
+		if PrivateTutor.objects.filter(tutor = tutor).count() == 0:
+			thistutor = ContractedTutor.objects.get(tutor = tutor)
+		else:
+			thistutor = PrivateTutor.objects.get(tutor = tutor)
+		wallet = student.myuser.wallet
+		if wallet.balance < thistutor.hourly_rate * COMMISION:
+			return #fixme should report that not enough money
+		wallet.balance = wallet.balance - Decimal.from_float(thistutor.hourly_rate * COMMISION)
+		wallet.save()
 		timeformat = '%Y%m%d%H%M'  # fixme currently I don't care about exceed 14 days, or illegal booking ,only check availability
 		bookingtime = time.mktime(datetime.strptime(begintime, timeformat).timetuple())
-		today = date.today()
-		showingtime = time.mktime(datetime(today.year, today.month, today.day, 0, 0).timetuple())
+		now = datetime.now()
+		showingtime = time.mktime(datetime(now.year, now.month, now.day, 0, 0).timetuple())
 		half_hour_diff = int(bookingtime - showingtime) / 1800
 		hour_diff = int (half_hour_diff / 2)
 		#modify timeslot string
@@ -98,6 +109,10 @@ def selectbooking(request, student_id, tutor_id ):	#receive data: starttime (yyy
 		tutor.timeslot = "".join(timeslot)
 		tutor.save()
 		tutor.tutorialsession_set.create(starttime=begintime, status=1, tutor=tutor, student=student)
+		#message delivering
+		content = "System notification [ " + str(datetime(now.year, now.month, now.day, now.hour, now.minute)) + " ]: You have booked a session on " + str(datetime.strptime(begintime, timeformat)) + " with tutor " + tutor.myuser.user.username + " ,with wallet balance deduced by " + str(thistutor.hourly_rate * COMMISION) + " to " + str(wallet.balance)
+		notification = Notification(content = content, myuser = student.myuser)
+		notification.save()
 		return render(request, 'searchtutors/tutorpage.html', {'success': tutorial_session, 'tutor': tutor, 'student': student})
 
 
@@ -108,8 +123,8 @@ def cancelbooking(request, student_id, tutor_id, tutorial_sessions_id): #, stude
 	student = get_object_or_404(Student, pk=student_id)
 	timeformat = '%Y%m%d%H%M'  # fixme currently I don't care about exceed 14 days, or illegal booking ,only check availability
 	bookingtime = time.mktime(datetime.strptime(tutorial_session.starttime, timeformat).timetuple())
-	today = date.today()
-	showingtime = time.mktime(datetime(today.year, today.month, today.day, 0, 0).timetuple())
+	now = datetime.now()
+	showingtime = time.mktime(datetime(now.year, now.month, now.day, 0, 0).timetuple())
 	half_hour_diff = int(bookingtime - showingtime) / 1800
 	hour_diff = int(half_hour_diff / 2)
 	timeslot = list(tutor.timeslot)
@@ -118,6 +133,12 @@ def cancelbooking(request, student_id, tutor_id, tutorial_sessions_id): #, stude
 	tutor.save()
 	tutorial_session.status = 3
 	tutorial_session.save()
+	# message delivering
+	content = "System notification [ " + str(
+		datetime(now.year, now.month, now.day, now.hour, now.minute)) + " ]: You have cancelled the session on " + str(
+		datetime.strptime(bookingtime, timeformat)) + " with tutor " + tutor.myuser.user.username
+	notification = Notification(content=content, myuser=student.myuser)
+	notification.save()
 	return render(request, 'searchtutors/tutorpage.html', {'fail': tutorial_session, 'tutor': tutor})
 
 def mywallet(request, myuser_id):
