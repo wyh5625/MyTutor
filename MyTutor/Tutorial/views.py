@@ -137,7 +137,7 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
 	# message delivering
 	content = "System notification [ " + str(
 		datetime(now.year, now.month, now.day, now.hour, now.minute)) + " ]: You have cancelled the session on " + str(
-		datetime.strptime(bookingtime, timeformat)) + " with tutor " + tutor.myuser.user.username
+		datetime.strptime(tutorial_session.starttime, timeformat)) + " with tutor " + tutor.myuser.user.username
 	notification = Notification(content=content, myuser=myuser)
 	notification.save()
 	return render(request, 'myaccount/mybooking.html', {'myuser': myuser})
