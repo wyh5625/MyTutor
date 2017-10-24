@@ -1,8 +1,15 @@
 {% extends "myaccount/myaccount.html" %}
 {% block title %}: my booking{% endblock %}
+{% block script%}
+    function cancelSession(elem){
+        var session_id = "{{session.id}}";
+        elem.parentNode.innerHTML ="<input type=\"hidden\"  name=\"session_id\" value=" +session_id+  ">X</input>"
+        document.frm.submit();
+    }
+{% endblock %}
 {% block right %}
 <div id="content" style="width: 70%; float : right;">
-     <table style="text-align: center;">
+<table>
             <tr class="title" style="width:100%; background-color: #005B98; color: white; font-size: 16pt;">
                 <th>Time</th>
                 <th>Tutor</th>
@@ -10,50 +17,32 @@
                 <th>Status</th>
                 <th>Cancel / Evaluate</th>
             </tr>
+
+
             {% for session in  session_list %}
-                <tr style="background-color: #9f9f9f; font-size: 14pt; text-align: center;">
-                <script type="text/javascript">
-                    var a = {{ session.starttime }};
-                    //var date = a.substring(0,3) + "-" + a.substring(4, 5) + "-" + a.substring(5,6);
-                    //alert(date);
-                    document.write("<td>"+a+"</td>");
-                </script>
+
+
+
+
+                    <tr style="background-color: #9f9f9f; font-size: 14pt; text-align: center;">
+                    <td >{{ session.starttime }}</td>
                 <td>{{ session.tutor }}</td>
                 <td>{{ session.tutor.hourly_rate }}</td>
                     <td>{{ session.status }}</td>
                 <script>
-                    var cancelStatus;
-                    if ({{ session.status }} == 'upcoming')
+
+                    if ("{{ session.status }}" == '1')
                     {
-                        alert("cancel!");
+
+                        document.write(" <form action=\"{% url 'Tutorial:cancelbooking' user.id session.id %}\" method=\"post\" name=\"frm\">{% csrf_token %}<td id=\'clickable\' onclick=\'cancelSession(this)\' style='color: red;'>X</td></form>");
+                    }else{
+                        document.write("<td id=\'cannotClick\'>X</td>");
                     }
                 </script>
-                    <td>Cancel/Evaluate</td>
                 </tr>
+
+
             {% endfor %}
-     <div id="content" style="width: 70%; float : right; text-align: center;">
-     <table style="text-align: center;">
-            <tr class="title" style="width:100%;">
-                <th style="position: relative; width:20%;">Time</th>
-                <th style="width:20%;">Tutor</th>
-                <th style="width:25%;">Rate</th>
-                <th style="width:25%;">Status</th>
-                <th style="width:25%;">Cancel / Evaluate</th>
-            </tr>
-            {% for session in  session_list %}
-            <tr class="row" id={{ session.id }} style="width: 40%;">
-                <td class="starttime">{{ session.starttime }}</td>
-                <td class="tutor">{{ session.tutor }}</td>
-                <td class="rate">{{ session.tutor.hourly_rate }}</td>
-                <td class="status">{{ session.status }}</td>
-                {% if session.status == 'cancel' %}
-                <td class="coe" onclick="cancelHandler();">Cancel</ a></td>
-                {% elif session.status == 'attended' %}
-                <td class="coe" onclick="reviewHandler();">Click to Review</ a></td>
-                {% elif session.status == 'upcoming' %}
-                <td class="coe">Cancel</td>
-                {% endif %}
-            </tr>
-            {% endfor %}
-        </table>
+
+         </table>
 {% endblock %}

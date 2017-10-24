@@ -75,7 +75,7 @@ def mybooking(request, myuser_id):
 	myuser = get_object_or_404(MyUser, pk=myuser_id)
 	mystudent = get_object_or_404(Student,myuser=myuser)
 	booking = TutorialSession.objects.filter(student=mystudent)
-	return render(request, 'myaccount/mybooking.html', {'user': mystudent, 'session_list': booking })
+	return render(request, 'myaccount/mybooking.html', {'user': myuser , 'session_list': booking })
 
 def selectbooking(request, student_id, tutor_id ):	#receive data: starttime (yyyymmddhhmm string)
 	begintime = request.POST['starttime']
@@ -95,7 +95,7 @@ def selectbooking(request, student_id, tutor_id ):	#receive data: starttime (yyy
 		wallet = student.myuser.wallet
 		if wallet.balance < thistutor.hourly_rate * COMMISION:
 			return #fixme should report that not enough money
-		wallet.balance = wallet.balance - Decimal.from_float(thistutor.hourly_rate * COMMISION)
+		wallet.balance = wallet.balance - Decimal.from_float(thistutor.hourly_rate * COMMISION) #fixme didn't add money to tutor account
 		wallet.save()
 		timeformat = '%Y%m%d%H%M'  # fixme currently I don't care about exceed 14 days, or illegal booking ,only check availability
 		bookingtime = time.mktime(datetime.strptime(begintime, timeformat).timetuple())
@@ -116,11 +116,12 @@ def selectbooking(request, student_id, tutor_id ):	#receive data: starttime (yyy
 		return render(request, 'searchtutors/tutorpage.html', {'success': tutorial_session, 'tutor': tutor, 'student': student})
 
 
-def cancelbooking(request, student_id, tutor_id, tutorial_sessions_id): #, student_id, tutor_id):
+def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tutor_id):
 	#begintime = request.POST['starttime']
 	tutorial_session =get_object_or_404(TutorialSession, pk=tutorial_sessions_id)
-	tutor = get_object_or_404(Tutor, pk=tutor_id)
-	student = get_object_or_404(Student, pk=student_id)
+	tutor = tutorial_session.tutor
+	#student = tutorial_session.student
+	myuser = get_object_or_404(MyUser, pk=myuser_id)
 	timeformat = '%Y%m%d%H%M'  # fixme currently I don't care about exceed 14 days, or illegal booking ,only check availability
 	bookingtime = time.mktime(datetime.strptime(tutorial_session.starttime, timeformat).timetuple())
 	now = datetime.now()
@@ -137,9 +138,9 @@ def cancelbooking(request, student_id, tutor_id, tutorial_sessions_id): #, stude
 	content = "System notification [ " + str(
 		datetime(now.year, now.month, now.day, now.hour, now.minute)) + " ]: You have cancelled the session on " + str(
 		datetime.strptime(bookingtime, timeformat)) + " with tutor " + tutor.myuser.user.username
-	notification = Notification(content=content, myuser=student.myuser)
+	notification = Notification(content=content, myuser=myuser)
 	notification.save()
-	return render(request, 'searchtutors/tutorpage.html', {'fail': tutorial_session, 'tutor': tutor})
+	return render(request, 'myaccount/mybooking.html', {'myuser': myuser})
 
 def mywallet(request, myuser_id):
 	myuser = get_object_or_404(MyUser, pk=myuser_id)

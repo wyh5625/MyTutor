@@ -13,7 +13,7 @@ urlpatterns = [
     url(r'^(?P<myuser_id>[0-9]+)/myAccount/mywallet/$', views.mywallet, name='mywallet'),
     url(r'^(?P<myuser_id>[0-9]+)/message/$', views.message, name='message'),
     url(r'^(?P<student_id>[0-9]+)/timeslot/(?P<tutor_id>[0-9]+)/$', views.selectbooking, name='timeslot'),
-    url(r'^(?P<student_id>[0-9]+)/myAccount/mybooking/cancelled$', views.cancelbooking, name='cancelbooking'),
+    url(r'^(?P<myuser_id>[0-9]+)/myAccount/mybooking/cancelled/(?P<tutorial_sessions_id>[0-9]+)/$', views.cancelbooking, name='cancelbooking'),
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.logout, name='logout'),
     #test
