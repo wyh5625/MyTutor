@@ -1,11 +1,5 @@
 {% extends "Menu.html" %}
 {% block title %}: my account{% endblock %}
-{% block script %}
-    function bookInfo(){
-    var d= "<p>aaaaaaaaaaaaaaa</p >";
-    document.getElementById('content').innerHTML= "<p>book info</p >";
-    }
-{% endblock %}
 {% block content %}
     <div class="navi" style="float: left; background-color : #B0C4DE; width :15%;  height: 100%; text-align: center; ">
         <div id="booking" style="height: 10%; padding: 15px; font-size: 18pt; margin-top: 15%;"><a href="{% url 'Tutorial:mybooking' user.id %}" style="text-decoration: none; font-weight: bold; color: #005B98">MY BOOKING</a></div>

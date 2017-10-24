@@ -3,13 +3,13 @@
 {% block script%}
     function cancelSession(elem){
         var session_id = "{{session.id}}";
-        elem.innerHTML ="<input type=\"hidden\"  name='session_id' value= \""+session_id+"\" id=\"good\">X</input>"
+        elem.parentNode.innerHTML ="<input type=\"hidden\"  name=\"session_id\" value=" +session_id+  ">X</input>"
         document.frm.submit();
     }
 {% endblock %}
 {% block right %}
 <div id="content" style="width: 70%; float : right;">
-     <form style="text-align: center;">
+<table>
             <tr class="title" style="width:100%; background-color: #005B98; color: white; font-size: 16pt;">
                 <th>Time</th>
                 <th>Tutor</th>
@@ -17,25 +17,32 @@
                 <th>Status</th>
                 <th>Cancel / Evaluate</th>
             </tr>
+
+
             {% for session in  session_list %}
-                <form action=\"{% url 'Tutorial:cancelbooking' %}\" method=\"post\" name=\"frm\">
-                <tr style="background-color: #9f9f9f; font-size: 14pt; text-align: center;">
+
+
+
+
+                    <tr style="background-color: #9f9f9f; font-size: 14pt; text-align: center;">
                     <td >{{ session.starttime }}</td>
                 <td>{{ session.tutor }}</td>
                 <td>{{ session.tutor.hourly_rate }}</td>
                     <td>{{ session.status }}</td>
                 <script>
-                    var cancelStatus;
-                    if ("{{ session.status }}" == 'upcoming')
+
+                    if ("{{ session.status }}" == '1')
                     {
-                        document.write("<td id=\'clickable\' onclick=\'cancelSession(this)\' style='color: red;'>X</td>");
+
+                        document.write(" <form action=\"{% url 'Tutorial:cancelbooking' user.id session.id %}\" method=\"post\" name=\"frm\">{% csrf_token %}<td id=\'clickable\' onclick=\'cancelSession(this)\' style='color: red;'>X</td></form>");
                     }else{
                         document.write("<td id=\'cannotClick\'>X</td>");
                     }
                 </script>
                 </tr>
 
-         </form>
+
             {% endfor %}
+
          </table>
 {% endblock %}
