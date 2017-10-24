@@ -2,13 +2,14 @@
 {% block title %}: my booking{% endblock %}
 {% block script%}
     function cancelSession(elem){
-    var confirmInfo = elem.previousSibling.parentNode.innerHTML;
-    alert(confirmInfo);
+        var session_id = "{{session.id}}";
+        elem.innerHTML ="<input type=\"hidden\"  name='session_id' value= \""+session_id+"\" id=\"good\">X</input>"
+        document.frm.submit();
     }
 {% endblock %}
 {% block right %}
 <div id="content" style="width: 70%; float : right;">
-     <table style="text-align: center;">
+     <form style="text-align: center;">
             <tr class="title" style="width:100%; background-color: #005B98; color: white; font-size: 16pt;">
                 <th>Time</th>
                 <th>Tutor</th>
@@ -17,6 +18,7 @@
                 <th>Cancel / Evaluate</th>
             </tr>
             {% for session in  session_list %}
+                <form action=\"{% url 'Tutorial:cancelbooking' %}\" method=\"post\" name=\"frm\">
                 <tr style="background-color: #9f9f9f; font-size: 14pt; text-align: center;">
                     <td >{{ session.starttime }}</td>
                 <td>{{ session.tutor }}</td>
@@ -32,5 +34,8 @@
                     }
                 </script>
                 </tr>
+
+         </form>
             {% endfor %}
+         </table>
 {% endblock %}

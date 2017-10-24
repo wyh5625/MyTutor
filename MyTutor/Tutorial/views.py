@@ -7,6 +7,7 @@ from django.urls import reverse
 from .models import Tutor, PrivateTutor, MyUser, Notification, TutorialSession, Student, Tutor
 from django.contrib.auth.models import User
 from datetime import date, datetime, time, timedelta
+import time
 
 # Create your views here.
 class HomePageView(TemplateView):
@@ -85,16 +86,18 @@ def selectbooking(request, student_id, tutor_id ):	#receive data: starttime (yyy
 					  {'fail': tutorial_session, 'tutor': tutor, 'student': student, 'begintime': begintime})
 	else:
 		# time solving
-		"""timeformat = '%Y%m%d%H%M'  # fixme currently I don't care about exceed 14 days, or illegal booking ,only check availability
+		timeformat = '%Y%m%d%H%M'  # fixme currently I don't care about exceed 14 days, or illegal booking ,only check availability
 		bookingtime = time.mktime(datetime.strptime(begintime, timeformat).timetuple())
 		today = date.today()
 		showingtime = time.mktime(datetime(today.year, today.month, today.day, 0, 0).timetuple())
-		half_hour_diff = int(showingtime - bookingtime) / 1800
-		hour_diff = half_hour_diff / 2
+		half_hour_diff = int(bookingtime - showingtime) / 1800
+		hour_diff = int (half_hour_diff / 2)
+		#modify timeslot string
 		timeslot = list(tutor.timeslot)
-		timeslot[hour_diff] = '1'
-		tutor.timeslot = "".join(timeslot)"""
-		tutor.tutorialsession_set.create(starttime=begintime, status="Occupied", tutor=tutor, student=student)
+		timeslot[hour_diff] = '0'
+		tutor.timeslot = "".join(timeslot)
+		tutor.save()
+		tutor.tutorialsession_set.create(starttime=begintime, status=1, tutor=tutor, student=student)
 		return render(request, 'searchtutors/tutorpage.html', {'success': tutorial_session, 'tutor': tutor, 'student': student})
 
 """
