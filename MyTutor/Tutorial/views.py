@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .models import Tutor, PrivateTutor, MyUser, Notification, TutorialSession, Student, Tutor
 from django.contrib.auth.models import User
+from datetime import date, datetime, time, timedelta
 
 # Create your views here.
 class HomePageView(TemplateView):
@@ -78,13 +79,36 @@ def selectbooking(request, student_id, tutor_id ):	#receive data: starttime (yyy
 	tutor = get_object_or_404(Tutor, pk=tutor_id)
 	student = get_object_or_404(Student, pk=student_id)
 	tutorial_session = tutor.tutorialsession_set.filter(starttime=begintime)
+
+	if tutorial_session: #if it is not empty, you cannot make this session
+		return render(request, 'searchtutors/tutorpage.html',
+					  {'fail': tutorial_session, 'tutor': tutor, 'student': student, 'begintime': begintime})
+	else:
+		# time solving
+		"""timeformat = '%Y%m%d%H%M'  # fixme currently I don't care about exceed 14 days, or illegal booking ,only check availability
+		bookingtime = time.mktime(datetime.strptime(begintime, timeformat).timetuple())
+		today = date.today()
+		showingtime = time.mktime(datetime(today.year, today.month, today.day, 0, 0).timetuple())
+		half_hour_diff = int(showingtime - bookingtime) / 1800
+		hour_diff = half_hour_diff / 2
+		timeslot = list(tutor.timeslot)
+		timeslot[hour_diff] = '1'
+		tutor.timeslot = "".join(timeslot)"""
+		tutor.tutorialsession_set.create(starttime=begintime, status="Occupied", tutor=tutor, student=student)
+		return render(request, 'searchtutors/tutorpage.html', {'success': tutorial_session, 'tutor': tutor, 'student': student})
+
+"""
+def cancelbooking(request, student_id, tutor_id, tutorial_sessions_id): #, student_id, tutor_id):
+	#begintime = request.POST['starttime']
+	tutorial_session =get_object_or_404(TutorialSession, pk=tutorial_sessions_id)
+	tutor = get_object_or_404(Tutor, pk=tutor_id)
+	student = get_object_or_404(Student, pk=student_id)
 	if tutorial_session:
 		tutor.tutorialsession_set.create(begintime, "Occupied", tutor, student)
 		return render(request, 'searchtutors/tutorpage.html', {'success': tutorial_session, 'tutor': tutor})
 	else:
 		return render(request, 'searchtutors/tutorpage.html', {'fail': tutorial_session, 'tutor': tutor})
-
-
+"""
 def mywallet(request, myuser_id):
 	myuser = get_object_or_404(MyUser, pk=myuser_id)
 	return render(request, 'myaccount/mywallet.html', {'user':myuser })

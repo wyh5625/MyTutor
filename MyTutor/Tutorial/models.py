@@ -62,4 +62,13 @@ class TutorialSession(models.Model):
     status = models.CharField(max_length=10)
     tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
     student =  models.ForeignKey(Student, on_delete=models.CASCADE)
-
+    def __str__(self):
+        return self.starttime + "-student-" + self.student.myuser.user.username + "-tutor-" + self.tutor.myuser.user.username
+"""
+status map:
+0   upcoming can cancel
+1   upcoming cannot cancel
+2   attended
+3   cancelled
+4   evaluated
+"""

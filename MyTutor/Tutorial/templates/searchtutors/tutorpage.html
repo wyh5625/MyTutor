@@ -17,7 +17,7 @@
             if(i == 0){
                  d+= "<td rowspan=\"1\" class=\"hour_\" height=\"10%\" width=\"4%\"  style=\"background-color : #191970 ; color : white;margin : 1px;\">Date/Time</td>";
                 for (var j = 0;j<24;j++){
-                if (j < 9){
+                if (j <= 9){
                         j = "0" + j;
                     }
                 d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"4%\" style=\"background-color : #191970 ; color : white;margin : 1px;\">"+j+":00</td>";
@@ -67,11 +67,15 @@
 
 {% endblock %}
 {% block content %}
-    {% if success and fail %}
+    {{ tutor.myuser.user.username}} this is testing<br>
+    {{success}} success<br>
+    {{fail}} fail<br>
+    {{begintime}} begintime<br>
+    {% if success or fail %}
         <p>{{ student.id}}</p>
     {% else%}
     <div class="tutorInfo">
-        <p>{{ tutor.user.name }}</p >
+        <p>{{ tutor.myuser.user.username }}</p >
         <h4>Timeslots : <h4>
             <div id="timeSlots"><button type="button" onclick="timeSlots()">click to check timeslot</button></div>
 
