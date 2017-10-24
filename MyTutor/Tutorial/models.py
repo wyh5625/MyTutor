@@ -59,7 +59,7 @@ class Notification(models.Model):
             return self.myuser.user.username
 class TutorialSession(models.Model):
     starttime = models.CharField(max_length=12)  # yyyymmddhhmm
-    status = models.CharField(max_length=10)
+    status = models.IntegerField()
     tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
     student =  models.ForeignKey(Student, on_delete=models.CASCADE)
     def __str__(self):
