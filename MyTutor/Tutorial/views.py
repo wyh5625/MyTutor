@@ -73,7 +73,7 @@ def mybooking(request, myuser_id):
 	myuser = get_object_or_404(MyUser, pk=myuser_id)
 	mystudent = get_object_or_404(Student,myuser=myuser)
 	booking = TutorialSession.objects.filter(student=mystudent)
-	return render(request, 'myaccount/mybooking.html', {'user':myuser, 'session_list': booking })
+	return render(request, 'myaccount/mybooking.html', {'user': mystudent, 'session_list': booking })
 
 def selectbooking(request, student_id, tutor_id ):	#receive data: starttime (yyyymmddhhmm string)
 	begintime = request.POST['starttime']
@@ -100,18 +100,26 @@ def selectbooking(request, student_id, tutor_id ):	#receive data: starttime (yyy
 		tutor.tutorialsession_set.create(starttime=begintime, status=1, tutor=tutor, student=student)
 		return render(request, 'searchtutors/tutorpage.html', {'success': tutorial_session, 'tutor': tutor, 'student': student})
 
-"""
+
 def cancelbooking(request, student_id, tutor_id, tutorial_sessions_id): #, student_id, tutor_id):
 	#begintime = request.POST['starttime']
 	tutorial_session =get_object_or_404(TutorialSession, pk=tutorial_sessions_id)
 	tutor = get_object_or_404(Tutor, pk=tutor_id)
 	student = get_object_or_404(Student, pk=student_id)
-	if tutorial_session:
-		tutor.tutorialsession_set.create(begintime, "Occupied", tutor, student)
-		return render(request, 'searchtutors/tutorpage.html', {'success': tutorial_session, 'tutor': tutor})
-	else:
-		return render(request, 'searchtutors/tutorpage.html', {'fail': tutorial_session, 'tutor': tutor})
-"""
+	timeformat = '%Y%m%d%H%M'  # fixme currently I don't care about exceed 14 days, or illegal booking ,only check availability
+	bookingtime = time.mktime(datetime.strptime(tutorial_session.starttime, timeformat).timetuple())
+	today = date.today()
+	showingtime = time.mktime(datetime(today.year, today.month, today.day, 0, 0).timetuple())
+	half_hour_diff = int(bookingtime - showingtime) / 1800
+	hour_diff = int(half_hour_diff / 2)
+	timeslot = list(tutor.timeslot)
+	timeslot[hour_diff] = '1'
+	tutor.timeslot = "".join(timeslot)
+	tutor.save()
+	tutorial_session.status = 3
+	tutorial_session.save()
+	return render(request, 'searchtutors/tutorpage.html', {'fail': tutorial_session, 'tutor': tutor})
+
 def mywallet(request, myuser_id):
 	myuser = get_object_or_404(MyUser, pk=myuser_id)
 	return render(request, 'myaccount/mywallet.html', {'user':myuser })
