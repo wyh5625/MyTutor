@@ -36,11 +36,7 @@ def logout(request):
 	auth.logout(request)
 	return HttpResponseRedirect('/Tutorial/')
 ####search tutor####
-<<<<<<< HEAD
 def index(request, myuser_id):
-=======
-def index(request):
->>>>>>> 2852a695c66828af347dd7a4ca526daef77b3da6
 	"""all_users = User.objects.all()
 	list = []
 	for user in all_users:
@@ -48,21 +44,12 @@ def index(request):
 		list.append(html.format(name=user.name, user_name = user.user_name))
 	output = '<hr>'.join(list)
 	return HttpResponse(output)"""
-	"""
 	all_tutors = Tutor.objects.all()
 	private_tutors = PrivateTutor.objects.all()
-<<<<<<< HEAD
 	myuser = get_object_or_404(MyUser, pk=myuser_id)
 	student = get_object_or_404(Student, myuser=myuser)
 	params = {"user": myuser, "latest_Tutor_list": all_tutors, 'student': student}
 	return render(request, 'searchtutors/index.html', params)
-=======
-	student = get_object_or_404(Student, pk=student_id)
-	params = {"latest_Tutor_list": all_tutors, 'student': student}
-	"""
-	return HttpResponse("homepage")
-	#return render(request, 'searchtutors/index.html', params)
->>>>>>> 2852a695c66828af347dd7a4ca526daef77b3da6
 
 
 def tutorpage(request, myuser_id, tutor_id):
@@ -93,9 +80,9 @@ def selectbooking(request, student_id, tutor_id ):	#receive data: starttime (yyy
 	tutorial_session = tutor.tutorialsession_set.filter(starttime=begintime)
 	if tutorial_session:
 		tutor.tutorialsession_set.create(begintime, "Occupied", tutor, student)
-		return render(request, 'searchtutors/index.html', {'success': tutorial_session, 'tutor': tutor})
+		return render(request, 'searchtutors/tutorpage.html', {'success': tutorial_session, 'tutor': tutor})
 	else:
-		return render(request, 'searchtutors/index.html', {'fail': tutorial_session, 'tutor': tutor})
+		return render(request, 'searchtutors/tutorpage.html', {'fail': tutorial_session, 'tutor': tutor})
 
 
 def mywallet(request, myuser_id):

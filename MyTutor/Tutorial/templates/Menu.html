@@ -9,11 +9,8 @@
 	<body style="height : 100%;">
 		<div id="header" class="header" style=" background-color: #191970;  margin : auto; font-size : 14pt; padding: 10px; text-align : center; font-family : Futura, Arial;">
 			<table style="width : 100%;">
-<<<<<<< HEAD
 				{% if request.user.is_authenticated %}
 				<tr>
-=======
->>>>>>> 2852a695c66828af347dd7a4ca526daef77b3da6
 					<th><a id="Home" href="" style="color : white; text-decoration:none;">Home</a></th>
 					<th><a id="SearchTutors" href="{% url 'Tutorial:index' user.id %}" style="color : white; text-decoration:none;">Search Tutors</a></th>
 					<th><a id="MyAccount" href="{% url 'Tutorial:myaccount' user.id %}" style="color : white; text-decoration:none;">My Account</a></th>
