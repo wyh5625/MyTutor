@@ -3,10 +3,11 @@
 {% block script%}
     function cancelSession(elem, id, name, time){
         var t = time.substring(0,4) + "-" + time.substring(4,6) + "-" + time.substring(6,8) + " " + time.substring(8,10) + ":" +time.substring(10,12);
-        alert(id);
+        //alert("shit")
+        var frm = "frm"+id
         if(confirm("Cancel information:\rTutor Name: "+name+"\rTime: "+t)){
          elem.innerHTML ="<input type=\"hidden\"  name=\"hidden\" value=" +id+ ">";
-        document.getElementById("frm").submit();
+        document.getElementById(frm).submit();
         alert ("Successful cancelling!");
     }
 
@@ -32,6 +33,7 @@
                 <td>{{ session.tutor.hourly_rate }}</td>
 
                 <script>
+
                       if ("{{ session.status }}" == '0' || "{{ session.status }}" == '1')
                     {
                        document.write("<td>Upcoming</td>");
@@ -42,18 +44,17 @@
                       }else if("{{ session.status }}" == '4'){
                           document.write("<td>Evaluated</td>");
                       }
-
                     </script>
                 <script>
 
                     if ("{{ session.status }}" == '0')
                     {
-                        var session_id = "{{session.id}}";
 
+                        var session_id = "{{session.id}}";
                         var name = "{{session.tutor}}";
                         var time = "{{session.starttime}}";
-                        document.write(" <form action=\"{% url 'Tutorial:cancelbooking' user.id session.id %}\" method=\"post\" id=\"frm\">{% csrf_token %}{{uf.as_p}}<td id=\'clickable\' onclick=\'cancelSession(this,17, name, time)\' style='color: red;'>X</td></form>");
-                         alert(session_id);
+                        document.write(" <form action=\"{% url 'Tutorial:cancelbooking' user.id session.id %}\" method=\"post\" id= \"frm"+session_id+"\" >{% csrf_token %}{{uf.as_p}}<td id=\'clickable\' onclick=\'cancelSession(this,"+session_id+", \"{{session.tutor}}\", \"{{session.starttime}}\")\' style='color: red;'>X</td></form>");
+
                     }else{
                         document.write("<td id=\'cannotClick\'>X</td>");
                     }
