@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from datetime import date, datetime, time, timedelta
 import time
-from .models import Tutor, PrivateTutor, ContractedTutor, MyUser, Notification, TutorialSession, Student, Tutor, Wallet
+from Tutorial.models import Tutor, PrivateTutor, ContractedTutor, MyUser, Notification, TutorialSession, Student, Tutor, Wallet
 from decimal import Decimal
 
 COMMISION = 1.05
@@ -51,16 +51,14 @@ def index(request, myuser_id):
     all_tutors = Tutor.objects.all()
     private_tutors = PrivateTutor.objects.all()
     myuser = get_object_or_404(MyUser, pk=myuser_id)
-    student = get_object_or_404(Student, myuser=myuser)
-    params = {"user": myuser, "latest_Tutor_list": all_tutors, 'student': student}
+    params = {"user": myuser, "latest_Tutor_list": all_tutors, 'user': myuser}
     return render(request, 'searchtutors/index.html', params)
 
 
 def tutorpage(request, myuser_id, tutor_id):
     tutor = get_object_or_404(Tutor, pk=tutor_id)
     myuser = get_object_or_404(MyUser, pk=myuser_id)
-    student = get_object_or_404(Student, myuser=myuser)
-    return render(request, 'searchtutors/tutorpage.html', {'user':myuser, 'tutor': tutor, 'student':student})
+    return render(request, 'searchtutors/tutorpage.html', {'user':myuser, 'tutor': tutor, 'user':myuser})
 
 ####my account####
 def myaccount(request, myuser_id):
@@ -77,18 +75,22 @@ def mybooking(request, myuser_id):
     booking = TutorialSession.objects.filter(student=mystudent)
     return render(request, 'myaccount/mybooking.html', {'user': myuser , 'session_list': booking })
 
-def selectbooking(request, student_id, tutor_id ):	#receive data: starttime (yyyymmddhhmm string)
+def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyymmddhhmm string)
     begintime = request.POST['starttime']
-    tutor = get_object_or_404(Tutor, pk=tutor_id)
-    student = get_object_or_404(Student, pk=student_id)
+    myuser = MyUser.objects.get(pk=myuser_id)
+    tutor = Tutor.objects.get(pk=tutor_id)
+    student = Student.objects.get(myuser=myuser)
+    #myuser = get_object_or_404(MyUser, pk=myuser_id)
+    #tutor = get_object_or_404(Tutor, pk=tutor_id)
+    #student = get_object_or_404(Student, myuser=myuser)
     tutorial_session = tutor.tutorialsession_set.filter(starttime=begintime)
 
     if tutorial_session: #if it is not empty, you cannot make this session
         return render(request, 'searchtutors/tutorpage.html',
-                      {'fail': tutorial_session, 'tutor': tutor, 'student': student, 'begintime': begintime})
+                      {'fail': tutorial_session, 'tutor': tutor, 'user': myuser, 'begintime': begintime})
     else:
         # time solving
-        wallet = student.myuser.wallet
+        wallet = myuser.wallet
         if wallet.balance < tutor.hourly_rate * COMMISION:
             return #fixme should report that not enough money
         wallet.balance = wallet.balance - Decimal.from_float(tutor.hourly_rate * COMMISION) #fixme didn't add money to tutor account
@@ -107,9 +109,9 @@ def selectbooking(request, student_id, tutor_id ):	#receive data: starttime (yyy
         tutor.tutorialsession_set.create(starttime=begintime, status=0, tutor=tutor, student=student)
         #message delivering
         content = "System notification [ " + str(datetime(now.year, now.month, now.day, now.hour, now.minute)) + " ]: You have booked a session on " + str(datetime.strptime(begintime, timeformat)) + " with tutor " + tutor.myuser.user.username + " ,with wallet balance deduced by " + str(tutor.hourly_rate * COMMISION) + " to " + str(wallet.balance)
-        notification = Notification(content = content, myuser = student.myuser)
+        notification = Notification(content = content, myuser = myuser)
         notification.save()
-        return render(request, 'searchtutors/tutorpage.html', {'success': tutorial_session, 'tutor': tutor, 'student': student})
+        return render(request, 'searchtutors/tutorpage.html', {'success': tutorial_session, 'tutor': tutor, 'user': myuser})
 
 
 def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tutor_id):
