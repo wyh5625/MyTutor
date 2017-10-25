@@ -3,7 +3,7 @@
 {% block content %}
 
      {% if fail %}
-        <script>alert("Fail!");</script>
+        <script>alert("{{ fail }}");</script>
     {% endif %}
     {% if success %}
         <script>alert("Booking success!");</script>
