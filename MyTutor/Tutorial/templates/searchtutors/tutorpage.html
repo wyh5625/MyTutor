@@ -2,6 +2,9 @@
 {% block title %}: tutor page{% endblock %}
 {% block content %}
 
+     {% if fail %}
+        <script>alert("Fail!");</script>
+    {% endif %}
     {% if success %}
         <script>alert("Booking success!");</script>
     {% endif %}
