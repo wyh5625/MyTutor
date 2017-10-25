@@ -122,6 +122,10 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
     tutor.timeslot = "".join(timeslot)
     tutor.save()
     tutor.tutorialsession_set.create(starttime=begintime, status=0, tutor=tutor, student=student)
+    #wallet deduction
+    wallet.balance = wallet.balance - Decimal.from_float(
+        tutor.hourly_rate * COMMISION)  # fixme didn't add money to tutor account
+    wallet.save()
     # message delivering
     content = "System notification [ " + str(datetime(now.year, now.month, now.day, now.hour,
                                                       now.minute)) + " ]: You have booked a session on " + str(
@@ -130,10 +134,7 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
         tutor.hourly_rate * COMMISION) + " to " + str(wallet.balance)
     notification = Notification(content=content, myuser=myuser)
     notification.save()
-    #wallet deduction
-    wallet.balance = wallet.balance - Decimal.from_float(
-        tutor.hourly_rate * COMMISION)  # fixme didn't add money to tutor account
-    wallet.save()
+
 
     return render(request, 'searchtutors/tutorpage.html', {'success': "aa", 'tutor': tutor, 'user': myuser})
 
