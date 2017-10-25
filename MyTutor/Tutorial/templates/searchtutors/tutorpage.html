@@ -1,7 +1,16 @@
 {% extends "Menu.html" %}
 {% block title %}: tutor page{% endblock %}
-{% block script %}
-    function timeSlots(){
+{% block content %}
+
+    {% if success %}
+        <script>alert("Booking success!");</script>
+    {% endif %}
+    <div class="tutorInfo">
+        <p>Tutor Name : {{ tutor.myuser.user.username }}</p >
+        <p>Hourly Rate : {{ tutor.hourly_rate }}</p >
+        <h4>Timeslots : <h4>
+            <div id="timeSlots"></div>
+            <script>
         var list = "{{ tutor.timeslot}}";
         var d= "<form action=\"{% url 'Tutorial:timeslot' user.id tutor.id  %}\" method=\"post\" name=\"frm\">{% csrf_token %}<table width=\"100%\" style=\"border: 1px solid grey ; \"><tbody>";
         var date = new Date();
@@ -44,19 +53,16 @@
         }
         d += "</tbody></table></form>";
         document.getElementById('timeSlots').innerHTML= d;
-    }
 
-    function select(elem){
+        function select(elem){
        var slot = elem.getAttribute('id');
        var showStr = "Create a new booking : \r Name : ";
-       //showStr += Tutor.name;
         showStr += "\r Time : ";
         showStr += slot.substring(3,5) + "-" + slot.substring(5,7) +" , "+ slot.substring(8,10) + ":00";
         var value = "20"+ slot.substring(1,3) + slot.substring(3,5) + slot.substring(5,7) + slot.substring(8,10) + "00";
         if (value.length < 12){
             value = "20"+ slot.substring(1,3) + slot.substring(3,5) + slot.substring(5,7) + "0"+slot.substring(8,10) + "00";
         }
-        alert("user id :"+"{{user.id}}");
         if (confirm(showStr)){
             elem.innerHTML ="<input type=\"hidden\" name='starttime' value= \""+value+"\" id=\"good\">"
             document.frm.submit();
@@ -64,21 +70,6 @@
        }
 
     }
+            </script>
 
-{% endblock %}
-{% block content %}
-    {{ tutor.myuser.user.username}} this is testing<br>
-    {{success}} success<br>
-    {{fail}} fail<br>
-    {{begintime}} begintime<br>
-    {% if success or fail %}
-        <p>{{ user.id}}</p>
-    {% else%}
-    <div class="tutorInfo">
-        <p>{{ tutor.myuser.user.username }}</p >
-        <h4>Timeslots : <h4>
-            <div id="timeSlots"><button type="button" onclick="timeSlots()">click to check timeslot</button></div>
-
-    </div>
-    {% endif %}
 {% endblock %}

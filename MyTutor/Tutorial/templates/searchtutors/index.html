@@ -3,15 +3,27 @@
 {% block content %}
 <h3 style="background-color: #B0C4DE; color : #2F4F4F;  padding : 5px; text-align : center; border : 0px solid #708090; margin : 0;">Latest tutor information</h3>
 		<div id="TutoInfo" style="background-color : #F8F8FF; padding : 7px; height : 60%;">
-			<img src="logo.jpg" style="width : 20%; ">
-			<ul style="float : right;  text-align : left; color : #778899;">
+			<ul style="  text-align : left; color : #778899;">
+                <table style="margin: auto; width: 80%; text-align: center;">
+                    <tr style="color : white; background-color: #191970;">
+                        <th style="padding: 10px;">Tutor Name</th>
+                        <th>Type</th>
+                        <th>Hourly Rate</th>
+                    </tr>
+                {%for Tutor in latest_Tutor_list%}
 
-				{%for Tutor in latest_Tutor_list%}
-				<div>
-					<p><a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}">Tutor id{{Tutor.id}}student id{{ student.id }}   {{Tutor.myuser.user.username}}</a></p>
-					<!--<p>{{Tutor.hourly_rate}}</p>-->
-				</div>
+                    <tr>
+                       <td > <a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}" style="text-decoration : none;">{{Tutor.myuser.user.username}}</a></td>
+                        <script>
+                            if ("{{Tutor.hourly_rate}}" != '0'){
+                                document.write("<td ><a href=\"{% url 'Tutorial:tutorpage' user.id Tutor.id %}\" style=\"text-decoration : none;\" >Private Tutor</a></td><td>{{Tutor.hourly_rate}}</td>");
+                            }else{
+                                document.write("<td style=\"text-decoration : none;\"><a href=\"{% url 'Tutorial:tutorpage' user.id Tutor.id %}\" style=\"text-decoration : none;\">Contracted Tutor</a></td><td>N/A</td>")
+                            }
+                        </script>
+                    </tr>
 				{%endfor%}
+                 </table>
 			</ul>
 		</div>
 {% endblock %}

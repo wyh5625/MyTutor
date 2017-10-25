@@ -17,6 +17,9 @@ class HomePageView(TemplateView):
         return render(request, 'index.html', context=None)
 #####homepage###
 def home(request):
+    if request.user.is_authenticated(): #visitor or client
+        myuser = MyUser.objects.get(user=request.user)
+        return HttpResponseRedirect('/Tutorial/' + str(myuser.id)) #searchTutors/'+str(request.user.id)
     return render(request, 'home.html')
 ####login####
 def login(request):
@@ -111,7 +114,7 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
         content = "System notification [ " + str(datetime(now.year, now.month, now.day, now.hour, now.minute)) + " ]: You have booked a session on " + str(datetime.strptime(begintime, timeformat)) + " with tutor " + tutor.myuser.user.username + " ,with wallet balance deduced by " + str(tutor.hourly_rate * COMMISION) + " to " + str(wallet.balance)
         notification = Notification(content = content, myuser = myuser)
         notification.save()
-        return render(request, 'searchtutors/tutorpage.html', {'success': tutorial_session, 'tutor': tutor, 'user': myuser})
+        return render(request, 'searchtutors/tutorpage.html', {'success': "aa", 'tutor': tutor, 'user': myuser})
 
 
 def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tutor_id):
