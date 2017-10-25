@@ -86,10 +86,11 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
     #myuser = get_object_or_404(MyUser, pk=myuser_id)
     #tutor = get_object_or_404(Tutor, pk=tutor_id)
     #student = get_object_or_404(Student, myuser=myuser)
-    tutorial_session = tutor.tutorialsession_set.get(starttime=begintime)
+    tutorial_session = tutor.tutorialsession_set.filter(starttime=begintime)
 
     if tutorial_session: #if it is not empty, you cannot make this session
-        if tutorial_session.status != 3:
+        session = tutor.tutorialsession_set.get(starttime=begintime)
+        if session.status != 3:
             return render(request, 'searchtutors/tutorpage.html',
                       {'fail': "aa", 'tutor': tutor, 'user': myuser, 'begintime': begintime})
     # time solving
