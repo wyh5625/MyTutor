@@ -118,7 +118,7 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
     weekday = (1 + now.weekday()) % 7 #Monday is 0 ... Sunday is 6, but Sunday is the first day of the week, transform to 0
     # modify timeslot string
     timeslot = list(tutor.timeslot)
-    timeslot[weekday * 24 + hour_diff] = '0'
+    timeslot[weekday * 24 + hour_diff] = '2' #meaning I book the session, 0 only means tutor doesn't want this session to be booked
     tutor.timeslot = "".join(timeslot)
     tutor.save()
     tutor.tutorialsession_set.create(starttime=begintime, status=0, tutor=tutor, student=student)
