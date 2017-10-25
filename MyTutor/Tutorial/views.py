@@ -104,7 +104,8 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
     for slot in tutor.tutorialsession_set.filter(student=student): #for this tutor's session, for student is this student , for loop
         slottime = datetime.strptime(slot.starttime, timeformat)
         if nowbooking.year == slottime.year and nowbooking.month == slottime.month and nowbooking.day == slottime.day:
-            return render(request, 'searchtutors/tutorpage.html',
+            if slot.status != 3:
+                return render(request, 'searchtutors/tutorpage.html',
                           {'fail': "You have already booked a session on that day", 'tutor': tutor, 'user': myuser,
                            'begintime': begintime})  # fixme should report that not enough money
     wallet = myuser.wallet
