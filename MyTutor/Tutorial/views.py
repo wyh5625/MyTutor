@@ -112,11 +112,12 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
         return render(request, 'searchtutors/tutorpage.html',
                       {'fail': "Your wallet doesn't have enough money", 'tutor': tutor, 'user': myuser, 'begintime': begintime})# fixme should report that not enough money
 
-    half_hour_diff = int(bookingtime - showingtime) / 1800
+    half_hour_diff = int(bookingtime - showingtime) / 1800 #only consider private tutor
     hour_diff = int(half_hour_diff / 2)
+    weekday = (1 + now.weekday()) % 7 #Monday is 0 ... Sunday is 6, but Sunday is the first day of the week, transform to 0
     # modify timeslot string
     timeslot = list(tutor.timeslot)
-    timeslot[hour_diff] = '0'
+    timeslot[weekday * 24 + hour_diff] = '0'
     tutor.timeslot = "".join(timeslot)
     tutor.save()
     tutor.tutorialsession_set.create(starttime=begintime, status=0, tutor=tutor, student=student)
@@ -151,8 +152,10 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
     showingtime = time.mktime(datetime(now.year, now.month, now.day, 0, 0).timetuple())
     half_hour_diff = int(bookingtime - showingtime) / 1800
     hour_diff = int(half_hour_diff / 2)
+    weekday = (1 + now.weekday()) % 7 #Monday is 0 ... Sunday is 6, but Sunday is the first day of the week, transform to 0
+    # modify timeslot string
     timeslot = list(tutor.timeslot)
-    timeslot[hour_diff] = '1'
+    timeslot[weekday * 24 + hour_diff] = '1'
     tutor.timeslot = "".join(timeslot)
     tutor.save()
     tutorial_session.status = 3
