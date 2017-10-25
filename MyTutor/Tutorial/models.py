@@ -4,8 +4,12 @@ from django.contrib.auth.models import User
 class Wallet(models.Model):
     balance = models.DecimalField(max_digits=10, decimal_places=2)
     def __str__(self):
-        myuser = MyUser.objects.get(wallet = self)
-        return myuser.user.username + "'s wallet"
+        myuser = MyUser.objects.filter(wallet = self)
+        if myuser.count() == 0:
+            return "null"
+        else:
+            myuser = MyUser.objects.get(wallet = self)
+            return myuser.user.username + "'s wallet"
 
 
 """class User(models.Model):
@@ -35,6 +39,7 @@ class Tutor(models.Model):
     myuser = models.ForeignKey(MyUser, on_delete=models.CASCADE,null=True)
     timeslot = models.CharField(max_length=336) #todo: should update every half an hour
     # 0-unavailable, 1-available, half an hour per digit, 336 timeslots is a week
+    hourly_rate = models.IntegerField()
     def __str__(self):
         if self.myuser is None:
             return "null"
@@ -43,13 +48,13 @@ class Tutor(models.Model):
 
 class PrivateTutor(models.Model):
 	tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
-	hourly_rate = models.IntegerField()
+	#hourly_rate = models.IntegerField()
 	def __str__(self):
 		return self.tutor.myuser.user.username
 
 class ContractedTutor(models.Model):
 	tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
-	hourly_rate = 0
+	#hourly_rate = 0
 	def __str__(self):
 		return self.tutor.myuser.user.username
 

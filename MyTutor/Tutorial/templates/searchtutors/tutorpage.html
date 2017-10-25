@@ -31,7 +31,7 @@
                 }
                 d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"4%\" style=\"background-color : #191970 ; color : white;margin : 1px;\">"+month + " - " +strDate+"</td>";
                 for (var j = 0;j<24;j++){
-                    if (list[j + 23*i] == 1)
+                    if (list[j + 23*(i-1)] == 1)
                        { d+= "<td rowspan=\"1\" id=\""+year+month+strDate+"_"+j+"\" height=\"10%\" width=\"4%\" style=\"background-color : #B0C4DE ; color : white;margin : 1px;\" onclick=\"select(this)\"></td>";}
                     else
                         {d+= "<td rowspan=\"1\" id=\""+year+month+strDate+"_"+j+"\" height=\"10%\" width=\"4%\" style=\"background-color : grey ; color : white;margin : 1px;\" ></td>";}
