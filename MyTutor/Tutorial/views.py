@@ -83,6 +83,9 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
     myuser = MyUser.objects.get(pk=myuser_id)
     tutor = Tutor.objects.get(pk=tutor_id)
     student = Student.objects.get(myuser=myuser)
+    if tutor.myuser == myuser:
+        return render(request, 'searchtutors/tutorpage.html',
+                      {'fail': "You cannot book your own session", 'tutor': tutor, 'user': myuser, 'begintime': begintime})
     #myuser = get_object_or_404(MyUser, pk=myuser_id)
     #tutor = get_object_or_404(Tutor, pk=tutor_id)
     #student = get_object_or_404(Student, myuser=myuser)
