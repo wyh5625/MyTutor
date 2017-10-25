@@ -18,7 +18,7 @@ class HomePageView(TemplateView):
 #####homepage###
 def home(request):
     if request.user.is_authenticated(): #visitor or client
-        myuser = MyUser.objects.get(user=request.user)
+        myuser = MyUser.objects.get(user=request.user) #fixme if an admin want to go to Tutorial/, he is not a myuser
         return HttpResponseRedirect('/Tutorial/' + str(myuser.id)) #searchTutors/'+str(request.user.id)
     return render(request, 'home.html')
 ####login####
@@ -92,14 +92,13 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
         session = tutor.tutorialsession_set.get(starttime=begintime)
         if session.status != 3:
             return render(request, 'searchtutors/tutorpage.html',
-                      {'fail': "aa", 'tutor': tutor, 'user': myuser, 'begintime': begintime})
+                      {'fail': "This session has been booked", 'tutor': tutor, 'user': myuser, 'begintime': begintime})
     # time solving
     wallet = myuser.wallet
     if wallet.balance < tutor.hourly_rate * COMMISION:
-        return  # fixme should report that not enough money
-    wallet.balance = wallet.balance - Decimal.from_float(
-        tutor.hourly_rate * COMMISION)  # fixme didn't add money to tutor account
-    wallet.save()
+        return render(request, 'searchtutors/tutorpage.html',
+                      {'fail': "Your wallet doesn't have enough money", 'tutor': tutor, 'user': myuser, 'begintime': begintime})# fixme should report that not enough money
+    #check if one day two bookings
     timeformat = '%Y%m%d%H%M'  # fixme currently I don't care about exceed 14 days, or illegal booking ,only check availability
     bookingtime = time.mktime(datetime.strptime(begintime, timeformat).timetuple())
     now = datetime.now()
@@ -120,6 +119,11 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
         tutor.hourly_rate * COMMISION) + " to " + str(wallet.balance)
     notification = Notification(content=content, myuser=myuser)
     notification.save()
+    #wallet deduction
+    wallet.balance = wallet.balance - Decimal.from_float(
+        tutor.hourly_rate * COMMISION)  # fixme didn't add money to tutor account
+    wallet.save()
+
     return render(request, 'searchtutors/tutorpage.html', {'success': "aa", 'tutor': tutor, 'user': myuser})
 
 
