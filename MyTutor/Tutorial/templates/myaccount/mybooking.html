@@ -9,7 +9,7 @@
 {% endblock %}
 {% block right %}
 <div id="content" style="width: 70%; float : right;">
-<table>
+<table style="margin-top: 15px;">
             <tr class="title" style="width:100%; background-color: #005B98; color: white; font-size: 16pt;">
                 <th>Time</th>
                 <th>Tutor</th>
@@ -25,7 +25,20 @@
                     <td >{{ session.starttime }}</td>
                 <td>{{ session.tutor }}</td>
                 <td>{{ session.tutor.hourly_rate }}</td>
-                    <td>{{ session.status }}</td>
+
+                <script>
+                      if ("{{ session.status }}" == '0' || "{{ session.status }}" == '1')
+                    {
+                       document.write("<td>Upcoming</td>");
+                    }else if("{{ session.status }}" == '2'){
+                          document.write("<td>Attended</td>");
+                      }else if("{{ session.status }}" == '3'){
+                          document.write("<td>Canceled</td>");
+                      }else if("{{ session.status }}" == '4'){
+                          document.write("<td>Evaluated</td>");
+                      }
+
+                    </script>
                 <script>
 
                     if ("{{ session.status }}" == '0')

@@ -58,7 +58,7 @@ def index(request, myuser_id):
 def tutorpage(request, myuser_id, tutor_id):
     tutor = get_object_or_404(Tutor, pk=tutor_id)
     myuser = get_object_or_404(MyUser, pk=myuser_id)
-    return render(request, 'searchtutors/tutorpage.html', {'user':myuser, 'tutor': tutor, 'user':myuser})
+    return render(request, 'searchtutors/tutorpage.html', {'user':myuser, 'tutor': tutor})
 
 ####my account####
 def myaccount(request, myuser_id):
