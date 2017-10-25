@@ -86,35 +86,41 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
     #myuser = get_object_or_404(MyUser, pk=myuser_id)
     #tutor = get_object_or_404(Tutor, pk=tutor_id)
     #student = get_object_or_404(Student, myuser=myuser)
-    tutorial_session = tutor.tutorialsession_set.filter(starttime=begintime)
+    tutorial_session = tutor.tutorialsession_set.get(starttime=begintime)
 
     if tutorial_session: #if it is not empty, you cannot make this session
-        return render(request, 'searchtutors/tutorpage.html',
-                      {'fail': tutorial_session, 'tutor': tutor, 'user': myuser, 'begintime': begintime})
-    else:
-        # time solving
-        wallet = myuser.wallet
-        if wallet.balance < tutor.hourly_rate * COMMISION:
-            return #fixme should report that not enough money
-        wallet.balance = wallet.balance - Decimal.from_float(tutor.hourly_rate * COMMISION) #fixme didn't add money to tutor account
-        wallet.save()
-        timeformat = '%Y%m%d%H%M'  # fixme currently I don't care about exceed 14 days, or illegal booking ,only check availability
-        bookingtime = time.mktime(datetime.strptime(begintime, timeformat).timetuple())
-        now = datetime.now()
-        showingtime = time.mktime(datetime(now.year, now.month, now.day, 0, 0).timetuple())
-        half_hour_diff = int(bookingtime - showingtime) / 1800
-        hour_diff = int (half_hour_diff / 2)
-        #modify timeslot string
-        timeslot = list(tutor.timeslot)
-        timeslot[hour_diff] = '0'
-        tutor.timeslot = "".join(timeslot)
-        tutor.save()
-        tutor.tutorialsession_set.create(starttime=begintime, status=0, tutor=tutor, student=student)
-        #message delivering
-        content = "System notification [ " + str(datetime(now.year, now.month, now.day, now.hour, now.minute)) + " ]: You have booked a session on " + str(datetime.strptime(begintime, timeformat)) + " with tutor " + tutor.myuser.user.username + " ,with wallet balance deduced by " + str(tutor.hourly_rate * COMMISION) + " to " + str(wallet.balance)
-        notification = Notification(content = content, myuser = myuser)
-        notification.save()
-        return render(request, 'searchtutors/tutorpage.html', {'success': "aa", 'tutor': tutor, 'user': myuser})
+        if tutorial_session.status != 3:
+            return render(request, 'searchtutors/tutorpage.html',
+                      {'fail': "aa", 'tutor': tutor, 'user': myuser, 'begintime': begintime})
+    # time solving
+    wallet = myuser.wallet
+    if wallet.balance < tutor.hourly_rate * COMMISION:
+        return  # fixme should report that not enough money
+    wallet.balance = wallet.balance - Decimal.from_float(
+        tutor.hourly_rate * COMMISION)  # fixme didn't add money to tutor account
+    wallet.save()
+    timeformat = '%Y%m%d%H%M'  # fixme currently I don't care about exceed 14 days, or illegal booking ,only check availability
+    bookingtime = time.mktime(datetime.strptime(begintime, timeformat).timetuple())
+    now = datetime.now()
+    showingtime = time.mktime(datetime(now.year, now.month, now.day, 0, 0).timetuple())
+    half_hour_diff = int(bookingtime - showingtime) / 1800
+    hour_diff = int(half_hour_diff / 2)
+    # modify timeslot string
+    timeslot = list(tutor.timeslot)
+    timeslot[hour_diff] = '0'
+    tutor.timeslot = "".join(timeslot)
+    tutor.save()
+    tutor.tutorialsession_set.create(starttime=begintime, status=0, tutor=tutor, student=student)
+    # message delivering
+    content = "System notification [ " + str(datetime(now.year, now.month, now.day, now.hour,
+                                                      now.minute)) + " ]: You have booked a session on " + str(
+        datetime.strptime(begintime,
+                          timeformat)) + " with tutor " + tutor.myuser.user.username + " ,with wallet balance deduced by " + str(
+        tutor.hourly_rate * COMMISION) + " to " + str(wallet.balance)
+    notification = Notification(content=content, myuser=myuser)
+    notification.save()
+    return render(request, 'searchtutors/tutorpage.html', {'success': "aa", 'tutor': tutor, 'user': myuser})
+
 
 
 def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tutor_id):
