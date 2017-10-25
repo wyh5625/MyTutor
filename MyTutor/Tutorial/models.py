@@ -37,9 +37,9 @@ class Student(models.Model):
 
 class Tutor(models.Model):
     myuser = models.ForeignKey(MyUser, on_delete=models.CASCADE,null=True)
-    timeslot = models.CharField(max_length=336) #todo: should update every half an hour
+    timeslot = models.CharField(max_length=672) #todo: should update every half an hour
     # 0-unavailable, 1-available, half an hour per digit, 336 timeslots is a week
-    hourly_rate = models.IntegerField()
+    hourly_rate = models.IntegerField() #todo: eight digit for student so can tell if he have
     def __str__(self):
         if self.myuser is None:
             return "null"
