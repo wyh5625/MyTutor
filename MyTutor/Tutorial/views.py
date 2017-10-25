@@ -93,16 +93,25 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
         if session.status != 3:
             return render(request, 'searchtutors/tutorpage.html',
                       {'fail': "This session has been booked", 'tutor': tutor, 'user': myuser, 'begintime': begintime})
-    # time solving
-    wallet = myuser.wallet
-    if wallet.balance < tutor.hourly_rate * COMMISION:
-        return render(request, 'searchtutors/tutorpage.html',
-                      {'fail': "Your wallet doesn't have enough money", 'tutor': tutor, 'user': myuser, 'begintime': begintime})# fixme should report that not enough money
+
+
     #check if one day two bookings
     timeformat = '%Y%m%d%H%M'  # fixme currently I don't care about exceed 14 days, or illegal booking ,only check availability
     bookingtime = time.mktime(datetime.strptime(begintime, timeformat).timetuple())
     now = datetime.now()
     showingtime = time.mktime(datetime(now.year, now.month, now.day, 0, 0).timetuple())
+    nowbooking = datetime.strptime(begintime, timeformat) #this is the yy mm dd format for what student wants to book
+    for slot in tutor.tutorialsession_set.filter(student=student): #for this tutor's session, for student is this student , for loop
+        slottime = datetime.strptime(slot.starttime, timeformat)
+        if nowbooking.year == slottime.year and nowbooking.month == slottime.month and nowbooking.day == slottime.day:
+            return render(request, 'searchtutors/tutorpage.html',
+                          {'fail': "You have already booked a session on that day", 'tutor': tutor, 'user': myuser,
+                           'begintime': begintime})  # fixme should report that not enough money
+    wallet = myuser.wallet
+    if wallet.balance < tutor.hourly_rate * COMMISION:
+        return render(request, 'searchtutors/tutorpage.html',
+                      {'fail': "Your wallet doesn't have enough money", 'tutor': tutor, 'user': myuser, 'begintime': begintime})# fixme should report that not enough money
+
     half_hour_diff = int(bookingtime - showingtime) / 1800
     hour_diff = int(half_hour_diff / 2)
     # modify timeslot string
