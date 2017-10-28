@@ -53,34 +53,37 @@ def index(request, myuser_id):
     return HttpResponse(output)"""
     all_tutors = Tutor.objects.all()
     private_tutors = PrivateTutor.objects.all()
-    myuser = get_object_or_404(MyUser, pk=myuser_id)
+    myuser = MyUser.objects.get(user=request.user)  # myuser = get_object_or_404(MyUser, pk=myuser_id)
+    #fixme I do this to make sure you are the person you should be, you cannot be someone else
+    #fixme  but I haven't tried how to also relink the url i.e. if id = 2 enter 3/..., the content can be
+    #fixme 2's now ,but the url shows 3 still
     params = {"user": myuser, "latest_Tutor_list": all_tutors, 'user': myuser}
     return render(request, 'searchtutors/index.html', params)
 
 
 def tutorpage(request, myuser_id, tutor_id):
     tutor = get_object_or_404(Tutor, pk=tutor_id)
-    myuser = get_object_or_404(MyUser, pk=myuser_id)
+    myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     return render(request, 'searchtutors/tutorpage.html', {'user':myuser, 'tutor': tutor})
 
 ####my account####
 def myaccount(request, myuser_id):
-    myuser = get_object_or_404(MyUser, pk=myuser_id)
+    myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     return render(request, 'myaccount/myaccount.html', {'user':myuser })
 
 def myprofile(request, myuser_id):
-    myuser = get_object_or_404(MyUser, pk=myuser_id)
+    myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     return render(request, 'myaccount/myprofile.html', {'user':myuser })
 
 def mybooking(request, myuser_id):
-    myuser = get_object_or_404(MyUser, pk=myuser_id)
+    myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     mystudent = get_object_or_404(Student,myuser=myuser)
     booking = TutorialSession.objects.filter(student=mystudent)
     return render(request, 'myaccount/mybooking.html', {'user': myuser , 'session_list': booking })
 
 def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyymmddhhmm string)
     begintime = request.POST['starttime']
-    myuser = MyUser.objects.get(pk=myuser_id)
+    myuser = MyUser.objects.get(user=request.user) #myuser = MyUser.objects.get(pk=myuser_id)
     tutor = Tutor.objects.get(pk=tutor_id)
     student = Student.objects.get(myuser=myuser)
     if tutor.myuser == myuser:
@@ -148,7 +151,7 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
     tutorial_session =get_object_or_404(TutorialSession, pk=tutorial_sessions_id)
     tutor = tutorial_session.tutor
     #student = tutorial_session.student
-    myuser = get_object_or_404(MyUser, pk=myuser_id)
+    myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     mystudent = get_object_or_404(Student, myuser=myuser)
     booking = TutorialSession.objects.filter(student=mystudent)
     timeformat = '%Y%m%d%H%M'  # fixme currently I don't care about exceed 14 days, or illegal booking ,only check availability
@@ -180,11 +183,11 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
     return render(request, 'myaccount/mybooking.html', {'myuser': myuser, 'session_list':booking})
 
 def mywallet(request, myuser_id):
-    myuser = get_object_or_404(MyUser, pk=myuser_id)
+    myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     return render(request, 'myaccount/mywallet.html', {'user':myuser })
 
 ####message####
 def message(request, myuser_id):
-    myuser = get_object_or_404(MyUser, pk=myuser_id)
+    myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     messages = Notification.objects.filter(myuser=myuser)
     return render(request, 'message/message.html', {'user': myuser, 'messages': messages})
