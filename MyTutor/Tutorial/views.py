@@ -15,12 +15,14 @@ COMMISION = 1.05
 class HomePageView(TemplateView):
     def get(self, request, **kwargs):
         return render(request, 'index.html', context=None)
+
 #####homepage###
 def home(request):
-    if request.user.is_authenticated(): #visitor or client
-        myuser = MyUser.objects.get(user=request.user) #fixme if an admin want to go to Tutorial/, he is not a myuser
-        return HttpResponseRedirect('/Tutorial/' + str(myuser.id)) #searchTutors/'+str(request.user.id)
-    return render(request, 'home.html')
+    if not request.user.is_authenticated():
+        #every function will have this, to make sure guest cannot visit personal account by manipulating url
+        return render(request, 'home.html')
+    myuser = MyUser.objects.get(user=request.user) #fixme if an admin want to go to Tutorial/, he is not a myuser
+    return HttpResponseRedirect('/Tutorial/' + str(myuser.id)) #searchTutors/'+str(request.user.id)
 ####login####
 def login(request):
     if request.user.is_authenticated(): #visitor or client
@@ -44,54 +46,60 @@ def logout(request):
     return HttpResponseRedirect('/Tutorial/')
 ####search tutor####
 def index(request, myuser_id):
-    """all_users = User.objects.all()
-    list = []
-    for user in all_users:
-        html = '<p>User {name} has username: {user_name} </b></p>'
-        list.append(html.format(name=user.name, user_name = user.user_name))
-    output = '<hr>'.join(list)
-    return HttpResponse(output)"""
-    all_tutors = Tutor.objects.all()
-    private_tutors = PrivateTutor.objects.all()
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
     myuser = MyUser.objects.get(user=request.user)  # myuser = get_object_or_404(MyUser, pk=myuser_id)
     #fixme I do this to make sure you are the person you should be, you cannot be someone else
     #fixme  but I haven't tried how to also relink the url i.e. if id = 2 enter 3/..., the content can be
     #fixme 2's now ,but the url shows 3 still
+
+    all_tutors = Tutor.objects.all()
+    private_tutors = PrivateTutor.objects.all()
     params = {"user": myuser, "latest_Tutor_list": all_tutors, 'user': myuser}
     return render(request, 'searchtutors/index.html', params)
 
 
 def tutorpage(request, myuser_id, tutor_id):
-    tutor = get_object_or_404(Tutor, pk=tutor_id)
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
+
+    tutor = get_object_or_404(Tutor, pk=tutor_id)
     return render(request, 'searchtutors/tutorpage.html', {'user':myuser, 'tutor': tutor})
 
 ####my account####
 def myaccount(request, myuser_id):
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     return render(request, 'myaccount/myaccount.html', {'user':myuser })
 
 def myprofile(request, myuser_id):
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     return render(request, 'myaccount/myprofile.html', {'user':myuser })
 
 def mybooking(request, myuser_id):
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     mystudent = get_object_or_404(Student,myuser=myuser)
     booking = TutorialSession.objects.filter(student=mystudent)
     return render(request, 'myaccount/mybooking.html', {'user': myuser , 'session_list': booking })
 
 def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyymmddhhmm string)
-    begintime = request.POST['starttime']
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
     myuser = MyUser.objects.get(user=request.user) #myuser = MyUser.objects.get(pk=myuser_id)
+
+    begintime = request.POST['starttime']
     tutor = Tutor.objects.get(pk=tutor_id)
     student = Student.objects.get(myuser=myuser)
     if tutor.myuser == myuser:
         return render(request, 'searchtutors/tutorpage.html',
                       {'fail': "You cannot book your own session", 'tutor': tutor, 'user': myuser, 'begintime': begintime})
-    #myuser = get_object_or_404(MyUser, pk=myuser_id)
-    #tutor = get_object_or_404(Tutor, pk=tutor_id)
-    #student = get_object_or_404(Student, myuser=myuser)
+
     tutorial_session = tutor.tutorialsession_set.filter(starttime=begintime)
 
     if tutorial_session: #if it is not empty, you cannot make this session
@@ -101,8 +109,8 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
                       {'fail': "This session has been booked", 'tutor': tutor, 'user': myuser, 'begintime': begintime})
 
 
-    #check if one day two bookings
-    timeformat = '%Y%m%d%H%M'  # fixme currently I don't care about exceed 14 days, or illegal booking ,only check availability
+    #check if two bookings on the same day
+    timeformat = '%Y%m%d%H%M'
     bookingtime = time.mktime(datetime.strptime(begintime, timeformat).timetuple())
     now = datetime.now()
     showingtime = time.mktime(datetime(now.year, now.month, now.day, 0, 0).timetuple())
@@ -110,15 +118,17 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
     for slot in tutor.tutorialsession_set.filter(student=student): #for this tutor's session, for student is this student , for loop
         slottime = datetime.strptime(slot.starttime, timeformat)
         if nowbooking.year == slottime.year and nowbooking.month == slottime.month and nowbooking.day == slottime.day:
-            if slot.status != 3:
+            if slot.status != 3: #if equals three, then even the booking record exists, it has been canceled
                 return render(request, 'searchtutors/tutorpage.html',
                           {'fail': "You have already booked a session on that day", 'tutor': tutor, 'user': myuser,
                            'begintime': begintime})  # fixme should report that not enough money
     wallet = myuser.wallet
-    if wallet.balance < tutor.hourly_rate * COMMISION:
+    if wallet.balance < tutor.hourly_rate * COMMISION: #if not enough money, failed of course
         return render(request, 'searchtutors/tutorpage.html',
                       {'fail': "Your wallet doesn't have enough money", 'tutor': tutor, 'user': myuser, 'begintime': begintime})# fixme should report that not enough money
 
+    #later on with beginAllSessions, we update the available string for every tutor each week at the end
+    #day difference is because the 14-day long string starts from this Sunday, the first day of the week
     half_hour_diff = int(bookingtime - showingtime) / 1800 #only consider private tutor
     hour_diff = int(half_hour_diff / 2)
     weekday = (1 + now.weekday()) % 7 #Monday is 0 ... Sunday is 6, but Sunday is the first day of the week, transform to 0
@@ -147,6 +157,8 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
 
 
 def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tutor_id):
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
     #begintime = request.POST['starttime']
     tutorial_session =get_object_or_404(TutorialSession, pk=tutorial_sessions_id)
     tutor = tutorial_session.tutor
@@ -183,11 +195,15 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
     return render(request, 'myaccount/mybooking.html', {'myuser': myuser, 'session_list':booking})
 
 def mywallet(request, myuser_id):
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     return render(request, 'myaccount/mywallet.html', {'user':myuser })
 
 ####message####
 def message(request, myuser_id):
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     messages = Notification.objects.filter(myuser=myuser)
     return render(request, 'message/message.html', {'user': myuser, 'messages': messages})
