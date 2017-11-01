@@ -3,7 +3,6 @@
 {% block script%}
     function cancelSession(elem, id, name, time){
         var t = time.substring(0,4) + "-" + time.substring(4,6) + "-" + time.substring(6,8) + " " + time.substring(8,10) + ":" +time.substring(10,12);
-        //alert("shit")
         var frm = "frm"+id
         if(confirm("Cancel information:\rTutor Name: "+name+"\rTime: "+t)){
          elem.innerHTML ="<input type=\"hidden\"  name=\"hidden\" value=" +id+ ">";
