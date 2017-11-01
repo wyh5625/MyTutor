@@ -125,7 +125,7 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
     wallet = myuser.wallet
     if wallet.balance < tutor.hourly_rate * COMMISION: #if not enough money, failed of course
         return render(request, 'searchtutors/tutorpage.html',
-                      {'fail': "Your wallet doesn't have enough money", 'tutor': tutor, 'user': myuser, 'begintime': begintime})# fixme should report that not enough money
+                      {'fail': "Your wallet does nt have enough money", 'tutor': tutor, 'user': myuser, 'begintime': begintime})# fixme should report that not enough money
 
     #later on with beginAllSessions, we update the available string for every tutor each week at the end
     #day difference is because the 14-day long string starts from this Sunday, the first day of the week
