@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^(?P<myuser_id>[0-9]+)/myAccount/mybooking/cancelled/(?P<tutorial_sessions_id>[0-9]+)/$', views.cancelbooking, name='cancelbooking'),
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.logout, name='logout'),
-    url(r'^register/$', views.register_page),
+    url(r'^register/$', views.register_page, name='register'),
+    #url(r'^registerSuccess/$', views.register_page, name='registerSuccess'),
     #test
 ]

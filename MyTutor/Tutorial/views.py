@@ -12,6 +12,7 @@ from Tutorial.forms import *
 import time
 from Tutorial.models import Tutor, PrivateTutor, ContractedTutor, MyUser, Notification, TutorialSession, Student, Tutor, Wallet
 from decimal import Decimal
+from django.template import RequestContext
 
 
 COMMISION = 1.05
