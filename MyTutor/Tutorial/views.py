@@ -1,14 +1,18 @@
 from ast import literal_eval
 from django.contrib import auth
+from django.template import RequestContext
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic import TemplateView
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.models import User
 from datetime import date, datetime, time, timedelta
+from Tutorial.forms import *
 import time
 from Tutorial.models import Tutor, PrivateTutor, ContractedTutor, MyUser, Notification, TutorialSession, Student, Tutor, Wallet
 from decimal import Decimal
+
 
 COMMISION = 1.05
 # Create your views here.
@@ -207,3 +211,24 @@ def message(request, myuser_id):
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     messages = Notification.objects.filter(myuser=myuser)
     return render(request, 'message/message.html', {'user': myuser, 'messages': messages})
+
+
+def register_page(request):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = User.objects.create_user(
+                username=form.clean_data['username'],
+                password=form.clean_data['password1'],
+                email=form.clean_data['email']
+            )
+            #return render(request, 'home.html')
+    else:
+        form = RegistrationForm()
+    variables = {
+        'form': form
+    }
+    return render_to_response(
+        'registration/register.html',
+        variables, RequestContext(request)
+    )
