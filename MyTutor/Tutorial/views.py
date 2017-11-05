@@ -13,6 +13,9 @@ import time
 from Tutorial.models import Tutor, PrivateTutor, ContractedTutor, MyUser, Notification, TutorialSession, Student, Tutor, Wallet
 from decimal import Decimal
 from django.template import RequestContext
+from django.conf import settings
+import smtplib
+from django.core.mail import send_mail
 
 
 COMMISION = 1.05
@@ -158,6 +161,25 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
         tutor.hourly_rate) + " to " + str(tutor.myuser.wallet.balance)
     notification = Notification(content=content, myuser=tutor.myuser)
     notification.save()
+    """if tutor.myuser.user.email:
+        gmail_user = "comp3297group12@gmail.com"
+        gmail_pwd = "comp329712"
+        TO = 'comp3297group12@gmail.com'
+        SUBJECT = "Testing sending using gmail"
+        TEXT = "Testing sending mail using gmail servers"
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.ehlo()
+        server.starttls()
+        server.login(gmail_user, gmail_pwd)
+        BODY = '\r\n'.join(['To: %s' % TO,
+                            'From: %s' % gmail_user,
+                            'Subject: %s' % SUBJECT,
+                            '', TEXT])
+
+        server.sendmail(gmail_user, [TO], BODY)
+        print ('email sent')
+        #send_mail('Booking Notification', content, settings.EMAIL_HOST_USER,
+              #[tutor.myuser.user.email], fail_silently=False) """
     tutor.save()
     tutor.tutorialsession_set.create(starttime=begintime, status=0, tutor=tutor, student=student)
     #wallet deduction
