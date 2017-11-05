@@ -275,15 +275,17 @@ def register_page(request):
         variables, RequestContext(request)
     )
 
-def search_tutor_name(request):
+def search_page(request):
+    form = SearchForm()
     tutors = []
     show_results = False
-    if request.GET.has_key('query'):
+    if 'query' in request.GET:
         show_results = True
         query = request.GET['query'].strip()
         if query:
-            tutors = Tutor.objects.filter(myuser__user__username__contains='CT')[:10]
-    variables = RequestContext(request, {
+            form = SearchForm({'query' : query})
+            bookmarks = Tutor.objects.filter(myuser__user__username__contains=query)
+    variables = RequestContext(request, { 'form': form,
         'tutors': tutors,
         'show_results': show_results,
     })
