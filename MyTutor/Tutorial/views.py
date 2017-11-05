@@ -275,16 +275,16 @@ def register_page(request):
         variables, RequestContext(request)
     )
 
-def search_filter(request):
-    # if this is a POST request we need to process the form data
-    if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = SearchForm(request.POST)
-        # check whether it's valid:
-
-    # if a GET (or any other method) we'll create a blank form
-    else:
-        form = SearchForm()
-
-    return render(request, 'index.html', {'form': form})
-
+def search_tutor_name(request):
+    tutors = []
+    show_results = False
+    if request.GET.has_key('query'):
+        show_results = True
+        query = request.GET['query'].strip()
+        if query:
+            tutors = Tutor.objects.filter (username__icontains=query)[:10]
+    variables = RequestContext(request, {
+        'tutors': tutors,
+        'show_results': show_results,
+    })
+    return render_to_response('index.html', variables)
