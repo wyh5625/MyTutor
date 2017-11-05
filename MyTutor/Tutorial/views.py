@@ -17,7 +17,6 @@ from django.template import RequestContext
 from django.conf import settings
 import smtplib
 from django.core.mail import send_mail
-from django_cron import CronJobBase, Schedule
 
 from .forms import SearchForm
 
@@ -323,12 +322,38 @@ def register_page(request):
 
 def search_tutor_name(request,myuser_id ):
     tutors = []
+    tutors=Tutor.objects.all()
     show_results = False
     if 'givenName' in request.GET:
         show_results = True
         query = request.GET['givenName'].strip()
         if query:
-            tutors = Tutor.objects.filter(myuser__user__first_name__contains=query)[:10]
+            tutors = tutors.filter(myuser__user__first_name__contains=query)
+    if 'familyName' in request.GET:
+        show_results = True
+        query = request.GET['familyName'].strip()
+        if query:
+            tutors = tutors.filter(myuser__user__last_name__contains=query)
+    variables = {
+        "tutors": tutors
+    }
+    return render(request, 'searchtutors/index.html', variables)
+
+
+def search_tutor_tag(request,myuser_id ):
+    tutors = []
+    tutors=Tutor.objects.all()
+    show_results = False
+    if 'givenName' in request.GET:
+        show_results = True
+        query = request.GET['givenName'].strip()
+        if query:
+            tutors = tutors.filter(myuser__user__first_name__contains=query)
+    if 'familyName' in request.GET:
+        show_results = True
+        query = request.GET['familyName'].strip()
+        if query:
+            tutors = tutors.filter(myuser__user__last_name__contains=query)
     variables = {
         "tutors": tutors
     }
