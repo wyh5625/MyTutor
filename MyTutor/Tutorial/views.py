@@ -13,10 +13,15 @@ import time
 from Tutorial.models import Tutor, PrivateTutor, ContractedTutor, MyUser, Notification, TutorialSession, Student, Tutor, Wallet
 from decimal import Decimal
 from django.template import RequestContext
+<<<<<<< HEAD
 from django.conf import settings
 import smtplib
 from django.core.mail import send_mail
 from django_cron import CronJobBase, Schedule
+=======
+from .forms import SearchForm
+
+>>>>>>> 25c7585fa21ee511d3fe22ef485f9087a1760165
 
 COMMISION = 1.05
 # Create your views here.
@@ -63,7 +68,7 @@ def index(request, myuser_id):
 
     all_tutors = Tutor.objects.all()
     private_tutors = PrivateTutor.objects.all()
-    params = {"user": myuser, "latest_Tutor_list": all_tutors, 'user': myuser}
+    params = {"user": myuser, "latest_Tutor_list": all_tutors, "tutors": all_tutors }
     return render(request, 'searchtutors/index.html', params)
 
 
@@ -71,7 +76,6 @@ def tutorpage(request, myuser_id, tutor_id):
     if not request.user.is_authenticated(): #visitor or client
         return render(request, 'home.html')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
-
     tutor = get_object_or_404(Tutor, pk=tutor_id)
     return render(request, 'searchtutors/tutorpage.html', {'user':myuser, 'tutor': tutor})
 
@@ -295,6 +299,7 @@ def register_page(request):
         'registration/register.html',
         variables, RequestContext(request)
     )
+<<<<<<< HEAD
 #def forget_password(request):
 
 
@@ -313,3 +318,19 @@ def register_page(request):
         user = User.objects.get(username='plus')
         myuser = MyUser.objects.get(user=user)
         myuser.wallet.balance = myuser.wallet.balance + 10"""
+=======
+
+
+def search_tutor_name(request,myuser_id ):
+    tutors = []
+    show_results = False
+    if 'query' in request.GET:
+        show_results = True
+        query = request.GET['query'].strip()
+        if query:
+            tutors = Tutor.objects.filter(myuser__user__username__contains= query)[:10]
+    variables = {
+        "tutors": tutors
+    }
+    return render(request, 'searchtutors/index.html', variables)
+>>>>>>> 25c7585fa21ee511d3fe22ef485f9087a1760165
