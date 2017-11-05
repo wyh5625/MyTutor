@@ -42,8 +42,8 @@
                   <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                       <div class="form-group">
-                          <label>Subject Tags</label>
-                          <input type="text" class="form-control" placeholder="Enter the key words to seach tags">
+                          <label id="tags">Subject Tags</label>
+                          <input type="text" class="form-control" placeholder="Enter the key words to seach tags" id="subjectTags">
                       </div>
                     </div>
                   </div>
@@ -112,7 +112,8 @@
                 </div>
               </div>
               <div class="best-tutor-info">
-                <div class="best-tutor_t"><a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}">{{Tutor.myuser.user.username}}</a></div>
+                  <div class="best-tutor_t"><a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}">{{ Tutor.myuser.user.username }}</a></div>
+                <div class="best-tutor_t"><a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}">{{Tutor.myuser.user.first_name}} {{Tutor.myuser.user.last_name}}</a></div>
                 <div class="best-tutor_desc">Tutor's description here.
                 </div>
                 <div class="best-tutor_rate">
@@ -228,6 +229,27 @@
     }
 
     }
+
+    $(document).ready(function(){
+        var tags = new Array(10);
+        i = 0;
+        var strTags="";
+        $("#subjectTags").keypress(function (e) {
+
+            if (e.which == 13) {
+                e.preventDefault();
+                alert(strTags);
+                tags[i] = $("#subjectTags").val();
+
+                strTags = "<span style='background-color: #1f7e9a; color : white; margin : 1px; padding: 1px;'>X "+tags[i]+"</span>";
+                alert(strTags);
+                $("#tags").append(strTags);
+                 $("#subjectTags").val() = "";
+            }
+
+        });
+
+    });
 
 {% endblock %}
 
