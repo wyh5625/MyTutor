@@ -218,11 +218,26 @@ def register_page(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            user = User.objects.create_user(
-                username=form.clean_data['username'],
-                password=form.clean_data['password1'],
-                email=form.clean_data['email']
-            )
+            identity = form.cleaned_data['identity']
+            if identity == 'Student':
+                user = User.objects.create(
+                    username=form.cleaned_data['username'],
+                    password=form.cleaned_data['password1'],
+                    email=form.cleaned_data['email']
+                )
+            elif identity == 'Private Tutor':
+                tutor = Tutor()
+                user = PrivateTutor.objects.create(
+                    username=form.cleaned_data['username'],
+                    password=form.cleaned_data['password1'],
+                    email=form.cleaned_data['email']
+                )
+            else:
+                user = User.objects.create_user(
+                    username=form.cleaned_data['username'],
+                    password=form.cleaned_data['password1'],
+                    email=form.cleaned_data['email']
+                )
             #return render(request, 'home.html')
     else:
         form = RegistrationForm()

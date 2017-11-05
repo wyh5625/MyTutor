@@ -45,6 +45,15 @@ class Tutor(models.Model):
             return "null"
         else:
             return self.myuser.user.username
+    def create(cls, username, email, password):
+        user = User.objects.create_user(
+                    username=username,
+                    password=password,
+                    email=email
+                )
+        tutor = cls(myuser=user)
+        return tutor
+
 
 class PrivateTutor(models.Model):
 	tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
