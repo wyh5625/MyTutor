@@ -349,7 +349,7 @@ def search_tutor_tag(request,myuser_id ):
         if query:
             for tag_name in query:
                 tag = Tag.objects.filter(name=tag_name)
-                tutors = tag.tutors.all()
+                tutors = tag[0].tutors.all()
                 for tut in tutors:
                     if tut not in tutor_set:
                         tutor_set.append(tut)
