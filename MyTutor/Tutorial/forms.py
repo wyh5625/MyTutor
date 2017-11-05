@@ -3,7 +3,7 @@ import re
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 class RegistrationForm(forms.Form):
-    CHOICES = (('Option 1', 'Student'), ('Option 2', 'Private Tutor'), ('Option 3', 'Contracted Tutor'))
+    CHOICES = (('Student', 'Student'), ('Private Tutor', 'Private Tutor'), ('Contracted Tutor', 'Contracted Tutor'))
     identity = forms.ChoiceField(label='Identity',choices=CHOICES)
     username = forms.CharField(label='Username', max_length=30)
     email = forms.EmailField(label='Email')
