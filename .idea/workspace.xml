@@ -24,8 +24,8 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MyTutor/Tutorial/templates/searchtutors/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="451">
-              <caret line="224" column="8" lean-forward="false" selection-start-line="224" selection-start-column="8" selection-end-line="224" selection-end-column="8" />
+            <state relative-caret-position="478">
+              <caret line="225" column="8" lean-forward="false" selection-start-line="225" selection-start-column="8" selection-end-line="225" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -164,8 +164,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="563" />
-    <option name="y" value="76" />
+    <option name="x" value="249" />
+    <option name="y" value="58" />
     <option name="width" value="1473" />
     <option name="height" value="849" />
   </component>
@@ -266,7 +266,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="563" y="76" width="1473" height="849" extended-state="0" />
+    <frame x="249" y="58" width="1473" height="849" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2957339" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -664,8 +664,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/MyTutor/Tutorial/templates/searchtutors/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="451">
-          <caret line="224" column="8" lean-forward="false" selection-start-line="224" selection-start-column="8" selection-end-line="224" selection-end-column="8" />
+        <state relative-caret-position="478">
+          <caret line="225" column="8" lean-forward="false" selection-start-line="225" selection-start-column="8" selection-end-line="225" selection-end-column="8" />
           <folding />
         </state>
       </provider>
