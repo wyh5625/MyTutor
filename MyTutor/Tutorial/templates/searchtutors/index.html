@@ -19,7 +19,7 @@
             <!-- planner-->
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 planner">
               <div class="planner-block" id="planner" value="testing">
-                <form class="form-planner form-horizontal" id="SearchByTag" action=".">
+                <form class="form-planner form-horizontal" id="SearchByTag" action="{% url 'search_tutor_tag' user.id %}" method="get">
                     {% csrf_token %}
                   <div class="row" >
                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -43,7 +43,7 @@
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                       <div class="form-group">
                           <label id="tags">Subject Tags</label>
-                          <input type="text" class="form-control" placeholder="Enter the key words to seach tags" id="subjectTags">
+                          <input type="text" class="form-control" placeholder="Enter the key words to seach tags" id="subjectTags" name="tags" action="">
                       </div>
                     </div>
                   </div>
@@ -240,11 +240,11 @@
                 e.preventDefault();
                 alert(strTags);
                 tags[i] = $("#subjectTags").val();
-
                 strTags = "<span style='background-color: #1f7e9a; color : white; margin : 1px; padding: 1px;'>X "+tags[i]+"</span>";
                 alert(strTags);
                 $("#tags").append(strTags);
                  $("#subjectTags").val() = "";
+                $("#subjectTags").html()= "<input type='text' class='form-control' placeholder='Enter the key words to seach tags' id='subjectTags'name='tags' value='"+tags+"' >";
             }
 
         });

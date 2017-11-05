@@ -18,7 +18,8 @@ urlpatterns = [
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.logout, name='logout'),
     url(r'^register/$', views.register_page, name='register'),
-    url(r'^(?P<myuser_id>[0-9]+)/searchTutorName/$', views.search_tutor_name, name='search_tutor_name')
+    url(r'^(?P<myuser_id>[0-9]+)/searchTutorName/$', views.search_tutor_name, name='search_tutor_name'),
+url(r'^(?P<myuser_id>[0-9]+)/searchTutorTag/$', views.search_tutor_tag, name='search_tutor_tag')
     #url(r'^registerSuccess/$', views.register_page, name='registerSuccess'),
     #test
 ]
