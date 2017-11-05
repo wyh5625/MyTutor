@@ -43,7 +43,7 @@
                     <li><a href="{% url 'Tutorial:index' user.id %}">Search Tutors</a></li>
                     <li><a href="{% url 'Tutorial:mybooking' user.id %}">My Account</a></li>
                     <li><a href="{% url 'Tutorial:message' user.id %}">Messages</a></li>
-                    <li><a href="% url 'Tutorial:logout' %}">Logout</a></li>
+                    <li><a href="{% url 'Tutorial:logout' %}">Logout</a></li>
                       {% else %}<li><a href="#">Home</a></li>
                     <li><a href="{% url 'Tutorial:login' %}">Search Tutors</a></li>
                     <li><a href="{% url 'Tutorial:login' %}}">My Account</a></li>

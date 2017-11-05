@@ -8,14 +8,38 @@
     {% if success %}
         <script>alert("Booking success!");</script>
     {% endif %}
-    <div class="tutorInfo">
-        <p>Tutor Name : {{ tutor.myuser.user.username }}</p >
-        <p>Hourly Rate : {{ tutor.hourly_rate }}</p >
-        <h4>Timeslots : <h4>
+    <!--Tutor Information -->
+      <section class="banner bg-parallax2">
+        <div class="overlay"></div>
+      <div class="banner-parallax">
+        <div class="container">
+          <div class="text-center">
+            <div class="banner-parallax_raiting">
+              <a href="#"><span class="star __selected"></span></a>
+              <a href="#"><span class="star __selected"></span></a>
+              <a href="#"><span class="star __selected"></span></a>
+              <a href="#"><span class="star"></span></a>
+              <a href="#"><span class="star"></span></a>
+            </div>
+            <h2 class="banner-parallax_t">{{ tutor.myuser.user.username }}</h2>
+            <div class="banner-parallax_price"><span>${{tutor.hourly_rate }}</span> / per hour</div>
+            <a href="#" class="btn btn-default">See more information</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!--Tutor Information -->
+    <div class="Timeslots">
+        <section class="mission">
+      <div class="container">
+        <h2 class="h2">Timeslot</h2>
+      </div>
+    </section>
+    <!--Time slot -->
             <div id="timeSlots"></div>
             <script>
         var list = "{{ tutor.timeslot}}";
-        var d= "<form action=\"{% url 'Tutorial:timeslot' user.id tutor.id  %}\" method=\"post\" name=\"frm\">{% csrf_token %}<table width=\"100%\" style=\"border: 1px solid grey ; \"><tbody>";
+        var d= "<form action=\"{% url 'Tutorial:timeslot' user.id tutor.id  %}\" method=\"post\" name=\"frm\">{% csrf_token %}<div class = 'col-md-2'></div><table width=\"100%\" class = 'slotTable col-md-8'><tbody>";
         var date = new Date();
         var week = date.getDay();
         var year = date.getYear();
@@ -63,7 +87,7 @@
             }
             d += "</tr>";
         }
-        d += "</tbody></table></form>";
+        d += "</tbody></table><div class = 'col-md-2'></div></form>";
         document.getElementById('timeSlots').innerHTML= d;
 
         function select(elem){
@@ -88,5 +112,8 @@
 
     }
             </script>
+    </div>
+    <!--Time slot -->
+
 
 {% endblock %}
