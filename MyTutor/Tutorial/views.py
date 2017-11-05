@@ -273,20 +273,16 @@ def register_page(request):
         'registration/register.html',
         variables, RequestContext(request)
     )
-def search_page(request):
-    form = SearchForm()
-    bookmarks = []
+def search_tutor_name(request):
+    tutors = []
     show_results = False
     if request.GET.has_key('query'):
         show_results = True
         query = request.GET['query'].strip()
         if query:
-            form = SearchForm({'query' : query})
-            bookmarks = Bookmark.objects.filter (title__icontains=query)[:10]
-    variables = RequestContext(request, { 'form': form,
-        'bookmarks': bookmarks,
+            tutors = Tutor.objects.filter (username__icontains=query)[:10]
+    variables = RequestContext(request, {
+        'tutors': tutors,
         'show_results': show_results,
-        'show_tags': True,
-        'show_user': True
     })
     return render_to_response('search.html', variables)

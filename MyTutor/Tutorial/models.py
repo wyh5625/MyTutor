@@ -84,8 +84,10 @@ class TutorialSession(models.Model):
     def __str__(self):
         return self.starttime + "-student-" + self.student.myuser.user.username + "-tutor-" + self.tutor.myuser.user.username
 class Tag(models.Model):
-    name = models.CharField(maxlength=64, unique=True)
+    name = models.CharField(max_length=64, unique=True)
     tutors = models.ManyToManyField(Tutor)
+    def __str__(self):
+        return self.name
 """
 status map:
 0   upcoming can cancel
