@@ -61,7 +61,7 @@ def index(request, myuser_id):
 
     all_tutors = Tutor.objects.all()
     private_tutors = PrivateTutor.objects.all()
-    params = {"user": myuser, "latest_Tutor_list": all_tutors, 'user': myuser}
+    params = {"user": myuser, "latest_Tutor_list": all_tutors, "tutors": all_tutors }
     return render(request, 'searchtutors/index.html', params)
 
 
@@ -69,7 +69,6 @@ def tutorpage(request, myuser_id, tutor_id):
     if not request.user.is_authenticated(): #visitor or client
         return render(request, 'home.html')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
-
     tutor = get_object_or_404(Tutor, pk=tutor_id)
     return render(request, 'searchtutors/tutorpage.html', {'user':myuser, 'tutor': tutor})
 
@@ -275,16 +274,15 @@ def register_page(request):
         variables, RequestContext(request)
     )
 
-def search_tutor_name(request):
+def search_tutor_name(request,myuser_id ):
     tutors = []
     show_results = False
     if request.GET.has_key('query'):
         show_results = True
         query = request.GET['query'].strip()
         if query:
-            tutors = Tutor.objects.filter (username__icontains=query)[:10]
+            tutors = Tutor.objects.filter(myuser__user__username__contains='CT')[:10]
     variables = RequestContext(request, {
-        'tutors': tutors,
-        'show_results': show_results,
+        "user": myuser, "latest_Tutor_list": all_tutors, "tutors": tutors
     })
     return render_to_response('index.html', variables)
