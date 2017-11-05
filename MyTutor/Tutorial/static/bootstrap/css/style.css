@@ -411,7 +411,7 @@ hr {
 **/
 .simple {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
 }
 .simple tr td {
   padding-bottom: 15px;
@@ -537,11 +537,11 @@ hr {
 }
 .ui-datepicker-multi .ui-datepicker-group table {
   width: 90%;
-  border-collapse: collapse;
+  border-collapse: separate;
   font-size: 1em;
 }
 .ui-datepicker-multi .ui-datepicker-group table td {
-  padding: 0;
+  padding: 5;
 }
 .ui-widget-header {
   border: none;
@@ -3096,7 +3096,21 @@ background: #fafafa;
 background-color: #fff !important;
 }
 
-.slotTable {
-	border : 1px, solid, grey;
+.timeSlots{
+	border : 10px, solid, black;
 	background-color : red;
+}
+
+.slotAvailable{
+	border : 10px, solid, red;
+	background-color :#eee; 
+	color : white;
+	margin : 10px;
+}
+
+.slotNotAvailable {
+	border : 10px, solid, red;
+	background-color : grey ; 
+	color : white;
+	margin : 10px;
 }
