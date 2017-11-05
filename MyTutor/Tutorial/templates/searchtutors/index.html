@@ -9,6 +9,15 @@
               <div class="parallax-text">
                 <h2 class="parallax_t __white">Search For Tutor</h2>
                 <h2 class="parallax_t __green">喵喵喵喵喵哼╭(╯^╰)╮</h2>
+                  <form method="get" action=".">
+                            {% csrf_token %}
+                            {{ form }}
+                             <input type="submit" value="mow" />
+
+                  <script>
+                      alert("{{ keyword }}");
+                </script>
+                      </form>
                 <p>Please verify the searching tags</p>
                   <select class="form-control __plannerSelect" onchange="modeChange(this)" name="selectMode">
                       <option value="1" selected='selected'id="byTags">Search by tags</option>

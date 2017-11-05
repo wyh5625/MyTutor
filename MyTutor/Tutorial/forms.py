@@ -33,6 +33,8 @@ class RegistrationForm(forms.Form):
             return password2
         raise forms.ValidationError('Passwords do not match.')
 
+class SearchForm(forms.Form):
+    keyWord = forms.CharField(label='Your name', max_length=100)
 
 
 
