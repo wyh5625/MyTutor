@@ -285,4 +285,4 @@ def search_tutor_name(request):
         'tutors': tutors,
         'show_results': show_results,
     })
-    return render_to_response('search.html', variables)
+    return render_to_response('index.html', variables)
