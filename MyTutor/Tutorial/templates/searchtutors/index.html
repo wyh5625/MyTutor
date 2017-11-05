@@ -8,7 +8,7 @@
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <div class="parallax-text">
                 <h2 class="parallax_t __white">Search For Tutor</h2>
-                <h2 class="parallax_t __green">喵喵喵喵喵</h2>
+                <h2 class="parallax_t __green">喵喵喵喵喵哼╭(╯^╰)╮</h2>
                 <p>Please verify the searching tags</p>
                   <select class="form-control __plannerSelect" onchange="modeChange(this)" name="selectMode">
                       <option value="1" selected='selected'id="byTags">Search by tags</option>
@@ -19,7 +19,9 @@
             <!-- planner-->
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 planner">
               <div class="planner-block" id="planner" value="testing">
-                <form class="form-planner form-horizontal" id="SearchByName">
+                <form class="form-planner form-horizontal" id="SearchByTag" action=".">
+                    {% csrf_token %}
+                    {{ form }}
                   <div class="row" >
                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                       <div class="form-group">
@@ -221,7 +223,7 @@
     function modeChange(sobj){
     var idx = sobj.selectedIndex;
      if (idx == 1){
-         var str = "<form class='form-planner form-horizontal' id='SearchByName'><div class='row' ><div class='col-lg-6 col-md-6 col-sm-12 col-xs-12 '><div class='form-group'><label>Given Name</label> <input type='text' class='form-control' placeholder='Given name'></div></div><div class='col-lg-6 col-md-6 col-sm-12 col-xs-12'><div class='form-group'><label>Family Name</label><input class='form-control' id='FamilyName' type='text' placeholder='Family name'></div></div></div></form>";
+         var str = "<form class='form-planner form-horizontal' id='SearchByName' action='.'><div class='row' >{% csrf_token %}<div class='col-lg-6 col-md-6 col-sm-12 col-xs-12 '><div class='form-group'><label>Given Name</label> <input type='text' class='form-control' placeholder='Given name'></div></div><div class='col-lg-6 col-md-6 col-sm-12 col-xs-12'><div class='form-group'><label>Family Name</label><input class='form-control' id='FamilyName' type='text' placeholder='Family name'></div></div></div></form>";
         document.getElementById("planner").innerHTML =  str;
     }else{
         document.getElementById("planner").innerHTML =  originalHTML;

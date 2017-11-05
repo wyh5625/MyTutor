@@ -14,7 +14,7 @@
 {% endblock %}
 {% block right %}
 <div id="content">
-
+    {% if session_list != "" %}
     <section class="section">
       <div class="container">
         <div class="title-main"><h2 class="h2">Booking Record<span class="title-secondary">啦啦啦啦啦啦啦啦啦啦啦╭(╯^╰)╮</span></h2></div>
@@ -90,4 +90,7 @@
           {% endfor %}
       </div>
     </section>
+    {% else %}
+    <p>hhh I'm a tutor:)</p>
+    {% endif %}
 {% endblock %}
