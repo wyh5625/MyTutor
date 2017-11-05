@@ -16,7 +16,7 @@ from django.template import RequestContext
 from django.conf import settings
 import smtplib
 from django.core.mail import send_mail
-
+from django_cron import CronJobBase, Schedule
 
 COMMISION = 1.05
 # Create your views here.
@@ -93,12 +93,20 @@ def mybooking(request, myuser_id):
         return render(request, 'home.html')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     mystudent = Student.objects.filter(myuser=myuser)
+    mytutor = Tutor.objects.filter(myuser=myuser)
+    #booking is the record as a student, booked is the record as a tutor
     if mystudent:
         mystudent = Student.objects.get(myuser = myuser)
         booking = TutorialSession.objects.filter(student=mystudent)
     else:
-        booking = "" #TODO template should have if clause so if not student, do not display anything of record
-    return render(request, 'myaccount/mybooking.html', {'user': myuser , 'session_list': booking })
+        booking=""
+    if mytutor:
+        mytutor = Tutor.objects.get(myuser=myuser)
+        booked = TutorialSession.objects.filter(tutor=mytutor)
+    else:
+        booked=""
+        #TODO template should have if clause so if not student, do not display anything of record
+    return render(request, 'myaccount/mybooking.html', {'user': myuser , 'session_list': booking, "booked_list": booked })
 
 def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyymmddhhmm string)
     if not request.user.is_authenticated(): #visitor or client
@@ -161,25 +169,11 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
         tutor.hourly_rate) + " to " + str(tutor.myuser.wallet.balance)
     notification = Notification(content=content, myuser=tutor.myuser)
     notification.save()
-    """if tutor.myuser.user.email:
-        gmail_user = "comp3297group12@gmail.com"
-        gmail_pwd = "comp329712"
-        TO = 'comp3297group12@gmail.com'
-        SUBJECT = "Testing sending using gmail"
-        TEXT = "Testing sending mail using gmail servers"
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.ehlo()
-        server.starttls()
-        server.login(gmail_user, gmail_pwd)
-        BODY = '\r\n'.join(['To: %s' % TO,
-                            'From: %s' % gmail_user,
-                            'Subject: %s' % SUBJECT,
-                            '', TEXT])
 
-        server.sendmail(gmail_user, [TO], BODY)
-        print ('email sent')
-        #send_mail('Booking Notification', content, settings.EMAIL_HOST_USER,
-              #[tutor.myuser.user.email], fail_silently=False) """
+    #this is to send email through sendgrid
+    if tutor.myuser.user.email:
+        send_mail('Booking Notification', content, settings.EMAIL_HOST_USER, [tutor.myuser.user.email], fail_silently=False)
+
     tutor.save()
     tutor.tutorialsession_set.create(starttime=begintime, status=0, tutor=tutor, student=student)
     #wallet deduction
@@ -221,7 +215,7 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
     timeslot = list(tutor.timeslot)
     timeslot[weekday * 24 + hour_diff] = '1'
     tutor.timeslot = "".join(timeslot)
-    tutor.myuser.wallet.balance = tutor.myuser.wallet.balance = tutor.hourly_rate
+    tutor.myuser.wallet.balance = tutor.myuser.wallet.balance - tutor.hourly_rate
     tutor.myuser.wallet.save()
     tutor.save()
     tutorial_session.status = 3
@@ -233,6 +227,10 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
               + str(tutor.hourly_rate) + " to " + str(tutor.myuser.wallet.balance)
     notification = Notification(content=content, myuser=tutor.myuser)
     notification.save()
+
+    #this is to send email through sendgrid
+    if tutor.myuser.user.email:
+        send_mail('Booking Cancel Notification', content, settings.EMAIL_HOST_USER, [tutor.myuser.user.email], fail_silently=False)
 
     #wallet repaying
     wallet = mystudent.myuser.wallet
@@ -253,6 +251,8 @@ def mywallet(request, myuser_id):
         return render(request, 'home.html')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     return render(request, 'myaccount/mywallet.html', {'user':myuser })
+
+#def forget_password(request, myuser_id):
 
 ####message####
 def message(request, myuser_id):
@@ -295,3 +295,21 @@ def register_page(request):
         'registration/register.html',
         variables, RequestContext(request)
     )
+#def forget_password(request):
+
+
+
+"""class MyCronJob(CronJobBase):
+    RUN_EVERY_MINS = 0.5 # every half minte
+
+    schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
+    code = 'my_app.my_cron_job'    # a unique code
+
+    CRON_CLASSES = [
+        "my_app.cron.MyCronJob"
+    ]
+
+    def do(self):
+        user = User.objects.get(username='plus')
+        myuser = MyUser.objects.get(user=user)
+        myuser.wallet.balance = myuser.wallet.balance + 10"""
