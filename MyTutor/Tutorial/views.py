@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from datetime import date, datetime, time, timedelta
 from Tutorial.forms import *
 import time
-from Tutorial.models import Tutor, PrivateTutor, ContractedTutor, MyUser, Notification, TutorialSession, Student, Tutor, Wallet
+from Tutorial.models import *
 from decimal import Decimal
 from django.template import RequestContext
 
@@ -341,21 +341,20 @@ def search_tutor_name(request,myuser_id ):
 
 
 def search_tutor_tag(request,myuser_id ):
+    tag = []
     tutors = []
-    tutors=Tutor.objects.all()
-    show_results = False
-    if 'givenName' in request.GET:
-        show_results = True
-        query = request.GET['givenName'].strip()
+    tutor_set = []
+    if 'tags' in request.GET:
+        query = request.GET['tags']
         if query:
-            tutors = tutors.filter(myuser__user__first_name__contains=query)
-    if 'familyName' in request.GET:
-        show_results = True
-        query = request.GET['familyName'].strip()
-        if query:
-            tutors = tutors.filter(myuser__user__last_name__contains=query)
+            for tag_name in query:
+                tag = Tag.objects.filter(name=tag_name)
+                tutors = tag.tutors.all()
+                for tut in tutors:
+                    if tut not in tutor_set:
+                        tutor_set.append(tut)
     variables = {
-        "tutors": tutors
+        "tutor_set": tutor_set
     }
     return render(request, 'searchtutors/index.html', variables)
 
