@@ -83,6 +83,9 @@ class TutorialSession(models.Model):
     student =  models.ForeignKey(Student, on_delete=models.CASCADE)
     def __str__(self):
         return self.starttime + "-student-" + self.student.myuser.user.username + "-tutor-" + self.tutor.myuser.user.username
+class Tag(models.Model):
+    name = models.CharField(maxlength=64, unique=True)
+    tutors = models.ManyToManyField(Tutor)
 """
 status map:
 0   upcoming can cancel

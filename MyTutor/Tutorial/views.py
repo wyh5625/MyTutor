@@ -89,8 +89,12 @@ def mybooking(request, myuser_id):
     if not request.user.is_authenticated(): #visitor or client
         return render(request, 'home.html')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
-    mystudent = get_object_or_404(Student,myuser=myuser)
-    booking = TutorialSession.objects.filter(student=mystudent)
+    mystudent = Student.objects.filter(myuser=myuser)
+    if mystudent:
+        mystudent = Student.objects.get(myuser = myuser)
+        booking = TutorialSession.objects.filter(student=mystudent)
+    else:
+        booking = "" #TODO template should have if clause so if not student, do not display anything of record
     return render(request, 'myaccount/mybooking.html', {'user': myuser , 'session_list': booking })
 
 def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyymmddhhmm string)
@@ -99,7 +103,11 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
     myuser = MyUser.objects.get(user=request.user) #myuser = MyUser.objects.get(pk=myuser_id)
 
     begintime = request.POST['starttime']
+    student = Student.objects.filter(myuser=myuser)
     tutor = Tutor.objects.get(pk=tutor_id)
+    if not student:
+        return render(request, 'searchtutors/tutorpage.html',
+                      {'fail': "Only a student can book session", 'tutor': tutor, 'user': myuser, 'begintime': begintime})
     student = Student.objects.get(myuser=myuser)
     if tutor.myuser == myuser:
         return render(request, 'searchtutors/tutorpage.html',
@@ -126,7 +134,7 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
             if slot.status != 3: #if equals three, then even the booking record exists, it has been canceled
                 return render(request, 'searchtutors/tutorpage.html',
                           {'fail': "You have already booked a session on that day", 'tutor': tutor, 'user': myuser,
-                           'begintime': begintime})  # fixme should report that not enough money
+                           'begintime': begintime})
     wallet = myuser.wallet
     if wallet.balance < tutor.hourly_rate * COMMISION: #if not enough money, failed of course
         return render(request, 'searchtutors/tutorpage.html',
@@ -141,6 +149,15 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
     timeslot = list(tutor.timeslot)
     timeslot[weekday * 24 + hour_diff] = '2' #meaning I book the session, 0 only means tutor doesn't want this session to be booked
     tutor.timeslot = "".join(timeslot)
+    tutor.myuser.wallet.balance = tutor.myuser.wallet.balance + tutor.hourly_rate
+    tutor.myuser.wallet.save()
+    content = "System notification [ " + str(datetime(now.year, now.month, now.day, now.hour,
+                                                      now.minute)) + " ]: You have been booked on " + str(
+        datetime.strptime(begintime,
+                          timeformat)) + " with student " + student.myuser.user.username + " ,with wallet balance added by " + str(
+        tutor.hourly_rate) + " to " + str(tutor.myuser.wallet.balance)
+    notification = Notification(content=content, myuser=tutor.myuser)
+    notification.save()
     tutor.save()
     tutor.tutorialsession_set.create(starttime=begintime, status=0, tutor=tutor, student=student)
     #wallet deduction
@@ -171,7 +188,7 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     mystudent = get_object_or_404(Student, myuser=myuser)
     booking = TutorialSession.objects.filter(student=mystudent)
-    timeformat = '%Y%m%d%H%M'  # fixme currently I don't care about exceed 14 days, or illegal booking ,only check availability
+    timeformat = '%Y%m%d%H%M'
     bookingtime = time.mktime(datetime.strptime(tutorial_session.starttime, timeformat).timetuple())
     now = datetime.now()
     showingtime = time.mktime(datetime(now.year, now.month, now.day, 0, 0).timetuple())
@@ -182,9 +199,19 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
     timeslot = list(tutor.timeslot)
     timeslot[weekday * 24 + hour_diff] = '1'
     tutor.timeslot = "".join(timeslot)
+    tutor.myuser.wallet.balance = tutor.myuser.wallet.balance = tutor.hourly_rate
+    tutor.myuser.wallet.save()
     tutor.save()
     tutorial_session.status = 3
     tutorial_session.save()
+    content = "System notification [ " + str(
+        datetime(now.year, now.month, now.day, now.hour, now.minute)) + " ]: Your following tutoring session has been cancelled:" + str(
+        datetime.strptime(tutorial_session.starttime,
+                          timeformat)) + " with student " + mystudent.myuser.user.username + " ,with wallet deduced by " \
+              + str(tutor.hourly_rate) + " to " + str(tutor.myuser.wallet.balance)
+    notification = Notification(content=content, myuser=tutor.myuser)
+    notification.save()
+
     #wallet repaying
     wallet = mystudent.myuser.wallet
     wallet.balance = wallet.balance + Decimal.from_float(
@@ -246,3 +273,20 @@ def register_page(request):
         'registration/register.html',
         variables, RequestContext(request)
     )
+def search_page(request):
+    form = SearchForm()
+    bookmarks = []
+    show_results = False
+    if request.GET.has_key('query'):
+        show_results = True
+        query = request.GET['query'].strip()
+        if query:
+            form = SearchForm({'query' : query})
+            bookmarks = Bookmark.objects.filter (title__icontains=query)[:10]
+    variables = RequestContext(request, { 'form': form,
+        'bookmarks': bookmarks,
+        'show_results': show_results,
+        'show_tags': True,
+        'show_user': True
+    })
+    return render_to_response('search.html', variables)
