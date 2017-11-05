@@ -282,8 +282,8 @@ def search_tutor_name(request,myuser_id ):
         show_results = True
         query = request.GET['query'].strip()
         if query:
-            tutors = Tutor.objects.filter(myuser__user__username__contains='CT')[:10]
+            tutors = Tutor.objects.filter(myuser__user__username__contains= query)[:10]
     variables = {
         "tutors": tutors
     }
-    return render_to_response('searchtutors/index.html', variables, RequestContext(request))
+    return render(request, 'searchtutors/index.html', variables)
