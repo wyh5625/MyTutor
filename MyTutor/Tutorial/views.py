@@ -219,10 +219,23 @@ def register_page(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = User.objects.create_user(
-                username=form.clean_data['username'],
-                password=form.clean_data['password1'],
-                email=form.clean_data['email']
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password1'],
+                email=form.cleaned_data['email']
             )
+            wallet = Wallet.objects.create()
+            myuser = MyUser.objects.create(user=user, wallet=wallet)
+            identity = form.cleaned_data['identity']
+            if identity == 'Student':
+                student = Student.objects.create(myuser=myuser)
+            elif identity == 'Private Tutor':
+                tutor = Tutor.objects.create(myuser=myuser)
+                privateTutor = PrivateTutor.objects.create(tutor=tutor)
+            else:   # contracted tutor
+                tutor = Tutor.objects.create(myuser=myuser)
+                setattr(tutor,'timeslot','111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111')
+                tutor.save()
+                contractedTutor = ContractedTutor.objects.create(tutor=tutor)
             #return render(request, 'home.html')
     else:
         form = RegistrationForm()

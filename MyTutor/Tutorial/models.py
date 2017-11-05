@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
 class Wallet(models.Model):
-    balance = models.DecimalField(max_digits=10, decimal_places=2)
+    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     def __str__(self):
         myuser = MyUser.objects.filter(wallet = self)
         if myuser.count() == 0:
@@ -37,14 +37,23 @@ class Student(models.Model):
 
 class Tutor(models.Model):
     myuser = models.ForeignKey(MyUser, on_delete=models.CASCADE,null=True)
-    timeslot = models.CharField(max_length=672) #todo: should update every half an hour
+    timeslot = models.CharField(max_length=672, default="111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111") #for private tutor todo: should update every half an hour
     # 0-unavailable, 1-available, half an hour per digit, 336 timeslots is a week
-    hourly_rate = models.IntegerField() #todo: eight digit for student so can tell if he have
+    hourly_rate = models.IntegerField(default=0) #todo: eight digit for student so can tell if he have
     def __str__(self):
         if self.myuser is None:
             return "null"
         else:
             return self.myuser.user.username
+    def create(cls, username, email, password):
+        user = User.objects.create_user(
+                    username=username,
+                    password=password,
+                    email=email
+                )
+        tutor = cls(myuser=user)
+        return tutor
+
 
 class PrivateTutor(models.Model):
 	tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
@@ -54,6 +63,7 @@ class PrivateTutor(models.Model):
 
 class ContractedTutor(models.Model):
 	tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
+    #self.tutor.timeslot = '111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111'
 	#hourly_rate = 0
 	def __str__(self):
 		return self.tutor.myuser.user.username
