@@ -1,29 +1,238 @@
 {% extends "Menu.html" %}
 {% block title %}: search tutor{% endblock %}
 {% block content %}
-<h3 style="background-color: #B0C4DE; color : #2F4F4F;  padding : 5px; text-align : center; border : 0px solid #708090; margin : 0;">Latest tutor information</h3>
-		<div id="TutoInfo" style="background-color : #F8F8FF; padding : 7px; height : 60%;">
-			<ul style="  text-align : left; color : #778899;">
-                <table style="margin: auto; width: 80%; text-align: center;">
-                    <tr style="color : white; background-color: #191970;">
-                        <th style="padding: 10px;">Tutor Name</th>
-                        <th>Type</th>
-                        <th>Hourly Rate</th>
-                    </tr>
-                {%for Tutor in latest_Tutor_list%}
+     <section class="bg-parallax parallax-window" onload="getValue();">
+        <div class="overlay"></div>
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <div class="parallax-text">
+                <h2 class="parallax_t __white">Search For Tutor</h2>
+                <h2 class="parallax_t __green">喵喵喵喵喵</h2>
+                <p>Please verify the searching tags</p>
+                  <select class="form-control __plannerSelect" onchange="modeChange(this)" name="selectMode">
+                      <option value="1" selected='selected'id="byTags">Search by tags</option>
+                      <option value="2" id="byName">Search by tutor's name</option>
+                  </select>
+              </div>
+            </div>
+            <!-- planner-->
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 planner">
+              <div class="planner-block" id="planner" value="testing">
+                <form class="form-planner form-horizontal" id="SearchByName">
+                  <div class="row" >
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                      <div class="form-group">
+                        <label>University</label>
+                        <select class="form-control __plannerSelect">
+                              <option value="">HKU</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                      <div class="form-group">
+                        <label>University course</label>
+                        <select class="form-control __plannerSelect">
+                              <option value="">COMP 3297</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                      <div class="form-group">
+                          <label>Subject Tags</label>
+                          <input type="text" class="form-control" placeholder="Enter the key words to seach tags">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                      <div class="form-group">
+                          <label>Tutor Type</label>
+                          <div class="theme-select">
+                            <select class="form-control __plannerSelect">
+                              <option value="">Private Tutor</option>
+                              <option value="">Contracted Tutor</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                      <div class="form-group">
+                          <label>Showing Option </label>
+                           <select class="form-control __plannerSelect">
+                              <option value="">All tutors</option>
+                              <option value="">Tutors with at least one available timeslot in the next 7 days.</option>
+                            </select>
+                        </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                      <div class="form-group">
+                          <label>Hourly Price Rate</label>
+                          <div id="slider-range"></div>
+                          <div id="amount"><span id="amount1"></span><span id="amount2"></span></div>
+                        </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                      <div class="planner-check-availability">
+                        <a href="wizzard-step1.html" class="btn btn-default">Check availability</a>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <!-- /planner-->
+          </div>
+        </div>
+    </section>
+    <!-- /parallax -->
 
-                    <tr>
-                       <td > <a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}" style="text-decoration : none;">{{Tutor.myuser.user.username}}</a></td>
-                        <script>
-                            if ("{{Tutor.hourly_rate}}" != '0'){
-                                document.write("<td ><a href=\"{% url 'Tutorial:tutorpage' user.id Tutor.id %}\" style=\"text-decoration : none;\" >Private Tutor</a></td><td>{{Tutor.hourly_rate}}</td>");
-                            }else{
-                                document.write("<td style=\"text-decoration : none;\"><a href=\"{% url 'Tutorial:tutorpage' user.id Tutor.id %}\" style=\"text-decoration : none;\">Contracted Tutor</a></td><td>N/A</td>")
-                            }
-                        </script>
-                    </tr>
-				{%endfor%}
-                 </table>
-			</ul>
-		</div>
+    <!-- Best Tutor -->
+    <section class="best-tutor">
+      <div class="container">
+        <div class="title-main">
+          <h2 class="h2">Are you interested in them ?<span class="title-secondary">Look Our Best Tutors</span></h2>
+        </div>
+
+        <div class="best-tutor-carousel">
+          <ul class="row best-tutor_ul">
+              {%for Tutor in latest_Tutor_list%}
+            <li class="col-lg-4 col-md-4 col-sm-6 col-xs-12 best-tutor_li">
+              <div class="best-tutor_img">
+                <a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}"><img src="/static/bootstrap/images/best-rooms/1.jpg" alt=""></a>
+                <div class="best-tutor_overlay">
+                  <div class="overlay_icn"><a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}"></a></div>
+                </div>
+              </div>
+              <div class="best-tutor-info">
+                <div class="best-tutor_t"><a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}">{{Tutor.myuser.user.username}}</a></div>
+                <div class="best-tutor_desc">Tutor's description here.
+                </div>
+                <div class="best-tutor_rate">
+                  <span>${{Tutor.hourly_rate}}</span>
+                </div>
+              </div>
+            </li>
+              {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- /choose best tutors -->
+    <!-- lux banner parallax -->
+      <section class="banner bg-parallax2">
+        <div class="overlay"></div>
+      <div class="banner-parallax">
+        <div class="container">
+          <div class="text-center">
+            <div class="banner-parallax_raiting">
+              <a href="#"><span class="star __selected"></span></a>
+              <a href="#"><span class="star __selected"></span></a>
+              <a href="#"><span class="star __selected"></span></a>
+              <a href="#"><span class="star"></span></a>
+              <a href="#"><span class="star"></span></a>
+            </div>
+            <h2 class="banner-parallax_t">Double Luxury Room</h2>
+            <div class="banner-parallax_price"><span>$560</span> / Night (Only This Week)</div>
+            <a href="#" class="btn btn-default">Book this room</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- /lux banner parallax -->
+    <!-- enjoy our services -->
+    <section class="section">
+      <div class="container">
+        <div class="title-main"><h2 class="h2">Our Services<span class="title-secondary">Great. Safe. Free.</span></h2></div>
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-globe"></i> Different Tours</h3>
+            <p>Improve ashamed married expense bed her comfort pursuit mrs. Four time took ye your as fail lady.</p>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-taxi"></i> Taxi Service</h3>
+            <p>Improve ashamed married expense bed her comfort pursuit mrs. Four time took ye your as fail lady.</p>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-glass"></i> Bar Included</h3>
+            <p>Improve ashamed married expense bed her comfort pursuit mrs. Four time took ye your as fail lady.</p>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-life-ring"></i> Discount System</h3>
+            <p>Improve ashamed married expense bed her comfort pursuit mrs. Four time took ye your as fail lady.</p>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-leaf"></i> Professional Staff</h3>
+            <p>Improve ashamed married expense bed her comfort pursuit mrs. Four time took ye your as fail lady.</p>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-eye"></i> Parking 24/7</h3>
+            <p>Improve ashamed married expense bed her comfort pursuit mrs. Four time took ye your as fail lady.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- /enjoy our services -->
+    <!-- testiomonials -->
+    <section class="testimonials">
+      <div class="container">
+        <div class="title-main"><h2 class="h2">Some Testimonails<span class="title-secondary">People Says About Us</span></h2></div>
+        <div class="owl-carousel">
+          <div class="item">
+            <div class="testimonials-block_i">
+              <div class="testimonials-block_t">Great <span>Service</span></div>
+              <p>Old unsatiable our now but considered travelling impression. In excuse hardly summer in basket misery. By rent an part need. At wrong of of water those linen. Needed oppose seemed how all</p>
+            </div>
+            <div class="testimonials-block_user">
+                <div class="user_img"><img src="/static/bootstrap/images/testimonials/mike.jpg" alt=""></div>
+                <div class="user_n">Garry Carlson</div>
+            </div>
+          </div>
+          <div class="item">
+            <div class="testimonials-block_i">
+              <div class="testimonials-block_t">Thank You Very Much <span>I Am Happy!</span></div>
+              <p>Certainty listening no no behaviour existence assurance situation is. Because add why not esteems amiable him. Interested the unaffected mrs law friendship add principles.</p>
+            </div>
+            <div class="testimonials-block_user">
+                <div class="user_img"><img src="/static/bootstrap/images/testimonials/mila.png" alt=""></div>
+                <div class="user_n">Mila Markovna</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- /testiomonials -->
+    <!-- map -->
+    <section class="map">
+      <div id="map"></div>
+    </section>
 {% endblock %}
+
+{% block script %}
+
+    var originalHTML;
+     window.load = function(){
+        originalHTML = document.getElementById("planner").innerHTML;
+        alert(originalHTML);
+    }
+
+    function modeChange(sobj){
+    var idx = sobj.selectedIndex;
+     if (idx == 1){
+         var str = "<form class='form-planner form-horizontal' id='SearchByName'><div class='row' ><div class='col-lg-6 col-md-6 col-sm-12 col-xs-12 '><div class='form-group'><label>Given Name</label> <input type='text' class='form-control' placeholder='Given name'></div></div><div class='col-lg-6 col-md-6 col-sm-12 col-xs-12'><div class='form-group'><label>Family Name</label><input class='form-control' id='FamilyName' type='text' placeholder='Family name'></div></div></div></form>";
+        document.getElementById("planner").innerHTML =  str;
+    }else{
+        document.getElementById("planner").innerHTML =  originalHTML;
+    }
+
+    }
+
+{% endblock %}
+
