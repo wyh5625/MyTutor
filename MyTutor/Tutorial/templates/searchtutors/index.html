@@ -209,19 +209,14 @@
       </div>
     </section>
     <!-- /testiomonials -->
-    <!-- map -->
-    <section class="map">
-      <div id="map"></div>
-    </section>
 {% endblock %}
 
 {% block script %}
 
     var originalHTML;
-     window.load = function(){
-        originalHTML = document.getElementById("planner").innerHTML;
-        alert(originalHTML);
-    }
+     $(window).on('load', function () {
+      originalHTML = document.getElementById("planner").innerHTML;
+ });
 
     function modeChange(sobj){
     var idx = sobj.selectedIndex;
