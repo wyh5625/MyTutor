@@ -7,6 +7,8 @@ class RegistrationForm(forms.Form):
     identity = forms.ChoiceField(label='Identity',choices=CHOICES)
     username = forms.CharField(label='Username', max_length=30)
     email = forms.EmailField(label='Email')
+    last_name = forms.CharField(label='Family Name', max_length=30)
+    first_name = forms.CharField(label='Given Name', max_length=30)
     password1 = forms.CharField(
         label='Password',
         widget=forms.PasswordInput()

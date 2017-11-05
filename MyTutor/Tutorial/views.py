@@ -13,15 +13,14 @@ import time
 from Tutorial.models import Tutor, PrivateTutor, ContractedTutor, MyUser, Notification, TutorialSession, Student, Tutor, Wallet
 from decimal import Decimal
 from django.template import RequestContext
-<<<<<<< HEAD
+
 from django.conf import settings
 import smtplib
 from django.core.mail import send_mail
 from django_cron import CronJobBase, Schedule
-=======
+
 from .forms import SearchForm
 
->>>>>>> 25c7585fa21ee511d3fe22ef485f9087a1760165
 
 COMMISION = 1.05
 # Create your views here.
@@ -274,7 +273,9 @@ def register_page(request):
             user = User.objects.create_user(
                 username=form.cleaned_data['username'],
                 password=form.cleaned_data['password1'],
-                email=form.cleaned_data['email']
+                email=form.cleaned_data['email'],
+                last_name = form.cleaned_data['last_name'],
+                first_name = form.cleaned_data['first_name']
             )
             wallet = Wallet.objects.create()
             myuser = MyUser.objects.create(user=user, wallet=wallet)
@@ -299,7 +300,7 @@ def register_page(request):
         'registration/register.html',
         variables, RequestContext(request)
     )
-<<<<<<< HEAD
+
 #def forget_password(request):
 
 
@@ -318,19 +319,18 @@ def register_page(request):
         user = User.objects.get(username='plus')
         myuser = MyUser.objects.get(user=user)
         myuser.wallet.balance = myuser.wallet.balance + 10"""
-=======
 
 
 def search_tutor_name(request,myuser_id ):
     tutors = []
     show_results = False
-    if 'query' in request.GET:
+    if 'givenName' in request.GET:
         show_results = True
-        query = request.GET['query'].strip()
+        query = request.GET['givenName'].strip()
         if query:
-            tutors = Tutor.objects.filter(myuser__user__username__contains= query)[:10]
+            tutors = Tutor.objects.filter(myuser__user__first_name__contains=query)[:10]
     variables = {
         "tutors": tutors
     }
     return render(request, 'searchtutors/index.html', variables)
->>>>>>> 25c7585fa21ee511d3fe22ef485f9087a1760165
+
