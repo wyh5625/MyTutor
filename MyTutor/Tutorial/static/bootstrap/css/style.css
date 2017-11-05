@@ -302,9 +302,9 @@ hr {
   font-size: 27px;
   font-weight: 300;
   margin-top: 0;
+  text-align: center;
   margin-bottom: 40px;
   padding-bottom: 30px;
-  text-align: center;
   background: url(../images/icons/header-icon.png) no-repeat center bottom;
   font-family: Montserrat;
 }
@@ -3094,4 +3094,9 @@ background: #fafafa;
 }
 .reservation-1 .module .theme-select {
 background-color: #fff !important;
+}
+
+.slotTable {
+	border : 1px, solid, grey;
+	background-color : red;
 }
