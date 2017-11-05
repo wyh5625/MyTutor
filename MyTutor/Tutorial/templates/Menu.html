@@ -2,32 +2,63 @@
 <html style="height : 100%;">
 	<head>
 		<title>Main page</title>
-		<meta name="viewport" content="width=device-width,maximum-scale=2">
-        <script>{% block script %}{% endblock %}</script>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+         <link rel="stylesheet" href="/static/bootstrap/css/style.css">
+        <link rel="stylesheet" href="/static/bootstrap/css/style1.css">
+         <link rel="stylesheet" href="/static/bootstrap/css/responsive.css">
+
+        <script type="text/javascript" src="/static/bootstrap/js/jquery.min.js"></script>
+  <script type="text/javascript" src="/static/bootstrap/js/tether.min.js"></script>
+  <script type="text/javascript" src="/static/bootstrap/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/static/bootstrap/js/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="/static/bootstrap/js/moment.min.js"></script>
+  <script type="text/javascript" src="/static/bootstrap/js/jquery.smartmenus.js"></script>
+  <script type="text/javascript" src="/static/bootstrap/js/jquery.parallax.min.js"></script>
+  <script type="text/javascript" src="/static/bootstrap/js/jquery.shuffle.min.js"></script>
+  <script type="text/javascript" src="/static/bootstrap/js/owl.carousel.min.js"></script>
+  <script type="text/javascript" src="/static/bootstrap/js/map.js"></script>
+  <script type="text/javascript" src="/static/bootstrap/js/main.js"></script>
+            <script>{% block script %}{% endblock %}</script>
 	</head>
 
-	<body style="height : 100%;">
-		<div id="header" class="header" style=" background-color: #191970;  margin : auto; font-size : 14pt; padding: 10px; text-align : center; font-family : Futura, Arial;">
-			<table style="width : 100%;">
-				{% if request.user.is_authenticated %}
-				<tr>
-					<th><a id="Home" href="" style="color : white; text-decoration:none;">Home</a></th>
-					<th><a id="SearchTutors" href="{% url 'Tutorial:index' user.id %}" style="color : white; text-decoration:none;">Search Tutors</a></th>
-					<th><a id="MyAccount" href="{% url 'Tutorial:mybooking' user.id %}" style="color : white; text-decoration:none;">My Account</a></th>
-					<th><a id="Messages" href="{% url 'Tutorial:message' user.id %}" style="color : white; text-decoration:none;">Messages</a></th>
-					<th><a id="Mode" href="" style="color : white; text-decoration:none;">Student Mode</a></th>
-				</tr>
-				{% else %}
-				<tr>
-					<th><a id="Home" href="" style="color : white; text-decoration:none;">Home</a></th>
-					<th><a id="SearchTutors" href="{% url 'Tutorial:login'%}" style="color : white; text-decoration:none;">Search Tutors</a></th>
-					<th><a id="MyAccount" href="{% url 'Tutorial:login' %}" style="color : white; text-decoration:none;">My Account</a></th>
-					<th><a id="Messages" href="{% url 'Tutorial:login' %}" style="color : white; text-decoration:none;">Messages</a></th>
-					<th><a id="Mode" href="{% url 'Tutorial:login' %}" style="color : white; text-decoration:none;">Login</a></th>
-				</tr>
-				{% endif %}
-			</table>
-        </div>
+	<body >
+		<header class="header">
+      <div class="header-bottom">
+        <nav class="navbar navbar-universal navbar-custom">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-3">
+                <div class="logo"><a href="index.html" class="navbar-brand page-scroll"><img src="/static/bootstrap/images/logo/logo.png" alt="logo"></a></div>
+              </div>
+              <div class="col-lg-9">
+                <div class="navbar-header">
+                  <button type="button" data-toggle="collapse" data-target=".navbar-main-collapse" class="navbar-toggle"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+                </div>
+                <div class="collapse navbar-collapse navbar-main-collapse">
+                  <ul class="nav navbar-nav navbar-right">
+                      {% if request.user.is_authenticated %}
+                    <li><a href="#">Home</a></li>
+                    <li><a href="{% url 'Tutorial:index' user.id %}">Search Tutors</a></li>
+                    <li><a href="{% url 'Tutorial:mybooking' user.id %}">My Account</a></li>
+                    <li><a href="{% url 'Tutorial:message' user.id %}">Messages</a></li>
+                    <li><a href="% url 'Tutorial:logout' %}">Logout</a></li>
+                      {% else %}<li><a href="#">Home</a></li>
+                    <li><a href="{% url 'Tutorial:login' %}">Search Tutors</a></li>
+                    <li><a href="{% url 'Tutorial:login' %}}">My Account</a></li>
+                    <li><a href="{% url 'Tutorial:login' %}">Messages</a></li>
+                    <li><a href="{% url 'Tutorial:login' %}">Login</a></li>
+                      {% endif %}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+</header>
         {% block content %}{% endblock %}
 	</body>
 </html>
+
