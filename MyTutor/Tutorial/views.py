@@ -13,6 +13,7 @@ import time
 from Tutorial.models import Tutor, PrivateTutor, ContractedTutor, MyUser, Notification, TutorialSession, Student, Tutor, Wallet
 from decimal import Decimal
 from django.template import RequestContext
+from .forms import SearchForm
 
 
 COMMISION = 1.05
@@ -273,6 +274,7 @@ def register_page(request):
         'registration/register.html',
         variables, RequestContext(request)
     )
+
 def search_tutor_name(request):
     tutors = []
     show_results = False
@@ -280,7 +282,7 @@ def search_tutor_name(request):
         show_results = True
         query = request.GET['query'].strip()
         if query:
-            tutors = Tutor.objects.filter (username__icontains=query)[:10]
+            tutors = Tutor.objects.filter(myuser__user__username__contains='CT')[:10]
     variables = RequestContext(request, {
         'tutors': tutors,
         'show_results': show_results,
