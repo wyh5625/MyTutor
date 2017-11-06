@@ -19,7 +19,7 @@
             <!-- planner-->
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 planner">
               <div class="planner-block" id="planner" value="testing">
-                <form class="form-planner form-horizontal" id="SearchByTag" action="{% url 'search_tutor_tag' user.id %}" method="get">
+                <form class="form-planner form-horizontal" id="SearchByTag" action="{% url 'Tutorial:search_tutor_tag' user.id %}" method="get">
                     {% csrf_token %}
                   <div class="row" >
                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -243,9 +243,10 @@
                 strTags = "<span style='background-color: #1f7e9a; color : white; margin : 1px; padding: 1px;'>X "+tags[i]+"</span>";
                 alert(strTags);
                 $("#tags").append(strTags);
-                 $("#subjectTags").val() = "";
-                $("#subjectTags").html()= "<input type='text' class='form-control' placeholder='Enter the key words to seach tags' id='subjectTags'name='tags' value='"+tags+"' >";
-            }
+                $("#subjectTags").val("");
+$("#subjectTags").html( "<input type='text' class='form-control' placeholder='Enter the key words to seach tags' id='subjectTags'name='tags' value='"+tags+"' >");
+                i++;
+                }
 
         });
 

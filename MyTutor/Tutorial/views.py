@@ -18,6 +18,11 @@ from django.conf import settings
 import smtplib
 from django.core.mail import send_mail
 
+import logging
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
+
 from .forms import SearchForm
 
 
@@ -344,15 +349,19 @@ def search_tutor_tag(request,myuser_id ):
     tag = []
     tutors = []
     tutor_set = []
+    query = []
     if 'tags' in request.GET:
         query = request.GET['tags']
         if query:
-            for tag_name in query:
+            tagset = query.split(',')
+            for tag_name in tagset:
                 tag = Tag.objects.filter(name=tag_name)
-                tutors = tag[0].tutors.all()
-                for tut in tutors:
-                    if tut not in tutor_set:
-                        tutor_set.append(tut)
+                if tag:
+                    tutors = tag[0].tutors.all()
+                    for tut in tutors:
+                        if tut not in tutor_set:
+                            tutor_set.append(tut)
+    logger.error(tutor_set)
     variables = {
         "tutor_set": tutor_set
     }
