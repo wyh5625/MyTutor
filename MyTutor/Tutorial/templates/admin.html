@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Cron Job Page</title>
+</head>
+<body>
+	<form method='POST' action="{% url 'Tutorial:triggersession' %}">
+		Time: <input type='text' name='time' size='30'>
+		<input type='submit' value='submit'>
+	</form>
+    <p>{{msg}}</p>
+</body>
+</html>
