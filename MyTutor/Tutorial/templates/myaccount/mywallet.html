@@ -1,12 +1,158 @@
 {% extends "myaccount/myaccount.html" %}
 {% block title %}: my wallet{% endblock %}
 {% block right %}
-    <table>
-    <tr>
-        <td>my wallet</td>
-        <td>{{user.id}}</td>
-        <td>{{user.name}} </td>
-        <td>{{user.wallet.balance}} </td>
-    </tr>
-    </table>
+    {% if student_list != "" %}
+    <section class="section">
+      <div class="container">
+        <div class="title-main"><h2 class="h2">Transaction records [student]<span class="title-secondary">啦啦啦啦啦啦啦啦啦啦啦╭(╯^╰)╮</span></h2></div>
+
+        <div class="row">
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-globe"></i> Time</h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-taxi"></i> Tutor</h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-glass"></i> Outflow</h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-life-ring"></i>Status </h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"></i> Coupon</h3>
+          </div>
+        </div>
+          {% for session in  student_list %}
+               <div class="row">
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <h3 class="service_title">{{ session.starttime }}</h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"> {{ session.tutor }}</h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"> ${{ session.tutor.hourly_rate }}</h3> <!--TODO: if cancelled, do something! deposit record, do something! with commission fee, do something!-->
+          </div>
+                    <script>
+
+                      if ("{{ session.status }}" == '0' || "{{ session.status }}" == '1')
+                    {
+                       document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
+                           "            <h3 class=\"service_title\">Upcoming</h3>" +
+                           "          </div>");
+                    }else if("{{ session.status }}" == '2'){
+                          document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
+                           "            <h3 class=\"service_title\">Attended</h3>" +
+                           "          </div>");
+                      }else if("{{ session.status }}" == '3'){
+                          document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
+                           "            <h3 class=\"service_title\"> Canceled</h3>" +
+                           "          </div>");
+                      }else if("{{ session.status }}" == '4'){
+                          document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
+                           "            <h3 class=\"service_title\">Envaluated</h3>" +
+                           "          </div>");
+                      }
+                    </script>
+                <script>
+                    var date1 = new Date();
+                    var time = "{{session.starttime}}"
+                    var date2 = new Date(time.substring(0,4)+"/" + time.substring(4,6)+"/" +time.substring(6,8)+" "+time.substring(8,10)+":"+time.substring(10,12)+":"+"00");
+                    var gap = Math.abs(date1-date2)/1000/60/60;
+                    //alert(gap);
+                    /*if ("{{ session.status }}" == '0' && gap >= 24 )
+                    {
+
+                        var session_id = "{{session.id}}";
+                        document.write(" <form action=\"{% url 'Tutorial:cancelbooking' user.id session.id %}\" method=\"post\" id= \"frm"+session_id+"\" >{% csrf_token %}{{uf.as_p}}<div id=\'clickable\' onclick=\'cancelSession(this,"+session_id+", \"{{session.tutor}}\", \"{{session.starttime}}\")\' style='color: red;' class=\"col-lg-2 col-md-4 col-sm-6\"><h3 class=\"service_title\">X</h3></div></form>");
+
+                    }else{
+                        document.write("<div class=\"col-lg-2 col-md-4 col-sm-6\">" +
+                            "            <h3 class=\"service_title\">X</h3>" +
+                            "          </div>");
+                    }*/
+                </script> <!--TODO should change the cancel block to display coupon usage-->
+        </div>
+          {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+    {% if tutor_list != "" %}
+    <section class="section">
+      <div class="container">
+        <div class="title-main"><h2 class="h2">Transaction records [tutor]<span class="title-secondary">啦啦啦啦啦啦啦啦啦啦啦╭(╯^╰)╮</span></h2></div>
+
+        <div class="row">
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-globe"></i> Time</h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-taxi"></i> Student</h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-glass"></i> Inflow</h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-life-ring"></i>Status </h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"></i> DoSomethingHere</h3>
+          </div>
+        </div>
+          {% for session in  tutor_list %}
+               <div class="row">
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <h3 class="service_title">{{ session.starttime }}</h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"> {{ session.student }}</h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"> ${{ session.tutor.hourly_rate }}</h3> <!--TODO: if cancelled, do something! deposit record, do something!-->
+          </div>
+                    <script>
+
+                      if ("{{ session.status }}" == '0' || "{{ session.status }}" == '1')
+                    {
+                       document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
+                           "            <h3 class=\"service_title\">Upcoming</h3>" +
+                           "          </div>");
+                    }else if("{{ session.status }}" == '2'){
+                          document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
+                           "            <h3 class=\"service_title\">Attended</h3>" +
+                           "          </div>");
+                      }else if("{{ session.status }}" == '3'){
+                          document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
+                           "            <h3 class=\"service_title\"> Canceled</h3>" +
+                           "          </div>");
+                      }else if("{{ session.status }}" == '4'){
+                          document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
+                           "            <h3 class=\"service_title\">Envaluated</h3>" +
+                           "          </div>");
+                      }
+                    </script>
+                <script>
+                    var date1 = new Date();
+                    var time = "{{session.starttime}}"
+                    var date2 = new Date(time.substring(0,4)+"/" + time.substring(4,6)+"/" +time.substring(6,8)+" "+time.substring(8,10)+":"+time.substring(10,12)+":"+"00");
+                    var gap = Math.abs(date1-date2)/1000/60/60;
+                    //alert(gap);
+                    /*if ("{{ session.status }}" == '0' && gap >= 24 )
+                    {
+
+                        var session_id = "{{session.id}}";
+                        document.write(" <form action=\"{% url 'Tutorial:cancelbooking' user.id session.id %}\" method=\"post\" id= \"frm"+session_id+"\" >{% csrf_token %}{{uf.as_p}}<div id=\'clickable\' onclick=\'cancelSession(this,"+session_id+", \"{{session.tutor}}\", \"{{session.starttime}}\")\' style='color: red;' class=\"col-lg-2 col-md-4 col-sm-6\"><h3 class=\"service_title\">X</h3></div></form>");
+
+                    }else{
+                        document.write("<div class=\"col-lg-2 col-md-4 col-sm-6\">" +
+                            "            <h3 class=\"service_title\">X</h3>" +
+                            "          </div>");
+                    }*/
+                </script> <!--TODO should change the cancel block to display coupon usage-->
+        </div>
+          {% endfor %}
+      </div>
+    </section>
+    {% endif %}
 {% endblock %}
