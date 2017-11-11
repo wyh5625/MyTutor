@@ -37,11 +37,15 @@ def home(request):
     if not request.user.is_authenticated():
         #every function will have this, to make sure guest cannot visit personal account by manipulating url
         return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        return HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #fixme if an admin want to go to Tutorial/, he is not a myuser
     return HttpResponseRedirect('/Tutorial/' + str(myuser.id)) #searchTutors/'+str(request.user.id)
 ####login####
 def login(request):
     if request.user.is_authenticated(): #visitor or client
+        if not MyUser.objects.filter(user=request.user):
+            return HttpResponseRedirect('/Tutorial/admin/') # Assume all tutors share a same page, so noneed for user.id+ str(user.id))
         myuser = MyUser.objects.get(user=request.user)
         return HttpResponseRedirect('/Tutorial/' + str(myuser.id)) #searchTutors/'+str(request.user.id)
 
@@ -64,6 +68,8 @@ def logout(request):
 def index(request, myuser_id):
     if not request.user.is_authenticated(): #visitor or client
         return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user)  # myuser = get_object_or_404(MyUser, pk=myuser_id)
     #fixme I do this to make sure you are the person you should be, you cannot be someone else
     #fixme  but I haven't tried how to also relink the url i.e. if id = 2 enter 3/..., the content can be
@@ -74,10 +80,25 @@ def index(request, myuser_id):
     params = {"user": myuser, "latest_Tutor_list": all_tutors, "tutors": all_tutors }
     return render(request, 'searchtutors/index.html', params)
 
+def adminpage(request):
+    return render(request, 'admin.html')
+
+def triggersession(request):
+    time = request.POST['time']
+    timeformat = '%Y%m%d%H%M'
+    try:
+        bookingtime = datetime.strptime(time, timeformat)
+    except Exception as e:
+        return render(request, 'admin.html', {"msg": "Please enter format: YYYYmmddHHMM"})
+    logger.error("trigger time wanted at" + time)
+    return render(request, 'admin.html', {"msg": "Setting success"})
+
 
 def tutorpage(request, myuser_id, tutor_id):
     if not request.user.is_authenticated(): #visitor or client
         return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     tutor = get_object_or_404(Tutor, pk=tutor_id)
     return render(request, 'searchtutors/tutorpage.html', {'user':myuser, 'tutor': tutor})
@@ -86,18 +107,24 @@ def tutorpage(request, myuser_id, tutor_id):
 def myaccount(request, myuser_id):
     if not request.user.is_authenticated(): #visitor or client
         return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     return render(request, 'myaccount/myaccount.html', {'user':myuser })
 
 def myprofile(request, myuser_id):
     if not request.user.is_authenticated(): #visitor or client
         return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     return render(request, 'myaccount/myprofile.html', {'user':myuser })
 
 def mybooking(request, myuser_id):
     if not request.user.is_authenticated(): #visitor or client
         return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     mystudent = Student.objects.filter(myuser=myuser)
     mytutor = Tutor.objects.filter(myuser=myuser)
@@ -118,6 +145,8 @@ def mybooking(request, myuser_id):
 def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyymmddhhmm string)
     if not request.user.is_authenticated(): #visitor or client
         return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = MyUser.objects.get(pk=myuser_id)
 
     begintime = request.POST['starttime']
@@ -204,6 +233,8 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
 def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tutor_id):
     if not request.user.is_authenticated(): #visitor or client
         return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
     #begintime = request.POST['starttime']
     tutorial_session =get_object_or_404(TutorialSession, pk=tutorial_sessions_id)
     tutor = tutorial_session.tutor
@@ -256,6 +287,8 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
 def mywallet(request, myuser_id):
     if not request.user.is_authenticated(): #visitor or client
         return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     student_list = ""
     tutor_list = ""
@@ -273,6 +306,8 @@ def mywallet(request, myuser_id):
 def message(request, myuser_id):
     if not request.user.is_authenticated(): #visitor or client
         return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     messages = Notification.objects.filter(myuser=myuser)
     return render(request, 'message/message.html', {'user': myuser, 'messages': messages})
@@ -333,7 +368,7 @@ def register_page(request):
         myuser.wallet.balance = myuser.wallet.balance + 10"""
 
 
-def search_tutor_name(request,myuser_id ):
+def search_tutor_name(request,myuser_id ): #TODO don't know what should admin be able to see lol
     tutors = []
     tutors=Tutor.objects.all()
     show_results = False
