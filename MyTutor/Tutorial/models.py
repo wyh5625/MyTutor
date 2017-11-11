@@ -12,14 +12,6 @@ class Wallet(models.Model):
             return myuser.user.username + "'s wallet"
 
 
-"""class User(models.Model):
-    user_name = models.CharField(max_length=200)
-    name = models.CharField(max_length=200)
-    password = models.CharField(max_length=200)
-    #tutorial_session = models.CharField(max_length=336)
-    wallet = models.ForeignKey(Wallet, on_delete = models.CASCADE)
-    def __str__(self):
-        return self.name"""
 
 class MyUser(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE )
@@ -94,7 +86,16 @@ class Tag(models.Model):
 status map:
 0   upcoming can cancel
 1   upcoming cannot cancel
-2   attended
+2   attended(invite to evaluate)
 3   cancelled
 4   evaluated
+5   in progress
+"""
+
+"""
+booking map:
+0   tutor set unavailable
+1   available
+2   booked
+3   passed/has been within 24 hours so status cannot be changed, this is more powerful than previous three
 """

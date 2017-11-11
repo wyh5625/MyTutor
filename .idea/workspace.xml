@@ -36,10 +36,12 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MyTutor/Tutorial/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="406">
-              <caret line="454" column="0" lean-forward="true" selection-start-line="454" selection-start-column="0" selection-end-line="454" selection-end-column="0" />
+            <state relative-caret-position="2539">
+              <caret line="533" column="0" lean-forward="true" selection-start-line="533" selection-start-column="0" selection-end-line="533" selection-end-column="0" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
+                <marker date="1510399843485" expanded="true" signature="3613:3915" ph="..." />
+                <marker date="1510399843485" expanded="true" signature="25356:25576" ph="..." />
               </folding>
             </state>
           </provider>
@@ -80,8 +82,8 @@
       <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/MyTutor/Tutorial/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="322">
-              <caret line="87" column="42" lean-forward="true" selection-start-line="87" selection-start-column="42" selection-end-line="87" selection-end-column="42" />
+            <state relative-caret-position="509">
+              <caret line="79" column="42" lean-forward="true" selection-start-line="79" selection-start-column="42" selection-end-line="79" selection-end-column="42" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
               </folding>
@@ -423,6 +425,8 @@
           <caret line="214" column="0" lean-forward="false" selection-start-line="214" selection-start-column="0" selection-end-line="214" selection-end-column="0" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
+            <marker date="1510399843485" expanded="true" signature="3613:3915" ph="..." />
+            <marker date="1510399843485" expanded="true" signature="25356:25576" ph="..." />
           </folding>
         </state>
       </provider>
@@ -498,6 +502,8 @@
           <caret line="229" column="37" lean-forward="true" selection-start-line="229" selection-start-column="37" selection-end-line="229" selection-end-column="37" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
+            <marker date="1510399843485" expanded="true" signature="3613:3915" ph="..." />
+            <marker date="1510399843485" expanded="true" signature="25356:25576" ph="..." />
           </folding>
         </state>
       </provider>
@@ -544,6 +550,8 @@
           <caret line="22" column="27" lean-forward="false" selection-start-line="22" selection-start-column="27" selection-end-line="22" selection-end-column="27" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
+            <marker date="1510399843485" expanded="true" signature="3613:3915" ph="..." />
+            <marker date="1510399843485" expanded="true" signature="25356:25576" ph="..." />
           </folding>
         </state>
       </provider>
@@ -590,6 +598,8 @@
           <caret line="34" column="45" lean-forward="true" selection-start-line="34" selection-start-column="45" selection-end-line="34" selection-end-column="45" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
+            <marker date="1510399843485" expanded="true" signature="3613:3915" ph="..." />
+            <marker date="1510399843485" expanded="true" signature="25356:25576" ph="..." />
           </folding>
         </state>
       </provider>
@@ -703,18 +713,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/MyTutor/Tutorial/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="406">
-          <caret line="454" column="0" lean-forward="true" selection-start-line="454" selection-start-column="0" selection-end-line="454" selection-end-column="0" />
+        <state relative-caret-position="2539">
+          <caret line="533" column="0" lean-forward="true" selection-start-line="533" selection-start-column="0" selection-end-line="533" selection-end-column="0" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
+            <marker date="1510399843485" expanded="true" signature="3613:3915" ph="..." />
+            <marker date="1510399843485" expanded="true" signature="25356:25576" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MyTutor/Tutorial/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="322">
-          <caret line="87" column="42" lean-forward="true" selection-start-line="87" selection-start-column="42" selection-end-line="87" selection-end-column="42" />
+        <state relative-caret-position="509">
+          <caret line="79" column="42" lean-forward="true" selection-start-line="79" selection-start-column="42" selection-end-line="79" selection-end-column="42" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>
