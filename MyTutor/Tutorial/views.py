@@ -360,6 +360,22 @@ def search_tutor_tag(request,myuser_id ):
     query = []
     show_tags = []
     tag_of_tutor = []
+    #option = request.GET["option"]
+    search_private = False
+    search_contracted = False
+    if 'type' in request.GET:
+        type = request.GET["type"]
+        if type == "PrivateTutor":
+            search_private = True
+        elif type == "ContractedTutor":
+            search_contracted = True
+        else:
+            search_private = True
+            search_contracted = True
+    privateTutor = []
+    PT = PrivateTutor.objects.all()
+    for t in PT:
+        privateTutor.append(t.tutor)
     if 'tags' in request.GET:
         logger.error("has tag")
         query = request.GET['tags']
@@ -378,11 +394,32 @@ def search_tutor_tag(request,myuser_id ):
                         else:
                             i = tutor_set.index(tut)
                             show_tags[i].append(tag[0].name)
+    result_tutor = []
+    result_tags = []
+    if search_contracted and not search_private:
+        for tut in tutor_set:
+            if tut not in privateTutor:
+                result_tutor.append(tut)
+                result_tags.append(show_tags[tutor_set.index(tut)])
+    elif not search_contracted and search_private:
+        for tut in tutor_set:
+            if tut in privateTutor:
+                result_tutor.append(tut)
+                result_tags.append(show_tags[tutor_set.index(tut)])
+    else:
+        result_tutor = tutor_set
+        result_tags = show_tags
 
-    logger.error(tutor_set)
-    logger.error(show_tags)
+    '''
+    if 'course' in request.GET:
+        query = request.GET['course']
+        if query:
+'''
+
+    logger.error(result_tutor)
+    logger.error(result_tags)
     variables = {
-        "tutors": tutor_set
+        "tutors": result_tutor, "tags": result_tags
     }
     return render(request, 'searchtutors/index.html', variables)
 
