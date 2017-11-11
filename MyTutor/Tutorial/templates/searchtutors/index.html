@@ -19,7 +19,7 @@
             <!-- planner-->
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 planner">
               <div class="planner-block" id="planner" value="testing">
-                <form class="form-planner form-horizontal" id="SearchByTag" action="{% url 'search_tutor_tag' user.id %}" method="get">
+                <form class="form-planner form-horizontal" id="SearchByTag" action="{% url 'Tutorial:search_tutor_tag' user.id %}" method="get">
                     {% csrf_token %}
                   <div class="row" >
                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -34,6 +34,7 @@
                       <div class="form-group">
                         <label>University course</label>
                         <select class="form-control __plannerSelect">
+                              <option value=""></option>
                               <option value="">COMP 3297</option>
                         </select>
                       </div>
@@ -75,6 +76,7 @@
                           <label>Hourly Price Rate</label>
                           <div id="slider-range"></div>
                           <div id="amount"><span id="amount1"></span><span id="amount2"></span></div>
+                           <script>alert(document.getElementById("amount1").innerHTML);alert(document.getElementById("amount2").innerHTML);</script>
                         </div>
                       </div>
                   </div>
@@ -105,6 +107,9 @@
           <ul class="row best-tutor_ul">
               {%for Tutor in tutors%}
             <li class="col-lg-4 col-md-4 col-sm-6 col-xs-12 best-tutor_li">
+            <script>
+                alert("{{ Tutor.myuser.user.username }}");
+                  </script>
               <div class="best-tutor_img">
                 <a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}"><img src="/static/bootstrap/images/best-rooms/1.jpg" alt=""></a>
                 <div class="best-tutor_overlay">
@@ -238,13 +243,12 @@
 
             if (e.which == 13) {
                 e.preventDefault();
-                alert(strTags);
                 tags[i] = $("#subjectTags").val();
                 strTags = "<span style='background-color: #1f7e9a; color : white; margin : 1px; padding: 1px;'>X "+tags[i]+"</span>";
-                alert(strTags);
                 $("#tags").append(strTags);
-                 $("#subjectTags").val() = "";
-                $("#subjectTags").html()= "<input type='text' class='form-control' placeholder='Enter the key words to seach tags' id='subjectTags'name='tags' value='"+tags+"' >";
+                 $("#subjectTags").val("");
+                $("#subjectTags").html( "<input type='text' class='form-control' placeholder='Enter the key words to seach tags' id='subjectTags'name='tags' value='"+tags+"' >");
+                i++;
             }
 
         });
