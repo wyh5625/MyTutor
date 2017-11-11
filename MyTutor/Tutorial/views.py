@@ -13,6 +13,9 @@ import time
 from Tutorial.models import *
 from decimal import Decimal
 from django.template import RequestContext
+import logging
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 from django.conf import settings
 import smtplib
@@ -77,7 +80,8 @@ def index(request, myuser_id):
 
     all_tutors = Tutor.objects.all()
     private_tutors = PrivateTutor.objects.all()
-    params = {"user": myuser, "latest_Tutor_list": all_tutors, "tutors": all_tutors }
+    zipped = zip(all_tutors, all_tutors)
+    params = {"user": myuser, "latest_Tutor_list": all_tutors, "tutors": zipped}
     return render(request, 'searchtutors/index.html', params)
 
 def adminpage(request):
@@ -399,6 +403,7 @@ def search_tutor_tag(request,myuser_id ):
     search_private = False
     search_contracted = False
     if 'type' in request.GET:
+        logger.error("has type")
         type = request.GET["type"]
         if type == "PrivateTutor":
             search_private = True
@@ -432,6 +437,7 @@ def search_tutor_tag(request,myuser_id ):
     result_tutor = []
     result_tags = []
     if search_contracted and not search_private:
+        logger.error("contracted tutor")
         for tut in tutor_set:
             if tut not in privateTutor:
                 result_tutor.append(tut)
@@ -445,16 +451,14 @@ def search_tutor_tag(request,myuser_id ):
         result_tutor = tutor_set
         result_tags = show_tags
 
-    '''
-    if 'course' in request.GET:
-        query = request.GET['course']
-        if query:
-'''
+    logger.error(request.GET('course'))
+
+
 
     logger.error(result_tutor)
     logger.error(result_tags)
+    zipped = zip(result_tutor,result_tags)
     variables = {
-        "tutors": result_tutor, "tags": result_tags
+        "tutors": zipped
     }
     return render(request, 'searchtutors/index.html', variables)
-
