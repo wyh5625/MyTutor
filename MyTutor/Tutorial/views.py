@@ -178,8 +178,8 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
     notification.save()
 
     #this is to send email through sendgrid
-    if tutor.myuser.user.email:
-        send_mail('Booking Notification', content, settings.EMAIL_HOST_USER, [tutor.myuser.user.email], fail_silently=False)
+    #if tutor.myuser.user.email:
+        #send_mail('Booking Notification', content, settings.EMAIL_HOST_USER, [tutor.myuser.user.email], fail_silently=False)
 
     tutor.save()
     tutor.tutorialsession_set.create(starttime=begintime, status=0, tutor=tutor, student=student)
@@ -236,8 +236,8 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
     notification.save()
 
     #this is to send email through sendgrid
-    if tutor.myuser.user.email:
-        send_mail('Booking Cancel Notification', content, settings.EMAIL_HOST_USER, [tutor.myuser.user.email], fail_silently=False)
+    #if tutor.myuser.user.email:
+        #send_mail('Booking Cancel Notification', content, settings.EMAIL_HOST_USER, [tutor.myuser.user.email], fail_silently=False)
 
     #wallet repaying
     wallet = mystudent.myuser.wallet
@@ -257,7 +257,15 @@ def mywallet(request, myuser_id):
     if not request.user.is_authenticated(): #visitor or client
         return render(request, 'home.html')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
-    return render(request, 'myaccount/mywallet.html', {'user':myuser })
+    student_list = ""
+    tutor_list = ""
+    if Student.objects.filter(myuser=myuser):
+        mystudent = Student.objects.get(myuser=myuser)
+        student_list = TutorialSession.objects.filter(student=mystudent)
+    if Tutor.objects.filter(myuser=myuser):
+        mytutor = Tutor.objects.get(myuser=myuser)
+        tutor_list = TutorialSession.objects.filter(tutor=mytutor)
+    return render(request, 'myaccount/mywallet.html', {'user':myuser, 'student_list':student_list, 'tutor_list':tutor_list })
 
 #def forget_password(request, myuser_id):
 
