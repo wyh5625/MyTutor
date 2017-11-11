@@ -393,7 +393,10 @@ def search_tutor_tag(request,myuser_id ):
     tutors = []
     tutor_set = []
     query = []
+    show_tags = []
+    tag_of_tutor = []
     if 'tags' in request.GET:
+        logger.error("has tag")
         query = request.GET['tags']
         if query:
             tagset = query.split(',')
@@ -404,9 +407,17 @@ def search_tutor_tag(request,myuser_id ):
                     for tut in tutors:
                         if tut not in tutor_set:
                             tutor_set.append(tut)
+                            tag_of_tutor = []
+                            tag_of_tutor.append(tag[0].name)
+                            show_tags.append(tag_of_tutor)
+                        else:
+                            i = tutor_set.index(tut)
+                            show_tags[i].append(tag[0].name)
+
     logger.error(tutor_set)
+    logger.error(show_tags)
     variables = {
-        "tutor_set": tutor_set
+        "tutors": tutor_set
     }
     return render(request, 'searchtutors/index.html', variables)
 
