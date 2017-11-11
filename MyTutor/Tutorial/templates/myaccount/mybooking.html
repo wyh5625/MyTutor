@@ -14,12 +14,11 @@
 {% endblock %}
 {% block right %}
 <div id="content">
-    {% if session_list != "" %}
+    {% if isstudent != "" %} <!--should judge using isstudent instead of booklist non empty-->
     <section class="section">
       <div class="container">
         <div class="title-main"><h2 class="h2">Booking Record[student]<span class="title-secondary">啦啦啦啦啦啦啦啦啦啦啦╭(╯^╰)╮</span></h2></div>
-
-        <div class="row">
+         <div class="row">
           <div class="col-lg-3 col-md-4 col-sm-6">
             <h3 class="service_title"><i class="fa fa-globe"></i> Time</h3>
           </div>
@@ -36,6 +35,7 @@
             <h3 class="service_title"></i> Canceled</h3>
           </div>
         </div>
+          {% if session_list != "" %}
           {% for session in  session_list %}
                <div class="row">
           <div class="col-lg-3 col-md-4 col-sm-6">
@@ -49,22 +49,30 @@
           </div>
                     <script>
 
-                      if ("{{ session.status }}" == '0' || "{{ session.status }}" == '1')
+                     if ("{{ session.status }}" == '0')
                     {
                        document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
                            "            <h3 class=\"service_title\">Upcoming</h3>" +
                            "          </div>");
-                    }else if("{{ session.status }}" == '2'){
+                    }else if("{{ session.status }}" == '1'){
+                           document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
+                           "            <h3 class=\"service_title\">Can't Cancel</h3>" +
+                           "          </div>");
+                      }else if("{{ session.status }}" == '2'){
                           document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
                            "            <h3 class=\"service_title\">Attended</h3>" +
                            "          </div>");
                       }else if("{{ session.status }}" == '3'){
                           document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
-                           "            <h3 class=\"service_title\"> Canceled</h3>" +
+                           "            <h3 class=\"service_title\">Canceled</h3>" +
                            "          </div>");
                       }else if("{{ session.status }}" == '4'){
                           document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
                            "            <h3 class=\"service_title\">Envaluated</h3>" +
+                           "          </div>");
+                      }else if("{{ session.status }}" == '5'){
+                          document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
+                           "            <h3 class=\"service_title\">In progress</h3>" +
                            "          </div>");
                       }
                     </script>
@@ -88,10 +96,11 @@
                 </script>
         </div>
           {% endfor %}
+          {% endif %}
       </div>
     </section>
     {% endif %}
-    {% if booked_list != "" %}
+    {% if istutor != "" %}
     <section class="section">
       <div class="container">
         <div class="title-main"><h2 class="h2">Booking Record[tutor]<span class="title-secondary">啦啦啦啦啦啦啦啦啦啦啦╭(╯^╰)╮</span></h2></div>
@@ -110,6 +119,7 @@
             <h3 class="service_title"><i class="fa fa-life-ring"></i>Status </h3>
           </div>
         </div>
+          {% if booked_list != "" %}
           {% for session in  booked_list %}
                <div class="row">
           <div class="col-lg-3 col-md-4 col-sm-6">
@@ -123,22 +133,30 @@
           </div>
                     <script>
 
-                      if ("{{ session.status }}" == '0' || "{{ session.status }}" == '1')
+                      if ("{{ session.status }}" == '0')
                     {
                        document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
                            "            <h3 class=\"service_title\">Upcoming</h3>" +
                            "          </div>");
-                    }else if("{{ session.status }}" == '2'){
+                    }else if("{{ session.status }}" == '1'){
+                           document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
+                           "            <h3 class=\"service_title\">Can't Cancel</h3>" +
+                           "          </div>");
+                      }else if("{{ session.status }}" == '2'){
                           document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
                            "            <h3 class=\"service_title\">Attended</h3>" +
                            "          </div>");
                       }else if("{{ session.status }}" == '3'){
                           document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
-                           "            <h3 class=\"service_title\"> Canceled</h3>" +
+                           "            <h3 class=\"service_title\">Canceled</h3>" +
                            "          </div>");
                       }else if("{{ session.status }}" == '4'){
                           document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
                            "            <h3 class=\"service_title\">Envaluated</h3>" +
+                           "          </div>");
+                      }else if("{{ session.status }}" == '5'){
+                          document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
+                           "            <h3 class=\"service_title\">In progress</h3>" +
                            "          </div>");
                       }
                     </script>
@@ -162,6 +180,7 @@
                 </script>
         </div>
           {% endfor %}
+          {% endif %}
       </div>
     </section>
     {% endif %}
