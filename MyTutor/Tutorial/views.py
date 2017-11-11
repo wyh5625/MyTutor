@@ -98,26 +98,27 @@ def triggersession(request):
     if bookingtime.minute != 0 and bookingtime.minute != 30:
         return render(request, 'admin.html', {"msg": "Minutes is not 00 or 30, so no effect"})
     locksession(time)
+    endsession(time)
     return render(request, 'admin.html', {"msg": "Setting success"})
 
-def locksession(time):
+def locksession(mytime):
     timeformat = '%Y%m%d%H%M'
-    reftime = datetime.strptime(time, timeformat)
-    #lock cancel
-    #begin tutorial
-
-
-    """for slot in TutorialSession.objects.all(): #for this tutor's session, for student is this student , for loop
-        if slot.starttime == time:
+    reftime = datetime.strptime(mytime, timeformat)
+    for slot in TutorialSession.objects.all(): #for this tutor's session, for student is this student , for loop
+        # begin tutorial
+        if slot.starttime == mytime:
             if slot.status == 0 or slot.status == 1: #meaning that this session is upcoming but not canceled
                 slot.status = 5 #set to in progress
                 slot.save()
-        else:"""
-
-
-
-
-
+        else:
+        # lock cancel
+            nowbooking = datetime.strptime(slot.starttime,timeformat)  # this is the yy mm dd format for what student wants to book
+            bookingtime = time.mktime(nowbooking.timetuple())  # transfrom nowbooking into time format, should expect this to be later
+            bookingreftime = time.mktime(reftime.timetuple()) # transform the reftime into time format
+            logger.error("This is slot's time " + str(bookingtime) + " and this is now time " + str(bookingreftime) + " and this is the time delta " + str((bookingtime - bookingreftime) / 3600))
+            if (slot.status == 0 and (bookingtime - bookingreftime) / 3600 <= 24): #if it is upcoming, make it cannot be canceled
+                slot.status = 1
+                slot.save()
 
     #close booking
     now = reftime #only test for within one week!!
@@ -160,10 +161,38 @@ def locksession(time):
         #TODO they should be two times, but curee
     return
 
-def endsession():
-    #end tutorial
-    #transaction
-    #review
+def endsession(mytime):
+    timeformat = '%Y%m%d%H%M'
+    reftime = datetime.strptime(mytime, timeformat)
+    bookingreftime = time.mktime(reftime.timetuple())
+
+    for slot in TutorialSession.objects.all(): #for this tutor's session, for student is this student , for loop
+
+        starttime = time.mktime(datetime.strptime(slot.starttime, timeformat).timetuple())
+        if ((slot.tutor.hourly_rate > 0 and (int(bookingreftime - starttime) == 3600)) or (slot.tutor.hourly_rate == 0 and (int(bookingreftime - starttime) == 1800))):
+            #private tutor and start for one hour, or contracted tutor and start for half an hour
+            if slot.status == 0 or slot.status == 1 or slot.status == 5: #meaning that this session is not cancelled, so will be asked to review
+                # end tutorial
+                slot.status = 2 #set to in progress
+                slot.save()
+
+                # transaction
+                slot.tutor.myuser.wallet.balance = slot.tutor.myuser.wallet.balance + slot.tutor.hourly_rate
+                slot.tutor.myuser.wallet.save()
+                now = datetime.now()
+                content = "System notification [ " + str(datetime(now.year, now.month, now.day, now.hour,
+                                                                  now.minute)) + " ]: You have completed the tutorial starting from " + str(
+                    datetime.strptime(slot.starttime, timeformat)) + " to " + str(reftime) + " with student " + slot.student.myuser.user.username + ", tuition fee " + str(slot.tutor.hourly_rate) + " has been transfered to your wallet"
+                notification = Notification(content=content, myuser=slot.tutor.myuser)
+                notification.save()
+
+                # review
+                content = "System notification [ " + str(datetime(now.year, now.month, now.day, now.hour,
+                                                                  now.minute)) + " ]: You have completed the tutorial starting from " + str(
+                    datetime.strptime(slot.starttime,
+                                      timeformat)) + " to " + str(reftime) + " with tutor " + slot.tutor.myuser.user.username + ", please evalute his/her performance!"
+                notification = Notification(content=content, myuser=slot.student.myuser)
+                notification.save()
     return
 
 
@@ -261,7 +290,7 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
     wallet = myuser.wallet
     if wallet.balance < tutor.hourly_rate * COMMISION: #if not enough money, failed of course
         return render(request, 'searchtutors/tutorpage.html',
-                      {'fail': "Your wallet does not have enough money", 'tutor': tutor, 'user': myuser, 'begintime': begintime})# fixme should report that not enough money
+                      {'fail': "Your wallet does not have enough money", 'tutor': tutor, 'user': myuser, 'begintime': begintime})
 
     #later on with beginAllSessions, we update the available string for every tutor each week at the end
     #day difference is because the 14-day long string starts from this Sunday, the first day of the week
@@ -272,13 +301,12 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
     timeslot = list(tutor.timeslot)
     timeslot[weekday * 24 + hour_diff] = '2' #meaning I book the session, 0 only means tutor doesn't want this session to be booked
     tutor.timeslot = "".join(timeslot)
-    tutor.myuser.wallet.balance = tutor.myuser.wallet.balance + tutor.hourly_rate
+    #tutor.myuser.wallet.balance = tutor.myuser.wallet.balance + tutor.hourly_rate
     tutor.myuser.wallet.save()
     content = "System notification [ " + str(datetime(now.year, now.month, now.day, now.hour,
                                                       now.minute)) + " ]: You have been booked on " + str(
         datetime.strptime(begintime,
-                          timeformat)) + " with student " + student.myuser.user.username + " ,with wallet balance added by " + str(
-        tutor.hourly_rate) + " to " + str(tutor.myuser.wallet.balance)
+                          timeformat)) + " with student " + student.myuser.user.username
     notification = Notification(content=content, myuser=tutor.myuser)
     notification.save()
 
@@ -290,7 +318,7 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
     tutor.tutorialsession_set.create(starttime=begintime, status=0, tutor=tutor, student=student)
     #wallet deduction
     wallet.balance = wallet.balance - Decimal.from_float(
-        tutor.hourly_rate * COMMISION)  # fixme didn't add money to tutor account
+        tutor.hourly_rate * COMMISION)
     wallet.save()
     # message delivering
     content = "System notification [ " + str(datetime(now.year, now.month, now.day, now.hour,
@@ -329,16 +357,15 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
     timeslot = list(tutor.timeslot)
     timeslot[weekday * 24 + hour_diff] = '1'
     tutor.timeslot = "".join(timeslot)
-    tutor.myuser.wallet.balance = tutor.myuser.wallet.balance - tutor.hourly_rate
-    tutor.myuser.wallet.save()
+    #tutor.myuser.wallet.balance = tutor.myuser.wallet.balance - tutor.hourly_rate
+    #tutor.myuser.wallet.save()
     tutor.save()
     tutorial_session.status = 3
     tutorial_session.save()
     content = "System notification [ " + str(
         datetime(now.year, now.month, now.day, now.hour, now.minute)) + " ]: Your following tutoring session has been cancelled:" + str(
         datetime.strptime(tutorial_session.starttime,
-                          timeformat)) + " with student " + mystudent.myuser.user.username + " ,with wallet deduced by " \
-              + str(tutor.hourly_rate) + " to " + str(tutor.myuser.wallet.balance)
+                          timeformat)) + " with student " + mystudent.myuser.user.username
     notification = Notification(content=content, myuser=tutor.myuser)
     notification.save()
 
