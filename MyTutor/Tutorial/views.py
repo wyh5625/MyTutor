@@ -105,13 +105,13 @@ def locksession(mytime):
     timeformat = '%Y%m%d%H%M'
     reftime = datetime.strptime(mytime, timeformat)
     for slot in TutorialSession.objects.all(): #for this tutor's session, for student is this student , for loop
-        # begin tutorial
+        ## begin tutorial
         if slot.starttime == mytime:
             if slot.status == 0 or slot.status == 1: #meaning that this session is upcoming but not canceled
                 slot.status = 5 #set to in progress
                 slot.save()
         else:
-        # lock cancel
+        ## lock cancel
             nowbooking = datetime.strptime(slot.starttime,timeformat)  # this is the yy mm dd format for what student wants to book
             bookingtime = time.mktime(nowbooking.timetuple())  # transfrom nowbooking into time format, should expect this to be later
             bookingreftime = time.mktime(reftime.timetuple()) # transform the reftime into time format
@@ -120,7 +120,7 @@ def locksession(mytime):
                 slot.status = 1
                 slot.save()
 
-    #close booking
+    ## close booking
     now = reftime #only test for within one week!!
     #now = datetime.now()
     showingtime = time.mktime(datetime(now.year, now.month, now.day, 0, 0).timetuple())
@@ -158,7 +158,7 @@ def locksession(mytime):
             timeslot[weekday * 48 + half_hour_diff + 48 + 1] = '3' #meaning I book the session, 0 only means tutor doesn't want this session to be booked
             tutor.timeslot = "".join(timeslot)
             tutor.save()"""
-        #TODO they should be two times, but curee
+        #TODO they should be two times, but curently not, so byebye
     return
 
 def endsession(mytime):
@@ -172,11 +172,11 @@ def endsession(mytime):
         if ((slot.tutor.hourly_rate > 0 and (int(bookingreftime - starttime) == 3600)) or (slot.tutor.hourly_rate == 0 and (int(bookingreftime - starttime) == 1800))):
             #private tutor and start for one hour, or contracted tutor and start for half an hour
             if slot.status == 0 or slot.status == 1 or slot.status == 5: #meaning that this session is not cancelled, so will be asked to review
-                # end tutorial
+                ## end tutorial
                 slot.status = 2 #set to in progress
                 slot.save()
 
-                # transaction
+                ## transaction
                 slot.tutor.myuser.wallet.balance = slot.tutor.myuser.wallet.balance + slot.tutor.hourly_rate
                 slot.tutor.myuser.wallet.save()
                 now = datetime.now()
@@ -186,13 +186,15 @@ def endsession(mytime):
                 notification = Notification(content=content, myuser=slot.tutor.myuser)
                 notification.save()
 
-                # review
+                ## review
                 content = "System notification [ " + str(datetime(now.year, now.month, now.day, now.hour,
                                                                   now.minute)) + " ]: You have completed the tutorial starting from " + str(
                     datetime.strptime(slot.starttime,
                                       timeformat)) + " to " + str(reftime) + " with tutor " + slot.tutor.myuser.user.username + ", please evalute his/her performance!"
                 notification = Notification(content=content, myuser=slot.student.myuser)
                 notification.save()
+
+                ## mytutor receives commision fee
     return
 
 
@@ -247,7 +249,6 @@ def mybooking(request, myuser_id):
         istutor = "1"
     else:
         booked=""
-        #TODO template should have if clause so if not student, do not display anything of record
     return render(request, 'myaccount/mybooking.html', {'user': myuser , 'session_list': booking, "booked_list": booked, 'isstudent': isstudent, 'istutor': istutor })
 
 def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyymmddhhmm string)
