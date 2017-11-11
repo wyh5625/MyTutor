@@ -232,19 +232,23 @@ def mybooking(request, myuser_id):
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     mystudent = Student.objects.filter(myuser=myuser)
     mytutor = Tutor.objects.filter(myuser=myuser)
+    isstudent = ""
+    istutor = ""
     #booking is the record as a student, booked is the record as a tutor
     if mystudent:
         mystudent = Student.objects.get(myuser = myuser)
         booking = TutorialSession.objects.filter(student=mystudent)
+        isstudent = "1"
     else:
-        booking=""
+        booking= ""
     if mytutor:
         mytutor = Tutor.objects.get(myuser=myuser)
         booked = TutorialSession.objects.filter(tutor=mytutor)
+        istutor = "1"
     else:
         booked=""
         #TODO template should have if clause so if not student, do not display anything of record
-    return render(request, 'myaccount/mybooking.html', {'user': myuser , 'session_list': booking, "booked_list": booked })
+    return render(request, 'myaccount/mybooking.html', {'user': myuser , 'session_list': booking, "booked_list": booked, 'isstudent': isstudent, 'istutor': istutor })
 
 def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyymmddhhmm string)
     if not request.user.is_authenticated(): #visitor or client
