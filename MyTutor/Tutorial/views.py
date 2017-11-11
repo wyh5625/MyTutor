@@ -317,6 +317,7 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
 
     #this is to send email through sendgrid
     #if tutor.myuser.user.email:
+        #logger.error("I try to send the following email: " + content)
         #send_mail('Booking Notification', content, settings.EMAIL_HOST_USER, [tutor.myuser.user.email], fail_silently=False)
 
     tutor.save()
