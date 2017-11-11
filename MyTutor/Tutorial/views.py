@@ -402,16 +402,8 @@ def search_tutor_tag(request,myuser_id ):
     #option = request.GET["option"]
     search_private = False
     search_contracted = False
-    if 'type' in request.GET:
-        logger.error("has type")
-        type = request.GET["type"]
-        if type == "PrivateTutor":
-            search_private = True
-        elif type == "ContractedTutor":
-            search_contracted = True
-        else:
-            search_private = True
-            search_contracted = True
+
+
     privateTutor = []
     PT = PrivateTutor.objects.all()
     for t in PT:
@@ -434,6 +426,15 @@ def search_tutor_tag(request,myuser_id ):
                         else:
                             i = tutor_set.index(tut)
                             show_tags[i].append(tag[0].name)
+    if 'type' in request.GET:
+        type = request.GET["type"]
+        if type == "PrivateTutor":
+            search_private = True
+        elif type == "ContractedTutor":
+            search_contracted = True
+        else:
+            search_private = True
+            search_contracted = True
     result_tutor = []
     result_tags = []
     if search_contracted and not search_private:
@@ -451,7 +452,11 @@ def search_tutor_tag(request,myuser_id ):
         result_tutor = tutor_set
         result_tags = show_tags
 
-    logger.error(request.GET('course'))
+
+    if 'course' in request.GET:
+        logger.error("has hffjwejfhkjhkjvhkjhfkdhfjjshkdjshjfhdkdhkjdskhskhkddkfjhd")
+        query = request.GET['course']
+
 
 
 

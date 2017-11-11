@@ -88,6 +88,8 @@ class Tag(models.Model):
     tutors = models.ManyToManyField(Tutor)
     def __str__(self):
         return self.name
+
+
 """
 status map:
 0   upcoming can cancel
