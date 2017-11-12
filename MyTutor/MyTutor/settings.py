@@ -117,6 +117,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.sendgrid.net' #smtp.gmail.com'
+EMAIL_HOST_PASSWORD = 'triangle1014' #my gmail password
+EMAIL_HOST_USER = 'triangleCZH' #my gmail username
+EMAIL_PORT = 587
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
 
 
 STATIC_URL = '/static/'

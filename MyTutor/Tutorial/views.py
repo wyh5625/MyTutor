@@ -330,9 +330,9 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
     notification.save()
 
     #this is to send email through sendgrid
-    #if tutor.myuser.user.email:
+    if tutor.myuser.user.email:
         #logger.error("I try to send the following email: " + content)
-        #send_mail('Booking Notification', content, settings.EMAIL_HOST_USER, [tutor.myuser.user.email], fail_silently=False)
+        send_mail('Booking Notification', content, settings.EMAIL_HOST_USER, [tutor.myuser.user.email], fail_silently=False)
 
     tutor.save()
     tutor.tutorialsession_set.create(starttime=begintime, status=0, tutor=tutor, student=student)
@@ -390,8 +390,8 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
     notification.save()
 
     #this is to send email through sendgrid
-    #if tutor.myuser.user.email:
-        #send_mail('Booking Cancel Notification', content, settings.EMAIL_HOST_USER, [tutor.myuser.user.email], fail_silently=False)
+    if tutor.myuser.user.email:
+        send_mail('Booking Cancel Notification', content, settings.EMAIL_HOST_USER, [tutor.myuser.user.email], fail_silently=False)
 
     #wallet repaying
     wallet = mystudent.myuser.wallet
