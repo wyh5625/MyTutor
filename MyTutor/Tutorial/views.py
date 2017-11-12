@@ -13,6 +13,7 @@ import time
 from Tutorial.models import *
 from decimal import Decimal
 from django.template import RequestContext
+from operator import itemgetter, attrgetter, methodcaller
 import logging
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -35,20 +36,18 @@ COMMISION = 1.05
 class HomePageView(TemplateView):
     def get(self, request, **kwargs):
         return render(request, 'index.html', context=None)
-'''
+
 class SearchedTutor(object):
-    name = ""
-    university = ""
+    tutor = ""
     hourly_rate = 0
-    type = ""
     tags = []
-    def __init__(self, name, university, hourly_rate, type, tags):
-        self.name = name
-        self.university = university
+    teachCourse = []
+    def __init__(self, tutor, hourly_rate, tags, teachCourse):
+        self.tutor = tutor
         self.hourly_rate = hourly_rate
-        self.type = type
         self.tags = tags
-'''
+        self.teachCourse = teachCourse
+
 #####homepage###
 def home(request):
     if not request.user.is_authenticated():
@@ -551,15 +550,30 @@ def search_tutor_tag(request,myuser_id ):
     # fourth filer
     priceFilter(request, tutor_set, show_tags, teach_course)
 
+    '''
     #fifth filter
     showOptionFilter(request, tutor_set, show_tags, teach_course)
-    '''
+
+    result_tutor = []
+    for tut in tutor_set:
+        outputTutor = SearchedTutor(tut, tut.hourly_rate, show_tags[tutor_set.index(tut)], teach_course[tutor_set.index(tut)])
+        logger.error(outputTutor.hourly_rate)
+        result_tutor.append(outputTutor)
+    sorted(result_tutor, key=lambda searchedtutor: searchedtutor.hourly_rate)
+    #orderFilter()
 
     logger.error(tutor_set)
     logger.error(show_tags)
     logger.error(teach_course)
 
-    zipped = zip(tutor_set,show_tags)
+    test_set = []
+    for tut in result_tutor:
+        test_set.append(tut.tutor)
+
+
+    logger.error(test_set)
+
+    zipped = zip(test_set,show_tags)
     variables = {
         "tutors": zipped
     }
@@ -662,16 +676,19 @@ def typeFilter(request, tutor_set, show_tags, teach_course):
             teach_course.append(ele)
 
 def priceFilter(request, tutor_set, show_tags, teach_course):
-    if 'price_range' in request.GET:
-        price_range = request.GET['price_range']
-        min = price_range.lowPrice
-        max = price_range.highPrice
+    if 'lowPrice' in request.GET:
+        logger.error("lowprice received")
+        logger.error(request.GET['lowPrice'])
+        '''
+        min = int(request.GET['lowPrice'])
+        max = int(request.GET['lowHigh'])
         for tut in tutor_set:
             if tut.hourly_rate < min or tut.hourly_rate > max:
                 i = tutor_set.index(tut)
                 tutor_set.remove(tut)
                 show_tags.pop(i)
                 teach_course.pop(i)
+                '''
 
 def showOptionFilter(request, tutor_set, show_tags, teach_course):
     new_tutor_set = []
@@ -682,8 +699,10 @@ def showOptionFilter(request, tutor_set, show_tags, teach_course):
         if option == "TutorWithin7Days":
             for tut in tutor_set:
                 available = tut.timeslot
-                length = available.length
-                weekslot = available[0:length/2]
+                length = len(available)
+                weekslot = available[0:int(length/2)]
+                logger.error("check timeslot")
+                logger.error(weekslot)
                 if '1' in weekslot:
                     new_tutor_set.append(tut)
                     new_show_tags.append(show_tags[tutor_set.index(tut)])

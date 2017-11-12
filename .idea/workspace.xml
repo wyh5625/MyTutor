@@ -26,8 +26,8 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MyTutor/Tutorial/templates/searchtutors/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-4619">
-              <caret line="36" column="57" lean-forward="false" selection-start-line="36" selection-start-column="57" selection-end-line="36" selection-end-column="57" />
+            <state relative-caret-position="81">
+              <caret line="73" column="37" lean-forward="true" selection-start-line="73" selection-start-column="37" selection-end-line="73" selection-end-column="37" />
               <folding />
             </state>
           </provider>
@@ -36,8 +36,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/MyTutor/Tutorial/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2320">
-              <caret line="726" column="40" lean-forward="false" selection-start-line="726" selection-start-column="40" selection-end-line="726" selection-end-column="40" />
+            <state relative-caret-position="258">
+              <caret line="560" column="40" lean-forward="true" selection-start-line="560" selection-start-column="40" selection-end-line="560" selection-end-column="40" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
               </folding>
@@ -71,7 +71,7 @@
       <file leaf-file-name="forms.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MyTutor/Tutorial/forms.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="351">
+            <state relative-caret-position="27">
               <caret line="16" column="33" lean-forward="false" selection-start-line="16" selection-start-column="33" selection-end-line="16" selection-end-column="33" />
               <folding>
                 <element signature="e#0#24#0" expanded="true" />
@@ -83,8 +83,8 @@
       <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MyTutor/Tutorial/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3">
-              <caret line="88" column="0" lean-forward="false" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
+            <state relative-caret-position="1134">
+              <caret line="58" column="22" lean-forward="true" selection-start-line="58" selection-start-column="22" selection-end-line="58" selection-end-column="22" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
               </folding>
@@ -146,6 +146,9 @@
       <find>3297</find>
       <find>univer</find>
       <find>set</find>
+      <find>price</find>
+      <find>rate low</find>
+      <find>rate</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -167,14 +170,14 @@
         <option value="$PROJECT_DIR$/MyTutor/MyTutor/settings.py" />
         <option value="$PROJECT_DIR$/MyTutor/Tutorial/admin.py" />
         <option value="$PROJECT_DIR$/MyTutor/Tutorial/models.py" />
-        <option value="$PROJECT_DIR$/MyTutor/Tutorial/views.py" />
         <option value="$PROJECT_DIR$/MyTutor/Tutorial/templates/searchtutors/index.html" />
+        <option value="$PROJECT_DIR$/MyTutor/Tutorial/views.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="783" />
-    <option name="y" value="116" />
+    <option name="x" value="530" />
+    <option name="y" value="27" />
     <option name="width" value="1473" />
     <option name="height" value="849" />
   </component>
@@ -275,7 +278,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="783" y="116" width="1473" height="849" extended-state="0" />
+    <frame x="530" y="27" width="1473" height="849" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33261028" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -711,7 +714,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/MyTutor/Tutorial/forms.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="351">
+        <state relative-caret-position="27">
           <caret line="16" column="33" lean-forward="false" selection-start-line="16" selection-start-column="33" selection-end-line="16" selection-end-column="33" />
           <folding>
             <element signature="e#0#24#0" expanded="true" />
@@ -719,28 +722,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/MyTutor/Tutorial/templates/searchtutors/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="81">
+          <caret line="73" column="37" lean-forward="true" selection-start-line="73" selection-start-column="37" selection-end-line="73" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/MyTutor/Tutorial/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3">
-          <caret line="88" column="0" lean-forward="false" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
+        <state relative-caret-position="1134">
+          <caret line="58" column="22" lean-forward="true" selection-start-line="58" selection-start-column="22" selection-end-line="58" selection-end-column="22" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MyTutor/Tutorial/templates/searchtutors/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4619">
-          <caret line="36" column="57" lean-forward="false" selection-start-line="36" selection-start-column="57" selection-end-line="36" selection-end-column="57" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/MyTutor/Tutorial/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2320">
-          <caret line="726" column="40" lean-forward="false" selection-start-line="726" selection-start-column="40" selection-end-line="726" selection-end-column="40" />
+        <state relative-caret-position="258">
+          <caret line="560" column="40" lean-forward="true" selection-start-line="560" selection-start-column="40" selection-end-line="560" selection-end-column="40" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>
