@@ -36,8 +36,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/MyTutor/Tutorial/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="258">
-              <caret line="560" column="40" lean-forward="true" selection-start-line="560" selection-start-column="40" selection-end-line="560" selection-end-column="40" />
+            <state relative-caret-position="123">
+              <caret line="569" column="0" lean-forward="true" selection-start-line="569" selection-start-column="0" selection-end-line="569" selection-end-column="0" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
               </folding>
@@ -51,8 +51,8 @@
             <state relative-caret-position="3213">
               <caret line="119" column="0" lean-forward="false" selection-start-line="119" selection-start-column="0" selection-end-line="119" selection-end-column="0" />
               <folding>
-                <marker date="1510471807136" expanded="true" signature="1590:1684" ph="..." />
-                <marker date="1510471807136" expanded="true" signature="1596:1684" ph="..." />
+                <marker date="1510477450621" expanded="true" signature="1590:1684" ph="..." />
+                <marker date="1510477450621" expanded="true" signature="1596:1684" ph="..." />
               </folding>
             </state>
           </provider>
@@ -176,8 +176,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="530" />
-    <option name="y" value="27" />
+    <option name="x" value="457" />
+    <option name="y" value="41" />
     <option name="width" value="1473" />
     <option name="height" value="849" />
   </component>
@@ -278,7 +278,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="530" y="27" width="1473" height="849" extended-state="0" />
+    <frame x="457" y="41" width="1473" height="849" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33261028" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -348,8 +348,8 @@
         <state relative-caret-position="1755">
           <caret line="65" column="14" lean-forward="false" selection-start-line="65" selection-start-column="14" selection-end-line="65" selection-end-column="14" />
           <folding>
-            <marker date="1510471807136" expanded="true" signature="1590:1684" ph="..." />
-            <marker date="1510471807136" expanded="true" signature="1596:1684" ph="..." />
+            <marker date="1510477450621" expanded="true" signature="1590:1684" ph="..." />
+            <marker date="1510477450621" expanded="true" signature="1596:1684" ph="..." />
           </folding>
         </state>
       </provider>
@@ -428,8 +428,8 @@
         <state relative-caret-position="1755">
           <caret line="65" column="14" lean-forward="true" selection-start-line="65" selection-start-column="14" selection-end-line="65" selection-end-column="14" />
           <folding>
-            <marker date="1510471807136" expanded="true" signature="1590:1684" ph="..." />
-            <marker date="1510471807136" expanded="true" signature="1596:1684" ph="..." />
+            <marker date="1510477450621" expanded="true" signature="1590:1684" ph="..." />
+            <marker date="1510477450621" expanded="true" signature="1596:1684" ph="..." />
           </folding>
         </state>
       </provider>
@@ -508,8 +508,8 @@
         <state relative-caret-position="1755">
           <caret line="65" column="14" lean-forward="true" selection-start-line="65" selection-start-column="14" selection-end-line="65" selection-end-column="14" />
           <folding>
-            <marker date="1510471807136" expanded="true" signature="1590:1684" ph="..." />
-            <marker date="1510471807136" expanded="true" signature="1596:1684" ph="..." />
+            <marker date="1510477450621" expanded="true" signature="1590:1684" ph="..." />
+            <marker date="1510477450621" expanded="true" signature="1596:1684" ph="..." />
           </folding>
         </state>
       </provider>
@@ -706,8 +706,8 @@
         <state relative-caret-position="3213">
           <caret line="119" column="0" lean-forward="false" selection-start-line="119" selection-start-column="0" selection-end-line="119" selection-end-column="0" />
           <folding>
-            <marker date="1510471807136" expanded="true" signature="1590:1684" ph="..." />
-            <marker date="1510471807136" expanded="true" signature="1596:1684" ph="..." />
+            <marker date="1510477450621" expanded="true" signature="1590:1684" ph="..." />
+            <marker date="1510477450621" expanded="true" signature="1596:1684" ph="..." />
           </folding>
         </state>
       </provider>
@@ -742,8 +742,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/MyTutor/Tutorial/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="258">
-          <caret line="560" column="40" lean-forward="true" selection-start-line="560" selection-start-column="40" selection-end-line="560" selection-end-column="40" />
+        <state relative-caret-position="123">
+          <caret line="569" column="0" lean-forward="true" selection-start-line="569" selection-start-column="0" selection-end-line="569" selection-end-column="0" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>

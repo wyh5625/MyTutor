@@ -131,6 +131,19 @@ def triggersession(request):
 def locksession(mytime):
     timeformat = '%Y%m%d%H%M'
     reftime = datetime.strptime(mytime, timeformat)
+    if reftime.weekday() == 6 and reftime.hour == 0 and reftime.minute == 0:
+        ## update the week of timeslot, if it is Sunday 00:00, then the timeslot should switch to a new week
+        for tutor in Tutor.objects.all():
+            if tutor.hourly_rate == 0:
+                trigger = 2
+            else: trigger = 1 #this is to distinguish between the two kinds
+            slotlist = tutor.timeslot
+            mid = 168 * trigger
+            first_half = slotlist[mid: ] #the first half should be the second half of previous slot, next week has become the current week
+            second_half = '1' * mid
+            tutor.timeslot = first_half + second_half
+            tutor.save()
+
     for slot in TutorialSession.objects.all(): #for this tutor's session, for student is this student , for loop
         ## begin tutorial
         if slot.starttime == mytime:
@@ -188,6 +201,7 @@ def locksession(mytime):
             tutor.save()"""
 
         #TODO they should be two times, but curently not, so byebye
+
     return
 
 def endsession(mytime):
