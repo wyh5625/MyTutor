@@ -27,11 +27,17 @@ class Student(models.Model):
         else:
             return self.myuser.user.username
 
+class University(models.Model):
+    name = models.CharField(max_length=64, unique=True)
+    def __str__(self):
+        return self.name
+
 class Tutor(models.Model):
     myuser = models.ForeignKey(MyUser, on_delete=models.CASCADE,null=True)
     timeslot = models.CharField(max_length=672, default="111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111") #for private tutor todo: should update every half an hour
     # 0-unavailable, 1-available, half an hour per digit, 336 timeslots is a week
     hourly_rate = models.IntegerField(default=0) #todo: eight digit for student so can tell if he have
+    university = models.ForeignKey(University, on_delete=models.CASCADE, null=True)
     def __str__(self):
         if self.myuser is None:
             return "null"
@@ -80,6 +86,15 @@ class Tag(models.Model):
     tutors = models.ManyToManyField(Tutor)
     def __str__(self):
         return self.name
+
+
+class Course(models.Model):
+    course_code = models.CharField(max_length=64, unique=True)
+    tutors = models.ManyToManyField(Tutor)
+    university = models.ForeignKey(University, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.course_code
+
 """
 status map:
 0   upcoming can cancel
