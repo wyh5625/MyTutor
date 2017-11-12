@@ -574,7 +574,7 @@ def search_tutor_tag(request,myuser_id ):
     if 'course' in request.GET:
         logger.error("has hffjwejfhkjhkjvhkjhfkdhfjjshkdjshjfhdkdhkjdskhskhkddkfjhd")
         query = request.GET['course']
-        
+
 
 
     logger.error(result_tutor)
