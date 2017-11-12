@@ -16,6 +16,7 @@ from django.template import RequestContext
 import logging
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
+from django.contrib.auth import views as auth_views
 
 from django.conf import settings
 import smtplib
@@ -80,6 +81,19 @@ def login(request):
 def logout(request):
     auth.logout(request)
     return HttpResponseRedirect('/Tutorial/')
+"""def password_reset(request):
+    return render( 'registration/password_reset_form.html')
+
+def password_reset_done(request):
+    return render('/registration/password_reset_done.html')
+
+def password_reset_confirm(requst):
+    return HttpResponseRedirect('/Tutorial/')
+
+def password_reset_complete(request):
+    return HttpResponseRedirect('/Tutorial/')"""
+
+
 ####search tutor####
 def index(request, myuser_id):
     if not request.user.is_authenticated(): #visitor or client
@@ -111,28 +125,31 @@ def triggersession(request):
     if bookingtime.minute != 0 and bookingtime.minute != 30:
         return render(request, 'admin.html', {"msg": "Minutes is not 00 or 30, so no effect"})
     locksession(time)
+
+    endsession(time)
     return render(request, 'admin.html', {"msg": "Setting success"})
 
-def locksession(time):
+def locksession(mytime):
     timeformat = '%Y%m%d%H%M'
-    reftime = datetime.strptime(time, timeformat)
-    #lock cancel
-    #begin tutorial
-
-
-    """for slot in TutorialSession.objects.all(): #for this tutor's session, for student is this student , for loop
-        if slot.starttime == time:
+    reftime = datetime.strptime(mytime, timeformat)
+    for slot in TutorialSession.objects.all(): #for this tutor's session, for student is this student , for loop
+        ## begin tutorial
+        if slot.starttime == mytime:
             if slot.status == 0 or slot.status == 1: #meaning that this session is upcoming but not canceled
                 slot.status = 5 #set to in progress
                 slot.save()
-        else:"""
+        else:
+        ## lock cancel
+            nowbooking = datetime.strptime(slot.starttime,timeformat)  # this is the yy mm dd format for what student wants to book
+            bookingtime = time.mktime(nowbooking.timetuple())  # transfrom nowbooking into time format, should expect this to be later
+            bookingreftime = time.mktime(reftime.timetuple()) # transform the reftime into time format
+            logger.error("This is slot's time " + str(bookingtime) + " and this is now time " + str(bookingreftime) + " and this is the time delta " + str((bookingtime - bookingreftime) / 3600))
+            if (slot.status == 0 and (bookingtime - bookingreftime) / 3600 <= 24): #if it is upcoming, make it cannot be canceled
+                slot.status = 1
+                slot.save()
 
+    ## close booking
 
-
-
-
-
-    #close booking
     now = reftime #only test for within one week!!
     #now = datetime.now()
     showingtime = time.mktime(datetime(now.year, now.month, now.day, 0, 0).timetuple())
@@ -170,13 +187,44 @@ def locksession(time):
             timeslot[weekday * 48 + half_hour_diff + 48 + 1] = '3' #meaning I book the session, 0 only means tutor doesn't want this session to be booked
             tutor.timeslot = "".join(timeslot)
             tutor.save()"""
-        #TODO they should be two times, but curee
+
+        #TODO they should be two times, but curently not, so byebye
     return
 
-def endsession():
-    #end tutorial
-    #transaction
-    #review
+def endsession(mytime):
+    timeformat = '%Y%m%d%H%M'
+    reftime = datetime.strptime(mytime, timeformat)
+    bookingreftime = time.mktime(reftime.timetuple())
+
+    for slot in TutorialSession.objects.all(): #for this tutor's session, for student is this student , for loop
+
+        starttime = time.mktime(datetime.strptime(slot.starttime, timeformat).timetuple())
+        if ((slot.tutor.hourly_rate > 0 and (int(bookingreftime - starttime) == 3600)) or (slot.tutor.hourly_rate == 0 and (int(bookingreftime - starttime) == 1800))):
+            #private tutor and start for one hour, or contracted tutor and start for half an hour
+            if slot.status == 0 or slot.status == 1 or slot.status == 5: #meaning that this session is not cancelled, so will be asked to review
+                ## end tutorial
+                slot.status = 2 #set to in progress
+                slot.save()
+
+                ## transaction
+                slot.tutor.myuser.wallet.balance = slot.tutor.myuser.wallet.balance + slot.tutor.hourly_rate
+                slot.tutor.myuser.wallet.save()
+                now = datetime.now()
+                content = "System notification [ " + str(datetime(now.year, now.month, now.day, now.hour,
+                                                                  now.minute)) + " ]: You have completed the tutorial starting from " + str(
+                    datetime.strptime(slot.starttime, timeformat)) + " to " + str(reftime) + " with student " + slot.student.myuser.user.username + ", tuition fee " + str(slot.tutor.hourly_rate) + " has been transfered to your wallet"
+                notification = Notification(content=content, myuser=slot.tutor.myuser)
+                notification.save()
+
+                ## review
+                content = "System notification [ " + str(datetime(now.year, now.month, now.day, now.hour,
+                                                                  now.minute)) + " ]: You have completed the tutorial starting from " + str(
+                    datetime.strptime(slot.starttime,
+                                      timeformat)) + " to " + str(reftime) + " with tutor " + slot.tutor.myuser.user.username + ", please evalute his/her performance!"
+                notification = Notification(content=content, myuser=slot.student.myuser)
+                notification.save()
+
+                ## mytutor receives commision fee
     return
 
 
@@ -216,19 +264,22 @@ def mybooking(request, myuser_id):
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     mystudent = Student.objects.filter(myuser=myuser)
     mytutor = Tutor.objects.filter(myuser=myuser)
+    isstudent = ""
+    istutor = ""
     #booking is the record as a student, booked is the record as a tutor
     if mystudent:
         mystudent = Student.objects.get(myuser = myuser)
         booking = TutorialSession.objects.filter(student=mystudent)
+        isstudent = "1"
     else:
-        booking=""
+        booking= ""
     if mytutor:
         mytutor = Tutor.objects.get(myuser=myuser)
         booked = TutorialSession.objects.filter(tutor=mytutor)
+        istutor = "1"
     else:
         booked=""
-        #TODO template should have if clause so if not student, do not display anything of record
-    return render(request, 'myaccount/mybooking.html', {'user': myuser , 'session_list': booking, "booked_list": booked })
+    return render(request, 'myaccount/mybooking.html', {'user': myuser , 'session_list': booking, "booked_list": booked, 'isstudent': isstudent, 'istutor': istutor })
 
 def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyymmddhhmm string)
     if not request.user.is_authenticated(): #visitor or client
@@ -274,7 +325,7 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
     wallet = myuser.wallet
     if wallet.balance < tutor.hourly_rate * COMMISION: #if not enough money, failed of course
         return render(request, 'searchtutors/tutorpage.html',
-                      {'fail': "Your wallet does not have enough money", 'tutor': tutor, 'user': myuser, 'begintime': begintime})# fixme should report that not enough money
+                      {'fail': "Your wallet does not have enough money", 'tutor': tutor, 'user': myuser, 'begintime': begintime})
 
     #later on with beginAllSessions, we update the available string for every tutor each week at the end
     #day difference is because the 14-day long string starts from this Sunday, the first day of the week
@@ -285,25 +336,25 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
     timeslot = list(tutor.timeslot)
     timeslot[weekday * 24 + hour_diff] = '2' #meaning I book the session, 0 only means tutor doesn't want this session to be booked
     tutor.timeslot = "".join(timeslot)
-    tutor.myuser.wallet.balance = tutor.myuser.wallet.balance + tutor.hourly_rate
+    #tutor.myuser.wallet.balance = tutor.myuser.wallet.balance + tutor.hourly_rate
     tutor.myuser.wallet.save()
     content = "System notification [ " + str(datetime(now.year, now.month, now.day, now.hour,
                                                       now.minute)) + " ]: You have been booked on " + str(
         datetime.strptime(begintime,
-                          timeformat)) + " with student " + student.myuser.user.username + " ,with wallet balance added by " + str(
-        tutor.hourly_rate) + " to " + str(tutor.myuser.wallet.balance)
+                          timeformat)) + " with student " + student.myuser.user.username
     notification = Notification(content=content, myuser=tutor.myuser)
     notification.save()
 
     #this is to send email through sendgrid
     #if tutor.myuser.user.email:
+        #logger.error("I try to send the following email: " + content)
         #send_mail('Booking Notification', content, settings.EMAIL_HOST_USER, [tutor.myuser.user.email], fail_silently=False)
 
     tutor.save()
     tutor.tutorialsession_set.create(starttime=begintime, status=0, tutor=tutor, student=student)
     #wallet deduction
     wallet.balance = wallet.balance - Decimal.from_float(
-        tutor.hourly_rate * COMMISION)  # fixme didn't add money to tutor account
+        tutor.hourly_rate * COMMISION)
     wallet.save()
     # message delivering
     content = "System notification [ " + str(datetime(now.year, now.month, now.day, now.hour,
@@ -342,16 +393,15 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
     timeslot = list(tutor.timeslot)
     timeslot[weekday * 24 + hour_diff] = '1'
     tutor.timeslot = "".join(timeslot)
-    tutor.myuser.wallet.balance = tutor.myuser.wallet.balance - tutor.hourly_rate
-    tutor.myuser.wallet.save()
+    #tutor.myuser.wallet.balance = tutor.myuser.wallet.balance - tutor.hourly_rate
+    #tutor.myuser.wallet.save()
     tutor.save()
     tutorial_session.status = 3
     tutorial_session.save()
     content = "System notification [ " + str(
         datetime(now.year, now.month, now.day, now.hour, now.minute)) + " ]: Your following tutoring session has been cancelled:" + str(
         datetime.strptime(tutorial_session.starttime,
-                          timeformat)) + " with student " + mystudent.myuser.user.username + " ,with wallet deduced by " \
-              + str(tutor.hourly_rate) + " to " + str(tutor.myuser.wallet.balance)
+                          timeformat)) + " with student " + mystudent.myuser.user.username
     notification = Notification(content=content, myuser=tutor.myuser)
     notification.save()
 
@@ -576,7 +626,6 @@ def typeFilter(request, tutor_set, show_tags, teach_course):
             search_private = True
         elif type == "ContractedTutor":
             search_contracted = True
-
     result_tutor = []
     result_tags = []
     result_course = []
