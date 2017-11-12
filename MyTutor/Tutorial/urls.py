@@ -1,6 +1,7 @@
 from django.conf.urls import url
 
 from . import views
+from django.contrib.auth.views import login, logout, password_reset, password_reset_done, password_reset_confirm,password_reset_complete
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import login, logout
 app_name = 'Tutorial'
@@ -21,7 +22,9 @@ urlpatterns = [
     url(r'^logout/$', views.logout, name='logout'),
     url(r'^register/$', views.register_page, name='register'),
     url(r'^(?P<myuser_id>[0-9]+)/searchTutorName/$', views.search_tutor_name, name='search_tutor_name'),
-url(r'^(?P<myuser_id>[0-9]+)/searchTutorTag/$', views.search_tutor_tag, name='search_tutor_tag')
+    url(r'^(?P<myuser_id>[0-9]+)/searchTutorTag/$', views.search_tutor_tag, name='search_tutor_tag'),
+
+
     #url(r'^registerSuccess/$', views.register_page, name='registerSuccess'),
     #test
 ]
