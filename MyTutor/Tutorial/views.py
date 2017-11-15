@@ -22,7 +22,7 @@ from django.contrib.auth import views as auth_views
 from django.conf import settings
 import smtplib
 from django.core.mail import send_mail
-
+import operator
 import logging
 
 # Get an instance of a logger
@@ -567,13 +567,18 @@ def search_tutor_tag(request,myuser_id ):
     '''
     #fifth filter
     showOptionFilter(request, tutor_set, show_tags, teach_course)
-
+    if 'Rate high to low' in request.GET:
+        logger.error("high to low")
+    else : logger.error("no high to low")
+    if 'Rate low to high' in request.GET:
+        logger.error("low to high")
+    else : logger.error("no low to high")
     result_tutor = []
     for tut in tutor_set:
         outputTutor = SearchedTutor(tut, tut.hourly_rate, show_tags[tutor_set.index(tut)], teach_course[tutor_set.index(tut)])
         logger.error(outputTutor.hourly_rate)
         result_tutor.append(outputTutor)
-    sorted(result_tutor, key=lambda searchedtutor: searchedtutor.hourly_rate)
+    result_tutor.sort(key=operator.attrgetter('hourly_rate'))
     #orderFilter()
 
     logger.error(tutor_set)
