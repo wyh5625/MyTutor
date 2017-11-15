@@ -22,7 +22,7 @@ from django.contrib.auth import views as auth_views
 from django.conf import settings
 import smtplib
 from django.core.mail import send_mail
-
+import operator
 import logging
 
 # Get an instance of a logger
