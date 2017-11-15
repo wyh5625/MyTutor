@@ -13,7 +13,7 @@ import time
 from Tutorial.models import *
 from decimal import Decimal
 from django.template import RequestContext
-from operator import itemgetter, attrgetter, methodcaller
+import operator
 import logging
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -567,32 +567,15 @@ def search_tutor_tag(request,myuser_id ):
     '''
     #fifth filter
     showOptionFilter(request, tutor_set, show_tags, teach_course)
-    if 'Rate high to low' in request.GET:
-        logger.error("high to low")
-    else : logger.error("no high to low")
-    if 'Rate low to high' in request.GET:
-        logger.error("low to high")
-    else : logger.error("no low to high")
-    result_tutor = []
-    for tut in tutor_set:
-        outputTutor = SearchedTutor(tut, tut.hourly_rate, show_tags[tutor_set.index(tut)], teach_course[tutor_set.index(tut)])
-        logger.error(outputTutor.hourly_rate)
-        result_tutor.append(outputTutor)
-    result_tutor.sort(key=operator.attrgetter('hourly_rate'))
-    #orderFilter()
+
+    orderFilter(request, tutor_set, show_tags, teach_course)
 
     logger.error(tutor_set)
     logger.error(show_tags)
     logger.error(teach_course)
 
-    test_set = []
-    for tut in result_tutor:
-        test_set.append(tut.tutor)
-
-
-    logger.error(test_set)
-
-    zipped = zip(test_set,show_tags)
+    #logger.error(t_set)
+    zipped = zip(tutor_set,show_tags)
     variables = {
         "tutors": zipped
     }
@@ -764,3 +747,24 @@ def universityFilter(request, tutor_set, show_tags, teach_course):
             for ele in new_teach_course:
                 teach_course.append(ele)
 
+def orderFilter(request, tutor_set, show_tags, teach_course):
+    result_tutor = []
+    for tut in tutor_set:
+        outputTutor = SearchedTutor(tut, tut.hourly_rate, show_tags[tutor_set.index(tut)],
+                                    teach_course[tutor_set.index(tut)])
+        result_tutor.append(outputTutor)
+    if 'order' in request.GET:
+        order = request.GET['order']
+        if order == "reverse":
+            result_tutor.sort(key=operator.attrgetter('hourly_rate'), reverse=True)
+        else:
+            result_tutor.sort(key=operator.attrgetter('hourly_rate'))
+    else:
+        result_tutor.sort(key=operator.attrgetter('hourly_rate'))
+    tutor_set.clear()
+    show_tags.clear()
+    teach_course.clear()
+    for tut in result_tutor:
+        tutor_set.append(tut.tutor)
+        show_tags.append(tut.tags)
+        teach_course.append(tut.teachCourse)
