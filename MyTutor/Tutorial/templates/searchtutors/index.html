@@ -255,9 +255,11 @@
 
 
     $(document).ready(function(){
-        var tags = new Array(10);
+
+         var tags = new Array(10);
         i = 0;
-        var strTags="";
+         var strTags="";
+
         $("#subjectTags").keypress(function (e) {
             var repeat = false;
             if (e.which == 13) {
@@ -277,10 +279,15 @@
                     }
                 }
                 if (repeat == false){
-                     strTags = "<span style='background-color: #1f7e9a; color : white; margin : 1px; padding: 1px;'>X "+tags[i]+"</span>";
+                    strTags = "<span style='background-color: lightgrey; color : darkred; padding : 2px; border:1px;'  id='deleteTags' target = '"+i+"'>X</span>";
+                     strTags += "<span style='background-color: lightgrey; color : black; margin : 2px; margin-left: 0; padding: 2px; ' id='tags_"+i+"'>"+tags[i]+"</span>";
                     $("#tags").append(strTags);
                      $("#subjectTags").val("");
-                     $("#subjectTags").html( "<input type='text' class='form-control' placeholder='Enter the key words to seach tags' id='subjectTags'name='tags' value='"+tags+"' >");
+                    var duck = "";
+                    for(var d = 0;d < 10;d++){
+                        duck += tags[0] + ",";
+                    }
+                     $("#subjectTags").html( "<input type='text' class='form-control' placeholder='Enter the key words to seach tags' id='subjectTags'name='tags' value='"+duck+"' >");
                     i++;
                  }
 
@@ -313,9 +320,25 @@
     }
 
 
-    });
 
     });
+
+    $(document).on('click', '#deleteTags', function(tags){
+        var intNum = parseInt($(this).attr("target"));
+        tags[intNum]="";
+        i--;
+        var tagID = "#tags_"+$(this).attr("target");
+        var duck = "";
+        for(var d = 0;d < 10;d++){
+            duck += tags[0] + ",";
+        }
+        $("#subjectTags").html( "<input type='text' class='form-control' placeholder='Enter the key words to seach tags' id='subjectTags'name='tags' value='"+duck+"' >");
+        $(this).remove();
+        $(tagID).remove();
+    });
+    });
+
+
 
 {% endblock %}
 

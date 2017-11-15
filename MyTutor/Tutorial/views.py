@@ -560,11 +560,10 @@ def search_tutor_tag(request,myuser_id ):
     # third filter
     typeFilter(request, tutor_set, show_tags, teach_course)
 
-    '''
+
     # fourth filer
     priceFilter(request, tutor_set, show_tags, teach_course)
 
-    '''
     #fifth filter
     showOptionFilter(request, tutor_set, show_tags, teach_course)
 
@@ -582,10 +581,15 @@ def search_tutor_tag(request,myuser_id ):
     return render(request, 'searchtutors/index.html', variables)
 def tagFilter(request, tutor_set, show_tags, teach_course):
     if 'tags' in request.GET:
-        logger.error("has tag")
         query = request.GET['tags']
+        logger.error("-----tags-----")
+        logger.error(query)
+        logger.error(type(query))
+        logger.error("-----end of tags-----")
+        tagset = query.split(',')
         if query:
-            tagset = query.split(',')
+            if query == "[object Object]":
+                logger.error("Fuck!!!!!")
             for tag_name in tagset:
                 tag = Tag.objects.filter(name=tag_name)
                 if tag:
@@ -678,19 +682,24 @@ def typeFilter(request, tutor_set, show_tags, teach_course):
             teach_course.append(ele)
 
 def priceFilter(request, tutor_set, show_tags, teach_course):
-    if 'lowPrice' in request.GET:
-        logger.error("lowprice received")
-        logger.error(request.GET['lowPrice'])
-        '''
-        min = int(request.GET['lowPrice'])
-        max = int(request.GET['lowHigh'])
+    if 'lowPrice' in request.GET and 'highPrice' in request.GET:
+        premin = request.GET['lowPrice']
+        premax = request.GET['highPrice']
+        if premin != "":
+            min = int(request.GET['lowPrice'])
+        else:
+            min = 0
+        if premax != "":
+            max = int(request.GET['highPrice'])
+        else:
+            max = 500000;
         for tut in tutor_set:
             if tut.hourly_rate < min or tut.hourly_rate > max:
                 i = tutor_set.index(tut)
                 tutor_set.remove(tut)
                 show_tags.pop(i)
                 teach_course.pop(i)
-                '''
+
 
 def showOptionFilter(request, tutor_set, show_tags, teach_course):
     new_tutor_set = []
