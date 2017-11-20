@@ -2,8 +2,24 @@
 {% block title %}: my wallet{% endblock %}
 {% block right %}
     Wallet balance: {{user.wallet.balance}}
+
+    {% if student_list != "" %}
+	<form method='POST' action="{% url 'Tutorial:deposit' user.id %}">
+		Deposit <input type='text' name='deposit' size='30'>
+		<input type='submit' value='submit'>
+	</form>
+    {% endif %}
+    {% if tutor_list != ""%}
+	<form method='POST' action="{% url 'Tutorial:withdraw' user.id %}">
+		Withdraw <input type='text' name='withdraw' size='30'>
+		<input type='submit' value='submit'>
+	</form>
+    {% endif %}
     {% if student_list != "" %}
     <section class="section">
+    {{msg}}
+
+	</form>
       <div class="container">
         <div class="title-main"><h2 class="h2">Transaction records [student]<span class="title-secondary">啦啦啦啦啦啦啦啦啦啦啦╭(╯^╰)╮</span></h2></div>
 

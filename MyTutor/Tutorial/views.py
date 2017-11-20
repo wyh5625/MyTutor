@@ -24,6 +24,7 @@ import smtplib
 from django.core.mail import send_mail
 import operator
 import logging
+from decimal import Decimal
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -463,7 +464,7 @@ def mywallet(request, myuser_id): #TODO filter thirty days!
     if Tutor.objects.filter(myuser=myuser):
         mytutor = Tutor.objects.get(myuser=myuser)
         tutor_list = TutorialSession.objects.filter(tutor=mytutor)
-    return render(request, 'myaccount/mywallet.html', {'user':myuser, 'student_list':student_list, 'tutor_list':tutor_list })
+    return render(request, 'myaccount/mywallet.html', {'user':myuser, 'student_list':student_list, 'tutor_list':tutor_list, 'msg': "" })
 
 #def forget_password(request, myuser_id):
 
@@ -477,6 +478,87 @@ def message(request, myuser_id):
     messages = Notification.objects.filter(myuser=myuser)
     return render(request, 'message/message.html', {'user': myuser, 'messages': messages})
 
+def withdraw(request, myuser_id):
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
+    myuser = MyUser.objects.get(user=request.user)  # myuser = get_object_or_404(MyUser, pk=myuser_id)
+    student_list = ""
+    tutor_list = ""
+    if Student.objects.filter(myuser=myuser):
+        mystudent = Student.objects.get(myuser=myuser)
+        student_list = TutorialSession.objects.filter(student=mystudent)
+    if Tutor.objects.filter(myuser=myuser):
+        mytutor = Tutor.objects.get(myuser=myuser)
+        tutor_list = TutorialSession.objects.filter(tutor=mytutor)
+    #filter1: not tutor
+    if not Tutor.objects.filter(myuser=myuser):
+        messages = "Only a tutor can withdraw money from wallet"
+        return render(request, 'myaccount/mywallet.html',
+                      {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
+    amount = request.POST['withdraw']
+    #filter2: not number
+    try:
+        cashflow = Decimal(amount)
+    except Exception as e:
+        messages = "Please enter a valid number"
+        return render(request, 'myaccount/mywallet.html',
+                      {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
+    #filter3: not possitive
+    if cashflow <= 0:
+        messages = "Please enter a positive number"
+        return render(request, 'myaccount/mywallet.html',
+                      {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
+    #filter4: not enough moneyD
+    if cashflow > myuser.wallet.balance:
+        messages = "You don't have enough money in your account"
+        return render(request, 'myaccount/mywallet.html',
+                      {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
+    myuser.wallet.balance = myuser.wallet.balance - cashflow
+    myuser.wallet.save()
+    messages = "Withdrawal success!" #TODO: remember that tutorialsession should keep track of hourly rate, and it records depost & withdraw
+    return render(request, 'myaccount/mywallet.html',
+                  {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
+
+
+def deposit(request, myuser_id):
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
+    myuser = MyUser.objects.get(user=request.user)  # myuser = get_object_or_404(MyUser, pk=myuser_id)
+    student_list = ""
+    tutor_list = ""
+    if Student.objects.filter(myuser=myuser):
+        mystudent = Student.objects.get(myuser=myuser)
+        student_list = TutorialSession.objects.filter(student=mystudent)
+    if Tutor.objects.filter(myuser=myuser):
+        mytutor = Tutor.objects.get(myuser=myuser)
+        tutor_list = TutorialSession.objects.filter(tutor=mytutor)
+    #filter1: only tutor can withdraw
+    if not Student.objects.filter(myuser=myuser):
+        messages = "Only a student can deposit money from wallet"
+        return render(request, 'myaccount/mywallet.html',
+                      {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
+    amount = request.POST['deposit']
+    #filter2: not number
+    try:
+        cashflow = Decimal(amount)
+    except Exception as e:
+        messages = "Please enter a valid number"
+        return render(request, 'myaccount/mywallet.html',
+                      {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
+    #filter3: not positive
+    if cashflow <= 0:
+        messages = "Please enter a positive number"
+        return render(request, 'myaccount/mywallet.html',
+                      {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
+    myuser.wallet.balance = myuser.wallet.balance + cashflow
+    myuser.wallet.save()
+    messages = "Deposit success!" #TODO: remember that tutorialsession should keep track of hourly rate, and it records depost & withdraw
+    return render(request, 'myaccount/mywallet.html',
+                  {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
 
 def register_page(request):
     if request.method == 'POST':
