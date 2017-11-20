@@ -226,12 +226,12 @@ def endsession(mytime):
                 slot.save()
 
                 ## transaction
-                slot.tutor.myuser.wallet.balance = slot.tutor.myuser.wallet.balance + slot.tutor.hourly_rate
+                slot.tutor.myuser.wallet.balance = slot.tutor.myuser.wallet.balance + slot.price
                 slot.tutor.myuser.wallet.save()
                 now = datetime.now()
                 content = "System notification [ " + str(datetime(now.year, now.month, now.day, now.hour,
                                                                   now.minute)) + " ]: You have completed the tutorial starting from " + str(
-                    datetime.strptime(slot.starttime, timeformat)) + " to " + str(reftime) + " with student " + slot.student.myuser.user.username + ", tuition fee " + str(slot.tutor.hourly_rate) + " has been transfered to your wallet"
+                    datetime.strptime(slot.starttime, timeformat)) + " to " + str(reftime) + " with student " + slot.student.myuser.user.username + ", tuition fee " + str(slot.price) + " has been transfered to your wallet"
                 notification = Notification(content=content, myuser=slot.tutor.myuser)
                 notification.save()
 
@@ -375,7 +375,7 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
         #send_mail('Booking Notification', content, settings.EMAIL_HOST_USER, [tutor.myuser.user.email], fail_silently=False)
 
     tutor.save()
-    tutor.tutorialsession_set.create(starttime=begintime, status=0, tutor=tutor, student=student)
+    tutor.tutorialsession_set.create(starttime=begintime, status=0, tutor=tutor, student=student, price=tutor.hourly_rate)
     #wallet deduction
     wallet.balance = wallet.balance - Decimal.from_float(
         tutor.hourly_rate * COMMISION)
@@ -439,12 +439,12 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
     #wallet repaying
     wallet = mystudent.myuser.wallet
     wallet.balance = wallet.balance + Decimal.from_float(
-        tutor.hourly_rate * COMMISION)  # fixme didn't add money to tutor account
+        tutorial_session.price * COMMISION)
     wallet.save()
     # message delivering
     content = "System notification [ " + str(
         datetime(now.year, now.month, now.day, now.hour, now.minute)) + " ]: You have cancelled the session on " + str(
-        datetime.strptime(tutorial_session.starttime, timeformat)) + " with tutor " + tutor.myuser.user.username + " ,with wallet repaid by " + str(tutor.hourly_rate * COMMISION) + " to " + str(wallet.balance)
+        datetime.strptime(tutorial_session.starttime, timeformat)) + " with tutor " + tutor.myuser.user.username + " ,with wallet repaid by " + str(tutorial_session.price * COMMISION) + " to " + str(wallet.balance)
     notification = Notification(content=content, myuser=myuser)
     notification.save()
 
