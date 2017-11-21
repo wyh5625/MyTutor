@@ -265,13 +265,20 @@ def tutorpage(request, myuser_id, tutor_id):
     return render(request, 'searchtutors/tutorpage.html', {'user':myuser, 'tutor': tutor})
 
 ####my account####
+####my account####
 def myaccount(request, myuser_id):
     if not request.user.is_authenticated(): #visitor or client
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
         HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
-    return render(request, 'myaccount/myaccount.html', {'user':myuser })
+    isstudent = "0"
+    istutor = "0"
+    if Student.objects.filter(myuser=myuser):
+       isstudent = "1"
+    if Tutor.objects.filter(myuser=myuser):
+        istutor = "1"
+    return render(request, 'myaccount/myaccount.html', {'user':myuser, 'isstudent': isstudent, 'istutor': istutor})
 
 def myprofile(request, myuser_id):
     if not request.user.is_authenticated(): #visitor or client
@@ -281,6 +288,13 @@ def myprofile(request, myuser_id):
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     form = ProfileForm(initial = {'last_name': myuser.user.last_name, 'first_name': myuser.user.first_name, 'email': myuser.user.email, 'phone': myuser.phone, 'content': myuser.profile_content})
     edit = False
+    myuser = MyUser.objects.get(user=request.user)  # myuser = get_object_or_404(MyUser, pk=myuser_id)
+    isstudent = "0"
+    istutor = "0"
+    if Student.objects.filter(myuser=myuser):
+        isstudent = "1"
+    if Tutor.objects.filter(myuser=myuser):
+        istutor = "1"
     if request.method == "GET":
         if 'edit' in request.GET:
             edit_or_not = request.GET['edit']
@@ -290,7 +304,8 @@ def myprofile(request, myuser_id):
                 edit = True
             else:
                 edit = False
-        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit})
+
+        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'isstudent': isstudent, 'istutor': istutor})
     else:   # POST
         logger.error("get post request")
         form = ProfileForm(request.POST)
@@ -308,7 +323,7 @@ def myprofile(request, myuser_id):
             myuser.save()
             myuser.user.save()
         edit = False
-        return render(request, 'myaccount/myprofile.html', {'user': myuser, 'form': form, 'edit': edit})
+        return render(request, 'myaccount/myprofile.html', {'user': myuser, 'form': form, 'edit': edit, 'isstudent': isstudent, 'istutor': istutor})
 
 def mybooking(request, myuser_id):
     if not request.user.is_authenticated(): #visitor or client
@@ -318,8 +333,8 @@ def mybooking(request, myuser_id):
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     mystudent = Student.objects.filter(myuser=myuser)
     mytutor = Tutor.objects.filter(myuser=myuser)
-    isstudent = ""
-    istutor = ""
+    isstudent = "0"
+    istutor = "0"
     #booking is the record as a student, booked is the record as a tutor
     if mystudent:
         mystudent = Student.objects.get(myuser = myuser)
@@ -515,8 +530,13 @@ def mywallet(request, myuser_id): #TODO filter thirty days!
     if Tutor.objects.filter(myuser=myuser):
         mytutor = Tutor.objects.get(myuser=myuser)
         tutor_list = TutorialSession.objects.filter(tutor=mytutor)
-    return render(request, 'myaccount/mywallet.html', {'user':myuser, 'student_list':student_list, 'tutor_list':tutor_list, 'msg': "" })
-
+    isstudent = "0"
+    istutor = "0"
+    if Student.objects.filter(myuser=myuser):
+        isstudent = "1"
+    if Tutor.objects.filter(myuser=myuser):
+        istutor = "1"
+    return render(request, 'myaccount/mywallet.html', {'user':myuser, 'student_list':student_list, 'tutor_list':tutor_list, 'msg': "", 'isstudent': isstudent, 'istutor': istutor })
 #def forget_password(request, myuser_id):
 
 ####message####

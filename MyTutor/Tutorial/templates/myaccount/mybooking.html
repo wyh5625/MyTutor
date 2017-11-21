@@ -8,8 +8,15 @@
          elem.innerHTML ="<input type=\"hidden\"  name=\"hidden\" value=" +id+ ">";
         document.getElementById(frm).submit();
         alert ("Successful cancelling!");
+        }
     }
 
+    function Evaluate(elem){
+        var score = prompt("Score(?/5): " );
+        var comment = prompt("Comment: " );
+        alert(score, comment);
+        elem.innerHTML ="<input type=\"hidden\"  name=\"score\" value=" +score+ " name=\"comment\" value=" +comment+ ">";
+        document.getElementById("evaluateR").submit();
     }
 {% endblock %}
 {% block right %}
@@ -59,16 +66,16 @@
                            "            <h3 class=\"service_title\">Can't Cancel</h3>" +
                            "          </div>");
                       }else if("{{ session.status }}" == '2'){
-                          document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
-                           "            <h3 class=\"service_title\">Attended</h3>" +
-                           "          </div>");
+                          document.write(" <form action= \"{ url 'Tutorial:evaluate' user.id session.id }\" method=\"post\" id=\"evaluateR\" >{% csrf_token %}{{uf.as_p}}<div class=\"col-lg-2 col-md-4 col-sm-6\" onclick = 'Evaluate(this)'>" +
+                           "            <h3 class=\"service_title\">To be evaluated</h3>" +
+                           "          </div></form>");
                       }else if("{{ session.status }}" == '3'){
                           document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
                            "            <h3 class=\"service_title\">Canceled</h3>" +
                            "          </div>");
                       }else if("{{ session.status }}" == '4'){
                           document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
-                           "            <h3 class=\"service_title\">Envaluated</h3>" +
+                           "            <h3 class=\"service_title\">Evaluated</h3>" +
                            "          </div>");
                       }else if("{{ session.status }}" == '5'){
                           document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
@@ -100,7 +107,7 @@
       </div>
     </section>
     {% endif %}
-    {% if istutor != "" %}
+    {% if istutor == "1" %}
     <section class="section">
       <div class="container">
         <div class="title-main"><h2 class="h2">Booking Record[tutor]<span class="title-secondary">啦啦啦啦啦啦啦啦啦啦啦╭(╯^╰)╮</span></h2></div>
@@ -143,8 +150,8 @@
                            "            <h3 class=\"service_title\">Can't Cancel</h3>" +
                            "          </div>");
                       }else if("{{ session.status }}" == '2'){
-                          document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
-                           "            <h3 class=\"service_title\">Attended</h3>" +
+                          document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6 \">" +
+                           "            <h3 class=\"service_title evaluate\" onclick='Evaluate()'>To be evaluated</h3>" +
                            "          </div>");
                       }else if("{{ session.status }}" == '3'){
                           document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
@@ -152,7 +159,7 @@
                            "          </div>");
                       }else if("{{ session.status }}" == '4'){
                           document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
-                           "            <h3 class=\"service_title\">Envaluated</h3>" +
+                           "            <h3 class=\"service_title\">Evaluated</h3>" +
                            "          </div>");
                       }else if("{{ session.status }}" == '5'){
                           document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
