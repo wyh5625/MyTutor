@@ -248,7 +248,9 @@ def endsession(mytime):
                                            cashflow=slot.price,
                                            information=slot, type=4)
 
-
+                company = MyTutor.objects.get(pk=1)
+                company.wallet.balance = company.wallet.balance + Decimal(str(slot.price * (COMMISION - 1)))
+                company.wallet.save()
                 ## mytutor receives commision fee
     return
 
@@ -520,8 +522,11 @@ def evaluate(request, myuser_id, tutorial_sessions_id):
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
         HttpResponseRedirect('/Tutorial/admin/')
+
     score = request.POST['score']
     comment = request.POST['comment']
+    comment = comment.replace('^space^', ' ')
+    logger.error(comment)
     if len(comment) > 200:
         msg = 'Exceeds limit 200 characters, the left characters will not be stored'
         comment = comment[:200]

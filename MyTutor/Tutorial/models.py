@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
+
+
+
 class Wallet(models.Model):
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     def __str__(self):
@@ -11,7 +14,10 @@ class Wallet(models.Model):
             myuser = MyUser.objects.get(wallet = self)
             return myuser.user.username + "'s wallet"
 
-
+class MyTutor(models.Model):
+    wallet = models.ForeignKey(Wallet, on_delete = models.CASCADE)
+    def __str__(self):
+        return "MyTutor"
 
 class MyUser(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE )
@@ -82,6 +88,8 @@ class TutorialSession(models.Model):
     tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
     student =  models.ForeignKey(Student, on_delete=models.CASCADE)
     price = models.IntegerField(default=0) #TODO: notice that this price does not include commission fee
+    score = models.DecimalField(max_digits=2, decimal_places=1, default=-1)  # TODO: if unevaluated, will use score = -1
+    comment = models.CharField(max_length=200, default="")
     #TODO: intensive change: now has done: when booking, store into price,  when cancel, check price instead of hourly rate, when end, money of price added instead of hourly rate
     def __str__(self):
         return self.starttime + "-student-" + self.student.myuser.user.username + "-tutor-" + self.tutor.myuser.user.username
