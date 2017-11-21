@@ -35,7 +35,7 @@
                         <label>University course</label>
                         <select class="form-control __plannerSelect" name="course">
                               <option  value=""></option>
-                              <option  value="COMP3297">COMP 3297</option>
+                              <option  value="COMP 3297">COMP 3297</option>
                         </select>
                       </div>
                     </div>
@@ -73,8 +73,9 @@
                   </div>
                     <div class="row">
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                            <input type="button" class="btn btn-default" value="Rate high to low" id="Rate">
-                            </div>
+                            <input type="button" class="btn btn-default" value="Random Order" id="Rate" >
+                            <input type="hidden" name="order" value="RandomOrder" id="RateOrder">
+                        </div>
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                             <input type="button"  class="btn btn-default" value="Show Price Range" id="priceRange">
                     </div>
@@ -137,8 +138,18 @@
               <div class="best-tutor-info">
                   <div class="best-tutor_t"><a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}">{{ Tutor.myuser.user.username }}</a></div>
                 <div class="best-tutor_t"><a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}">{{Tutor.myuser.user.first_name}} {{Tutor.myuser.user.last_name}}</a></div>
-                <div class="best-tutor_desc">{{ Tags }}
-                </div>
+                <script>
+                    var Tags = "{{ Tags }}";
+
+                    for (var j = 0;j < Tags.length;j++){
+                        if ( (Tags[j] >= 'a' && Tags[j] <= 'z') || (Tags[j] >= 'A' && Tags[j] <= 'Z') ){
+                            Tags[j] = " ";
+                         }
+                    }
+                    document.write("<div class=\"best-tutor_desc\">"+Tags+"\n" +
+                        "                </div>");
+                  </script>
+
                 <div class="best-tutor_rate">
                   <span>${{Tutor.hourly_rate}}</span>
                 </div>
@@ -151,89 +162,7 @@
     </section>
 
     <!-- /choose best tutors -->
-    <!-- lux banner parallax -->
-      <section class="banner bg-parallax2">
-        <div class="overlay"></div>
-      <div class="banner-parallax">
-        <div class="container">
-          <div class="text-center">
-            <div class="banner-parallax_raiting">
-              <a href="#"><span class="star __selected"></span></a>
-              <a href="#"><span class="star __selected"></span></a>
-              <a href="#"><span class="star __selected"></span></a>
-              <a href="#"><span class="star"></span></a>
-              <a href="#"><span class="star"></span></a>
-            </div>
-            <h2 class="banner-parallax_t">Double Luxury Room</h2>
-            <div class="banner-parallax_price"><span>$560</span> / Night (Only This Week)</div>
-            <a href="#" class="btn btn-default">Book this room</a>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- /lux banner parallax -->
-    <!-- enjoy our services -->
-    <section class="section">
-      <div class="container">
-        <div class="title-main"><h2 class="h2">Our Services<span class="title-secondary">Great. Safe. Free.</span></h2></div>
-        <div class="row">
-          <div class="col-lg-4 col-md-4 col-sm-6">
-            <h3 class="service_title"><i class="fa fa-globe"></i> Different Tours</h3>
-            <p>Improve ashamed married expense bed her comfort pursuit mrs. Four time took ye your as fail lady.</p>
-          </div>
-          <div class="col-lg-4 col-md-4 col-sm-6">
-            <h3 class="service_title"><i class="fa fa-taxi"></i> Taxi Service</h3>
-            <p>Improve ashamed married expense bed her comfort pursuit mrs. Four time took ye your as fail lady.</p>
-          </div>
-          <div class="col-lg-4 col-md-4 col-sm-6">
-            <h3 class="service_title"><i class="fa fa-glass"></i> Bar Included</h3>
-            <p>Improve ashamed married expense bed her comfort pursuit mrs. Four time took ye your as fail lady.</p>
-          </div>
-          <div class="col-lg-4 col-md-4 col-sm-6">
-            <h3 class="service_title"><i class="fa fa-life-ring"></i> Discount System</h3>
-            <p>Improve ashamed married expense bed her comfort pursuit mrs. Four time took ye your as fail lady.</p>
-          </div>
-          <div class="col-lg-4 col-md-4 col-sm-6">
-            <h3 class="service_title"><i class="fa fa-leaf"></i> Professional Staff</h3>
-            <p>Improve ashamed married expense bed her comfort pursuit mrs. Four time took ye your as fail lady.</p>
-          </div>
-          <div class="col-lg-4 col-md-4 col-sm-6">
-            <h3 class="service_title"><i class="fa fa-eye"></i> Parking 24/7</h3>
-            <p>Improve ashamed married expense bed her comfort pursuit mrs. Four time took ye your as fail lady.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- /enjoy our services -->
-    <!-- testiomonials -->
-    <section class="testimonials">
-      <div class="container">
-        <div class="title-main"><h2 class="h2">Some Testimonails<span class="title-secondary">People Says About Us</span></h2></div>
-        <div class="owl-carousel">
-          <div class="item">
-            <div class="testimonials-block_i">
-              <div class="testimonials-block_t">Great <span>Service</span></div>
-              <p>Old unsatiable our now but considered travelling impression. In excuse hardly summer in basket misery. By rent an part need. At wrong of of water those linen. Needed oppose seemed how all</p>
-            </div>
-            <div class="testimonials-block_user">
-                <div class="user_img"><img src="/static/bootstrap/images/testimonials/mike.jpg" alt=""></div>
-                <div class="user_n">Garry Carlson</div>
-            </div>
-          </div>
-          <div class="item">
-            <div class="testimonials-block_i">
-              <div class="testimonials-block_t">Thank You Very Much <span>I Am Happy!</span></div>
-              <p>Certainty listening no no behaviour existence assurance situation is. Because add why not esteems amiable him. Interested the unaffected mrs law friendship add principles.</p>
-            </div>
-            <div class="testimonials-block_user">
-                <div class="user_img"><img src="/static/bootstrap/images/testimonials/mila.png" alt=""></div>
-                <div class="user_n">Mila Markovna</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- /testiomonials -->
+
 {% endblock %}
 
 {% block script %}
@@ -283,11 +212,7 @@
                      strTags += "<span style='background-color: lightgrey; color : black; margin : 2px; margin-left: 0; padding: 2px; ' id='tags_"+i+"'>"+tags[i]+"</span>";
                     $("#tags").append(strTags);
                      $("#subjectTags").val("");
-                    var duck = "";
-                    for(var d = 0;d < 10;d++){
-                        duck += tags[0] + ",";
-                    }
-                     $("#subjectTags").html( "<input type='text' class='form-control' placeholder='Enter the key words to seach tags' id='subjectTags'name='tags' value='"+duck+"' >");
+                     $("#subjectTags").html( "<input type='text' class='form-control' placeholder='Enter the key words to seach tags' id='subjectTags'name='tags' value='"+tags+"' >");
                     i++;
                  }
 
@@ -315,9 +240,14 @@
 
             if (document.getElementById("Rate").value == 'Rate high to low'){
                 document.getElementById("Rate").value = 'Rate low to high';
-             }else{
-               document.getElementById("Rate").value = 'Rate high to low';
-    }
+                document.getElementById("RateOrder").value = 'Rate low to high';
+             }else if (document.getElementById("Rate").value == 'Rate low to high'){
+               document.getElementById("Rate").value = 'Random Order';
+                document.getElementById("RateOrder").value = 'Random';
+            }else{
+                 document.getElementById("Rate").value = 'Rate high to low';
+                document.getElementById("RateOrder").value = 'Rate high to low';
+            }
 
 
 
@@ -328,11 +258,8 @@
         tags[intNum]="";
         i--;
         var tagID = "#tags_"+$(this).attr("target");
-        var duck = "";
-        for(var d = 0;d < 10;d++){
-            duck += tags[0] + ",";
-        }
-        $("#subjectTags").html( "<input type='text' class='form-control' placeholder='Enter the key words to seach tags' id='subjectTags'name='tags' value='"+duck+"' >");
+
+        $("#subjectTags").html( "<input type='text' class='form-control' placeholder='Enter the key words to seach tags' id='subjectTags'name='tags' value='"+tags+"' >");
         $(this).remove();
         $(tagID).remove();
     });

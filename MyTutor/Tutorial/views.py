@@ -642,44 +642,50 @@ def search_tutor_name(request,myuser_id ): #TODO don't know what should admin be
         query = request.GET['familyName'].strip()
         if query:
             tutors = tutors.filter(myuser__user__last_name__contains=query)
+    zipped = zip(tutors, tutors)
     variables = {
-        "tutors": tutors
+        "tutors": zipped
     }
     return render(request, 'searchtutors/index.html', variables)
 
 
 def search_tutor_tag(request,myuser_id ):
-    tag = []
     show_tags = []
     tutor_set = []
-    teach_course = []
     #option = request.GET["option"]
     course = object()
     # first filter
+    tag_query = request.GET['tags']
+    course_query = request.GET['course']
 
-    tagFilter(request, tutor_set, show_tags, teach_course)
+    selectAllTutors(request, tutor_set)
 
-    courseFilter(request, tutor_set, show_tags, teach_course)
+    tagFilter(request, tutor_set)
+
+    courseFilter(request, tutor_set)
 
     #university filter
-    universityFilter(request, tutor_set, show_tags, teach_course)
+    universityFilter(request, tutor_set)
 
 
     # third filter
-    typeFilter(request, tutor_set, show_tags, teach_course)
+    typeFilter(request, tutor_set)
 
 
     # fourth filer
-    priceFilter(request, tutor_set, show_tags, teach_course)
+    priceFilter(request, tutor_set)
+
 
     #fifth filter
-    showOptionFilter(request, tutor_set, show_tags, teach_course)
+    showOptionFilter(request, tutor_set)
 
-    orderFilter(request, tutor_set, show_tags, teach_course)
 
-    logger.error(tutor_set)
+    orderFilter(request, tutor_set)
+
+    for tut in tutor_set:
+        show_tags.append(tut.tag_set.all())
+
     logger.error(show_tags)
-    logger.error(teach_course)
 
     #logger.error(t_set)
     zipped = zip(tutor_set,show_tags)
@@ -687,61 +693,49 @@ def search_tutor_tag(request,myuser_id ):
         "tutors": zipped
     }
     return render(request, 'searchtutors/index.html', variables)
-def tagFilter(request, tutor_set, show_tags, teach_course):
+def selectAllTutors(request, tutor_set):
+    tutors = Tutor.objects.all()
+    for tut in tutors:
+        tutor_set.append(tut)
+
+def tagFilter(request, tutor_set):
+    result_tutors = []
+    logger.error("-----tags-----")
     if 'tags' in request.GET:
         query = request.GET['tags']
-        logger.error("-----tags-----")
-        logger.error(query)
-        logger.error(type(query))
-        logger.error("-----end of tags-----")
         tagset = query.split(',')
-        if query:
-            if query == "[object Object]":
-                logger.error("Fuck!!!!!")
+        if tagset != ['']:
             for tag_name in tagset:
                 tag = Tag.objects.filter(name=tag_name)
                 if tag:
                     tutors = tag[0].tutors.all()
-                    for tut in tutors:
-                        if tut not in tutor_set:
-                            tutor_set.append(tut)
-                            tag_of_tutor = []
-                            tag_of_tutor.append(tag[0].name)
-                            show_tags.append(tag_of_tutor)
-                            teach_course.append("")
-                        else:
-                            i = tutor_set.index(tut)
-                            show_tags[i].append(tag[0].name)
-        else:
-            tutors = Tutor.objects.all()
-            for tut in tutors:
-                tutor_set.append(tut)
-                show_tags.append(tut.tag_set.all())
-                teach_course.append("")
+                    for tut in tutor_set:
+                        tags = tut.tag_set.all()
+                        for tag in tags:
+                            if tag.name in tagset:
+                                result_tutors.append(tut)
+                                break
+            tutor_set.clear()
+            for ele in result_tutors:
+                tutor_set.append(ele)
 
 # tutor_set, show_tags and course is one-to-one set
-def courseFilter(request, tutor_set, show_tags, teach_course):
-    if 'course' in request.GET:
+def courseFilter(request, tutor_set):
+    result_tutors = []
+    if 'course' in request.GET and request.GET['course'] != "":
         query = request.GET['course']
-        course = object()
-        course = Course.objects.filter(course_code=query)
-        logger.error("here")
-        logger.error(course)
-        if course:
-            logger.error(course[0])
-            tutor_of_course = course[0].tutors.all()
-            logger.error(tutor_of_course)
-            for tut in tutor_of_course:
-                if tut not in tutor_set:
-                    tutor_set.append(tut)
-                    tag_of_tutor = []
-                    show_tags.append(tag_of_tutor)
-                    teach_course.append(query)
-                else:
-                    i = tutor_set.index(tut)
-                    teach_course[i] = query
+        course_name = query
+        for tut in tutor_set:
+            courses = tut.course_set.all()
+            for course in courses:
+                if course.course_code == course_name:
+                    result_tutors.append(tut)
+                    break
+        tutor_set.clear()
+        for ele in result_tutors:
+            tutor_set.append(ele)
 
-def typeFilter(request, tutor_set, show_tags, teach_course):
+def typeFilter(request, tutor_set):
     search_private = False
     search_contracted = False
     privateTutor = []
@@ -755,41 +749,24 @@ def typeFilter(request, tutor_set, show_tags, teach_course):
         elif type == "ContractedTutor":
             search_contracted = True
     result_tutor = []
-    result_tags = []
-    result_course = []
     if search_contracted and not search_private:
         logger.error("contracted tutor")
         for tut in tutor_set:
             if tut not in privateTutor:
                 result_tutor.append(tut)
-                result_tags.append(show_tags[tutor_set.index(tut)])
-                result_course.append(teach_course[tutor_set.index(tut)])
         tutor_set.clear()
         for ele in result_tutor:
             tutor_set.append(ele)
-        show_tags.clear()
-        for ele in result_tags:
-            show_tags.append(ele)
-        teach_course.clear()
-        for ele in result_course:
-            teach_course.append(ele)
     elif not search_contracted and search_private:
         for tut in tutor_set:
             if tut in privateTutor:
                 result_tutor.append(tut)
-                result_tags.append(show_tags[tutor_set.index(tut)])
-                result_course.append(teach_course[tutor_set.index(tut)])
         tutor_set.clear()
         for ele in result_tutor:
             tutor_set.append(ele)
-        show_tags.clear()
-        for ele in result_tags:
-            show_tags.append(ele)
-        teach_course.clear()
-        for ele in result_course:
-            teach_course.append(ele)
 
-def priceFilter(request, tutor_set, show_tags, teach_course):
+def priceFilter(request, tutor_set):
+    new_tutor_set = []
     if 'lowPrice' in request.GET and 'highPrice' in request.GET:
         premin = request.GET['lowPrice']
         premax = request.GET['highPrice']
@@ -800,19 +777,17 @@ def priceFilter(request, tutor_set, show_tags, teach_course):
         if premax != "":
             max = int(request.GET['highPrice'])
         else:
-            max = 500000;
+            max = 500000
         for tut in tutor_set:
-            if tut.hourly_rate < min or tut.hourly_rate > max:
-                i = tutor_set.index(tut)
-                tutor_set.remove(tut)
-                show_tags.pop(i)
-                teach_course.pop(i)
+            if tut.hourly_rate >= min and tut.hourly_rate <= max:
+                new_tutor_set.append(tut)
+        tutor_set.clear()
+        for ele in new_tutor_set:
+            tutor_set.append(ele)
 
 
-def showOptionFilter(request, tutor_set, show_tags, teach_course):
+def showOptionFilter(request, tutor_set):
     new_tutor_set = []
-    new_show_tags = []
-    new_teach_course = []
     if 'option' in request.GET:
         option = request.GET['option']
         if option == "TutorWithin7Days":
@@ -824,22 +799,12 @@ def showOptionFilter(request, tutor_set, show_tags, teach_course):
                 logger.error(weekslot)
                 if '1' in weekslot:
                     new_tutor_set.append(tut)
-                    new_show_tags.append(show_tags[tutor_set.index(tut)])
-                    new_teach_course.append(teach_course[tutor_set.index(tut)])
             tutor_set.clear()
             for ele in new_tutor_set:
                 tutor_set.append(ele)
-            show_tags.clear()
-            for ele in new_show_tags:
-                show_tags.append(ele)
-            teach_course.clear()
-            for ele in new_teach_course:
-                teach_course.append(ele)
 
-def universityFilter(request, tutor_set, show_tags, teach_course):
+def universityFilter(request, tutor_set):
     new_tutor_set = []
-    new_show_tags = []
-    new_teach_course = []
     university = ""
     # university filter
     if 'university' in request.GET:
@@ -850,38 +815,29 @@ def universityFilter(request, tutor_set, show_tags, teach_course):
                 logger.error(tut.university)
                 if tut.university == uni[0]:
                     new_tutor_set.append(tut)
-                    new_show_tags.append(show_tags[tutor_set.index(tut)])
-                    new_teach_course.append(teach_course[tutor_set.index(tut)])
             logger.error("-----inside")
             logger.error(new_tutor_set)
             tutor_set.clear()
             for ele in new_tutor_set:
                 tutor_set.append(ele)
-            show_tags.clear()
-            for ele in new_show_tags:
-                show_tags.append(ele)
-            teach_course.clear()
-            for ele in new_teach_course:
-                teach_course.append(ele)
 
-def orderFilter(request, tutor_set, show_tags, teach_course):
+def orderFilter(request, tutor_set):
     result_tutor = []
-    for tut in tutor_set:
-        outputTutor = SearchedTutor(tut, tut.hourly_rate, show_tags[tutor_set.index(tut)],
-                                    teach_course[tutor_set.index(tut)])
-        result_tutor.append(outputTutor)
     if 'order' in request.GET:
         order = request.GET['order']
-        if order == "reverse":
-            result_tutor.sort(key=operator.attrgetter('hourly_rate'), reverse=True)
-        else:
-            result_tutor.sort(key=operator.attrgetter('hourly_rate'))
+        if order != "RandomOrder":
+            if order == "Rate high to low":
+                tutor_set.sort(key=operator.attrgetter('hourly_rate'), reverse=True)
+            else:
+                tutor_set.sort(key=operator.attrgetter('hourly_rate'))
     else:
-        result_tutor.sort(key=operator.attrgetter('hourly_rate'))
-    tutor_set.clear()
-    show_tags.clear()
-    teach_course.clear()
-    for tut in result_tutor:
-        tutor_set.append(tut.tutor)
-        show_tags.append(tut.tags)
-        teach_course.append(tut.teachCourse)
+        tutor_set.sort(key=operator.attrgetter('hourly_rate'))
+
+def editProfile(request):
+    user = request.GET['user']
+    form = UserProfileForm(user)
+    context = {
+        "edit": True,
+        "form": form
+    }
+    return render(request, myaccount/myprofile(request, user.id), context)

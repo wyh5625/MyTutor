@@ -14,3 +14,4 @@ admin.site.register(Tag)
 admin.site.register(University)
 admin.site.register(Course)
 
+

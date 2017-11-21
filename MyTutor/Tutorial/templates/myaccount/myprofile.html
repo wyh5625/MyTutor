@@ -1,7 +1,8 @@
 {% extends "myaccount/myaccount.html" %}
 {% block title %}: my profile{% endblock %}
 {% block right %}
-    my profile
 {{user.user.username}}
 {{user.user.email}}
+{{user.profile_content}}
+<button type="submit">Edit</button>
 {% endblock %}
