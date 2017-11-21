@@ -13,6 +13,8 @@ urlpatterns = [
     url(r'^(?P<myuser_id>[0-9]+)/searchTutors/(?P<tutor_id>[0-9]+)/$', views.tutorpage, name='tutorpage'),
     url(r'^(?P<myuser_id>[0-9]+)/myAccount/$', views.myaccount, name='myaccount'),
     url(r'^(?P<myuser_id>[0-9]+)/myAccount/mybooking/$', views.mybooking, name='mybooking'),
+    url(r'^(?P<myuser_id>[0-9]+)/myAccount/mybooking/evaluate/(?P<tutorial_sessions_id>[0-9]+)/$', views.evaluate,
+        name='evaluate'),
     url(r'^(?P<myuser_id>[0-9]+)/myAccount/myprofile/$', views.myprofile, name='myprofile'),
     url(r'^(?P<myuser_id>[0-9]+)/myAccount/mywallet/$', views.mywallet, name='mywallet'),
     url(r'^(?P<myuser_id>[0-9]+)/myAccount/mytransaction/$', views.mytransaction, name='mytransaction'),
