@@ -281,13 +281,33 @@ def myprofile(request, myuser_id):
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     form = ProfileForm(initial = {'last_name': myuser.user.last_name, 'first_name': myuser.user.first_name, 'email': myuser.user.email})
     edit = False
-    if 'edit' in request.GET:
-        edit_or_not = request.GET['edit']
-        if edit_or_not == '1':
-            edit = True
-        else:
-            edit = False
-    return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit})
+    if request.method == "GET":
+        if 'edit' in request.GET:
+            edit_or_not = request.GET['edit']
+            logger.error("get edit value")
+            logger.error(edit_or_not)
+            if edit_or_not == '1':
+                edit = True
+            else:
+                edit = False
+        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit})
+    else:   # POST
+        logger.error("get post request")
+        form = ProfileForm(request.POST)
+        if form.is_valid():
+            firstName = form.cleaned_data['first_name']
+            lastName = form.cleaned_data['last_name']
+            phone = form.cleaned_data['phone']
+            email = form.cleaned_data['email']
+            profile_content = form.cleaned_data['content']
+            myuser.user.first_name = firstName
+            myuser.user.last_name = lastName
+            myuser.phone = phone
+            myuser.user.email = email
+            myuser.profile_content = profile_content
+            myuser.save()
+        edit = False
+        return render(request, 'myaccount/myprofile.html', {'user': myuser, 'form': form, 'edit': edit})
 
 def mybooking(request, myuser_id):
     if not request.user.is_authenticated(): #visitor or client
@@ -840,7 +860,7 @@ def orderFilter(request, tutor_set):
                 tutor_set.sort(key=operator.attrgetter('hourly_rate'))
     else:
         tutor_set.sort(key=operator.attrgetter('hourly_rate'))
-
+'''
 def editProfile(request):
     user = request.GET['user']
     form = UserProfileForm(user)
@@ -849,3 +869,7 @@ def editProfile(request):
         "form": form
     }
     return render(request, myaccount/myprofile(request, user.id), context)
+'''
+'''
+def saveProfile(request):
+    '''

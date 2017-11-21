@@ -1,23 +1,7 @@
 {% extends "myaccount/myaccount.html" %}
 {% block title %}: my profile{% endblock %}
 {% block right %}
-<<<<<<< HEAD
 {% if not edit %}
-    {{user.user.username}}
-    {{user.user.first_name}}
-    {{user.user.last_name}}
-    {{user.phone}}
-    {{user.user.email}}
-    {{user.profile_content}}
-    <button type="submit">Edit</button>
-{% else %}
-<form method="POST" action="/accounts/profile/" class="" />
-    {{form.as_p}}
-    <button type="submit">Save</button>
-</form>
-    <button type="submit">Cancel</button>
-{% endif %}
-=======
     <div class = "infoPanel">
         <div class="best-tutor_img" style="float : left; width : 200px; height: 200px; border-radius: 200px;">
              <img src="/static/bootstrap/images/best-rooms/1.jpg">
@@ -27,8 +11,23 @@
         </div>
          <div class="insideInfo">Username : {{user.user.username}}</div>
          <div class="insideInfo">First name: {{user.user.first_name}}</div>
-         <div class="insideInfo">Last name: {{user.user.first_name}}</div>
+         <div class="insideInfo">Last name: {{user.user.last_name}}</div>
+         <div class="insideInfo">Phone Number: {{user.phone}}</div>
+         <div class="insideInfo">Email: {{user.user.email}}</div>
+         <div class="insideInfo">About Me: {{user.profile_content}}</div>
     </div>
-{{user.user.email}}
->>>>>>> 675a02381102ef050e7bc3efc2c85e7a359c278f
+    <form method="GET" action="{% url 'Tutorial:myprofile' user.id %}" class="" />
+        <input type="hidden" name="edit" value="1" />
+        <button type="submit">Edit</button>
+    <form>
+{% else %}
+<form method="POST" action="{% url 'Tutorial:myprofile' user.id %}" class="" />
+    {{form.as_p}}
+    <input type="submit" value="Save" />
+</form>
+<form method="GET" action="{% url 'Tutorial:myprofile' user.id %}" class="" />
+    <input type="hidden" name="edit" value="0" />
+    <button type="submit">Cancel</button>
+<form>
+{% endif %}
 {% endblock %}

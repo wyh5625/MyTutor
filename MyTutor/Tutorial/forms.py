@@ -44,9 +44,9 @@ class SearchForm(forms.Form):
 class ProfileForm(forms.Form):
     last_name = forms.CharField(label='Family Name', max_length=30)
     first_name = forms.CharField(label='Given Name', max_length=30)
+    phone = forms.IntegerField(label='Phone Number')
     email = forms.EmailField(label='Email')
     content = forms.CharField(label='About Me', max_length=2000)
-    #phone = forms.IntegerField()
 '''
 class UserProfileForm(forms.Form):
     last_name = forms.CharField(label='Family Name', max_length=30)
