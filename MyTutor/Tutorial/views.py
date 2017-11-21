@@ -248,7 +248,9 @@ def endsession(mytime):
                                            cashflow=slot.price,
                                            information=slot, type=4)
 
-
+                company = MyTutor.objects.get(pk=1)
+                company.wallet.balance = company.wallet.balance + Decimal(str(slot.price * (COMMISION - 1)))
+                company.wallet.save()
                 ## mytutor receives commision fee
     return
 

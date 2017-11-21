@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
+
+
+
 class Wallet(models.Model):
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     def __str__(self):
@@ -11,7 +14,10 @@ class Wallet(models.Model):
             myuser = MyUser.objects.get(wallet = self)
             return myuser.user.username + "'s wallet"
 
-
+class MyTutor(models.Model):
+    wallet = models.ForeignKey(Wallet, on_delete = models.CASCADE)
+    def __str__(self):
+        return "MyTutor"
 
 class MyUser(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE )
