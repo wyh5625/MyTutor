@@ -534,8 +534,9 @@ def search_tutor_name(request,myuser_id ): #TODO don't know what should admin be
         query = request.GET['familyName'].strip()
         if query:
             tutors = tutors.filter(myuser__user__last_name__contains=query)
+    zipped = zip(tutors, tutors)
     variables = {
-        "tutors": tutors
+        "tutors": zipped
     }
     return render(request, 'searchtutors/index.html', variables)
 
@@ -764,10 +765,11 @@ def orderFilter(request, tutor_set, show_tags, teach_course):
         result_tutor.append(outputTutor)
     if 'order' in request.GET:
         order = request.GET['order']
-        if order == "reverse":
-            result_tutor.sort(key=operator.attrgetter('hourly_rate'), reverse=True)
-        else:
-            result_tutor.sort(key=operator.attrgetter('hourly_rate'))
+        if order != "RandomOrder":
+            if order == "Rate high to low":
+                result_tutor.sort(key=operator.attrgetter('hourly_rate'), reverse=True)
+            else:
+                result_tutor.sort(key=operator.attrgetter('hourly_rate'))
     else:
         result_tutor.sort(key=operator.attrgetter('hourly_rate'))
     tutor_set.clear()
