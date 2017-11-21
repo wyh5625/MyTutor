@@ -102,14 +102,7 @@ class Transaction(models.Model):
             return "null"
         else:
             return self.myuser.user.username + "'s transaction on " + self.time
-"""
-type map
-0   deposit
-1   withdraw
-2   cancel(student)
-3   booking(student)
-4   booking(tutor)
-"""
+
 class Course(models.Model):
     course_code = models.CharField(max_length=64, unique=True)
     tutors = models.ManyToManyField(Tutor)

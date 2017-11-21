@@ -35,10 +35,21 @@
                 </div>
                 </a>
             <a href="{% url 'Tutorial:mytransaction' user.id %}">
-            <div class="navbox" >
-                <div class="best-tutor_t">TRANSACTION RECORD</div>
+                <div class="navbox" >
+                    <div class="best-tutor_t">TRANSACTION RECORD</div>
                 </div>
-                </a>
+            </a>
+            <a href="{% url 'Tutorial:tutorTimeslot' user.id %}" id="fortutoronly" style="display : none;">
+                <div class="navbox" >
+                    <div class="best-tutor_t">SELECT TIME</div>
+                </div>
+            </a>
+            <script>
+                var tutor = "{{istutor}}";
+                if (tutor == "1"){
+                    document.getElementById("fortutoronly").style.display="block";
+                }
+            </script>
      </div>
 
         <div class="right">

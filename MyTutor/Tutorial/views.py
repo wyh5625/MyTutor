@@ -526,6 +526,11 @@ def evaluate(request, myuser_id, tutorial_sessions_id):
         msg = 'Exceeds limit 200 characters, the left characters will not be stored'
         comment = comment[:200]
     logger.error("check it")
+    session = TutorialSession.objects.get(pk=tutorial_sessions_id)
+    session.score = score
+    session.comment = comment
+    session.status = 4
+    session.save()
     return mybooking(request, myuser_id)
 
 
@@ -930,3 +935,12 @@ def editProfile(request):
 '''
 def saveProfile(request):
     '''
+
+def tutorTimeslot(request, myuser_id):
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
+    myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
+    mytutor = Tutor.objects.filter(myuser=myuser)
+    return render(request, 'myaccount/tutorTimeslot.html', {'user':myuser, 'tutorList': mytutor})
