@@ -79,7 +79,7 @@ class TutorialSession(models.Model):
     status = models.IntegerField()
     tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
     student =  models.ForeignKey(Student, on_delete=models.CASCADE)
-    price = models.IntegerField(default=0)
+    price = models.IntegerField(default=0) #TODO: notice that this price does not include commission fee
     #TODO: intensive change: now has done: when booking, store into price,  when cancel, check price instead of hourly rate, when end, money of price added instead of hourly rate
     def __str__(self):
         return self.starttime + "-student-" + self.student.myuser.user.username + "-tutor-" + self.tutor.myuser.user.username
@@ -89,7 +89,25 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
-
+class Transaction(models.Model):
+    myuser = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    time = models.CharField(max_length=12)  # transaction time, yyyymmddhhmm
+    cashflow = models.DecimalField(max_digits=10, decimal_places=2, default=0.0) #this should be double instead of integer because deposit can be double
+    information = models.ForeignKey(TutorialSession, on_delete=models.CASCADE, blank=True, null=True) #can be himself, or another user
+    type = models.IntegerField()
+    def __str__(self):
+        if self.myuser is None:
+            return "null"
+        else:
+            return self.myuser.user.username + "'s transaction on " + self.time
+"""
+type map
+0   deposit
+1   withdraw
+2   cancel(student)
+3   booking(student)
+4   booking(tutor)
+"""
 class Course(models.Model):
     course_code = models.CharField(max_length=64, unique=True)
     tutors = models.ManyToManyField(Tutor)
@@ -113,4 +131,13 @@ booking map:
 1   available
 2   booked
 3   passed/has been within 24 hours so status cannot be changed, this is more powerful than previous three
+"""
+
+"""
+type map
+0   deposit
+1   withdraw
+2   cancel(student)
+3   booking(student)
+4   booking(tutor)
 """
