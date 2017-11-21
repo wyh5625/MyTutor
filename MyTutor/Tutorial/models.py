@@ -16,6 +16,7 @@ class Wallet(models.Model):
 class MyUser(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE )
     wallet = models.ForeignKey(Wallet, on_delete = models.CASCADE)
+    profile_content = models.CharField(max_length=2000, default="")
     def __str__(self):
         return self.user.username
 
@@ -94,6 +95,7 @@ class Course(models.Model):
     university = models.ForeignKey(University, on_delete=models.CASCADE)
     def __str__(self):
         return self.course_code
+
 
 """
 status map:

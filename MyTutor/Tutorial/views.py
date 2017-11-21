@@ -775,3 +775,12 @@ def orderFilter(request, tutor_set, show_tags, teach_course):
         tutor_set.append(tut.tutor)
         show_tags.append(tut.tags)
         teach_course.append(tut.teachCourse)
+
+def editProfile(request):
+    user = request.GET['user']
+    form = UserProfileForm(user)
+    context = {
+        "edit": True,
+        "form": form
+    }
+    return render(request, myaccount/myprofile(request, user.id), context)
