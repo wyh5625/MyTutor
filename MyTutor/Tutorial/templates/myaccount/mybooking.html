@@ -15,7 +15,7 @@
         var score = prompt("Score(?/5): " );
         var comment = prompt("Comment: " );
         alert(score, comment);
-        elem.innerHTML ="<input type=\"hidden\"  name=\"score\" value=" +score+ " name=\"comment\" value=" +comment+ ">";
+        elem.innerHTML ="<input type=\"hidden\"  name=\"score\" value=" +score+ "><input type=\"hidden\"  name=\"comment\" value=" +comment+ ">";
         document.getElementById("evaluateR").submit();
     }
 {% endblock %}
