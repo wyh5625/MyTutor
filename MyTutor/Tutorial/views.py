@@ -279,7 +279,7 @@ def myprofile(request, myuser_id):
     if not MyUser.objects.filter(user=request.user):
         HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
-    form = ProfileForm(initial = {'last_name': myuser.user.last_name, 'first_name': myuser.user.first_name, 'email': myuser.user.email})
+    form = ProfileForm(initial = {'last_name': myuser.user.last_name, 'first_name': myuser.user.first_name, 'email': myuser.user.email, 'phone': myuser.phone, 'content': myuser.profile_content})
     edit = False
     if request.method == "GET":
         if 'edit' in request.GET:
@@ -306,6 +306,7 @@ def myprofile(request, myuser_id):
             myuser.user.email = email
             myuser.profile_content = profile_content
             myuser.save()
+            myuser.user.save()
         edit = False
         return render(request, 'myaccount/myprofile.html', {'user': myuser, 'form': form, 'edit': edit})
 
