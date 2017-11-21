@@ -526,6 +526,11 @@ def evaluate(request, myuser_id, tutorial_sessions_id):
         msg = 'Exceeds limit 200 characters, the left characters will not be stored'
         comment = comment[:200]
     logger.error("check it")
+    session = TutorialSession.objects.get(pk=tutorial_sessions_id)
+    session.score = score
+    session.comment = comment
+    session.status = 4
+    session.save()
     return mybooking(request, myuser_id)
 
 
