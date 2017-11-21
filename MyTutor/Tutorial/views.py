@@ -214,6 +214,7 @@ def endsession(mytime):
     timeformat = '%Y%m%d%H%M'
     reftime = datetime.strptime(mytime, timeformat)
     bookingreftime = time.mktime(reftime.timetuple())
+    now = datetime.now()
 
     for slot in TutorialSession.objects.all(): #for this tutor's session, for student is this student , for loop
 
@@ -242,6 +243,11 @@ def endsession(mytime):
                                       timeformat)) + " to " + str(reftime) + " with tutor " + slot.tutor.myuser.user.username + ", please evalute his/her performance!"
                 notification = Notification(content=content, myuser=slot.student.myuser)
                 notification.save()
+
+                Transaction.objects.create(myuser=slot.tutor.myuser, time=mytime,
+                                           cashflow=slot.price,
+                                           information=slot, type=4)
+
 
                 ## mytutor receives commision fee
     return
@@ -383,7 +389,7 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
         #send_mail('Booking Notification', content, settings.EMAIL_HOST_USER, [tutor.myuser.user.email], fail_silently=False)
 
     tutor.save()
-    tutor.tutorialsession_set.create(starttime=begintime, status=0, tutor=tutor, student=student, price=tutor.hourly_rate)
+    newSession = tutor.tutorialsession_set.create(starttime=begintime, status=0, tutor=tutor, student=student, price=tutor.hourly_rate)
     #wallet deduction
     wallet.balance = wallet.balance - Decimal.from_float(
         tutor.hourly_rate * COMMISION)
@@ -397,6 +403,8 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
     notification = Notification(content=content, myuser=myuser)
     notification.save()
 
+
+    Transaction.objects.create(myuser=myuser, time=now.strftime(timeformat), cashflow=tutor.hourly_rate * COMMISION * (-1), information = newSession, type = 3)
 
     return render(request, 'searchtutors/tutorpage.html', {'success': "aa", 'tutor': tutor, 'user': myuser})
 
@@ -456,7 +464,21 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
     notification = Notification(content=content, myuser=myuser)
     notification.save()
 
-    return render(request, 'myaccount/mybooking.html', {'myuser': myuser, 'session_list':booking})
+    Transaction.objects.create(myuser=myuser, time=now.strftime(timeformat),
+                               cashflow=tutorial_session.price * COMMISION, information=tutorial_session, type=2)
+
+    mytutor = Tutor.objects.filter(myuser=myuser)
+    if mytutor:
+        mytutor = Tutor.objects.get(myuser=myuser)
+        booked = TutorialSession.objects.filter(tutor=mytutor)
+        istutor = "1"
+    else:
+        booked=""
+        istutor = "0"
+    return render(request, 'myaccount/mybooking.html',
+                      {'user': myuser, 'session_list': booking, "booked_list": booked, 'isstudent': "1",
+                       'istutor': istutor})
+
 
 def mywallet(request, myuser_id): #TODO filter thirty days!
     if not request.user.is_authenticated(): #visitor or client
@@ -526,6 +548,9 @@ def withdraw(request, myuser_id):
     myuser.wallet.balance = myuser.wallet.balance - cashflow
     myuser.wallet.save()
     messages = "Withdrawal success!" #TODO: remember that tutorialsession should keep track of hourly rate, and it records depost & withdraw
+
+    Transaction.objects.create(myuser=myuser, time=datetime.now().strftime("%Y%m%d%H%M"),
+                               cashflow=cashflow * (-1), type=1)
     return render(request, 'myaccount/mywallet.html',
                   {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
 
@@ -565,6 +590,9 @@ def deposit(request, myuser_id):
     myuser.wallet.balance = myuser.wallet.balance + cashflow
     myuser.wallet.save()
     messages = "Deposit success!" #TODO: remember that tutorialsession should keep track of hourly rate, and it records depost & withdraw
+
+    Transaction.objects.create(myuser=myuser, time=datetime.now().strftime("%Y%m%d%H%M"),
+                               cashflow=cashflow, type=0)
     return render(request, 'myaccount/mywallet.html',
                   {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
 

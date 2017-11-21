@@ -2,38 +2,72 @@
 {% block title %}: my account{% endblock %}
 {% block content %}
     <!-- breadcrumbs -->
-    <section class="breadcrumbs" style="background-image: url(/static/bootstrap/images/breadcrumbs/best-room.jpg)">
-      <div class="container">
-        <div class="row">
+<section class="breadcrumbs" style="background-image: url(/static/bootstrap/images/breadcrumbs/best-room.jpg)">
+    <div class="right">
+    <div class="row">
           <div class="col-md-6">
             <h1 class="h1">My Account</h1>
           </div>
-
-        </div>
-      </div>
-    </section>
-
-
-    <div class="container">
-     <div class="best-tutor-carousel">
-          <ul class="row best-tutor_ul">
-            <li class="col-lg-3 col-md-3 col-sm-3 col-xs-12 best-tutor_li">
-              <div class="best-tutor-info">
-                <div class="best-tutor_t"><a href="{% url 'Tutorial:mybooking' user.id %}">MY BOOKING</a></div>
-                </div>
-            </li>
-               <li class="col-lg-3 col-md-3 col-sm-3 col-xs-12 best-tutor_li">
-              <div class="best-tutor-info">
-                <div class="best-tutor_t"><a href="{% url 'Tutorial:myprofile' user.id %}">MY PROFILE</a></div>
-                </div>
-            </li>
-               <li class="col-lg-3 col-md-3 col-sm-3 col-xs-12 best-tutor_li">
-              <div class="best-tutor-info">
-                <div class="best-tutor_t"><a href="{% url 'Tutorial:mywallet' user.id %}">MY WALLET</a></div>
-                </div>
-          </ul>
         </div>
     </div>
-    <!-- /choose best rooms -->
+        </section>
+
+    <div class="left">
+             <div class="avater" style="text-align : center;">
+                    <img src="/static/bootstrap/images/best-rooms/1.jpg" style="width : 130px; height: 130px; border-radius: 130px; ">
+                    <div class="small">Welcome, {{user.user.first_name}} {{user.user.last_name}}</div>
+                 </div>
+              <a href="{% url 'Tutorial:mybooking' user.id %}"><div class="navbox">
+                <div class="best-tutor_t">MY BOOKING</div>
+                </div></a>
+            <a href="{% url 'Tutorial:myprofile' user.id %}">
+              <div class="navbox" >
+                <div class="best-tutor_t">MY PROFILE</div>
+                </div>
+                </a>
+            <a href="{% url 'Tutorial:mywallet' user.id %}">
+              <div class="navbox" >
+                <div class="best-tutor_t">MY WALLET</div>
+                </div>
+                </a>
+            <a href="{% url 'Tutorial:mywallet' user.id %}">
+            <div class="navbox" >
+                <div class="best-tutor_t">TRANSACTION RECORD</div>
+                </div>
+                </a>
+     </div>
+
+        <div class="right">
+
 {% block right %}{% endblock%}
+
+
+        </div>
+
+
+
+{% endblock %}
+
+{% block script1 %}
+    $(document).ready(function(){
+        var top = $('.left').offset().top - parseFloat($('.left').css('marginTop').replace(/auto/, 0));
+
+
+        $(window).scroll(function(evt) {
+            var y = $(this).scrollTop();
+            if (y > top) {
+            if (y < 100000) {
+            $('.left').addClass('fixed').removeAttr('style');
+            } else {
+                $('.left').removeClass('fixed').css({
+                        position: 'absolute',
+                        top: (100000 - top) + 'px'
+            });
+        }
+        } else {
+        $('.left').removeClass('fixed');
+        }
+        });
+
+});
 {% endblock %}

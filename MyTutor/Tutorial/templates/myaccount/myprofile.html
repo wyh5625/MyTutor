@@ -1,6 +1,7 @@
 {% extends "myaccount/myaccount.html" %}
 {% block title %}: my profile{% endblock %}
 {% block right %}
+<<<<<<< HEAD
 {% if not edit %}
     {{user.user.username}}
     {{user.user.first_name}}
@@ -16,4 +17,18 @@
 </form>
     <button type="submit">Cancel</button>
 {% endif %}
+=======
+    <div class = "infoPanel">
+        <div class="best-tutor_img" style="float : left; width : 200px; height: 200px; border-radius: 200px;">
+             <img src="/static/bootstrap/images/best-rooms/1.jpg">
+             <div class="best-tutor_overlay">
+                 <div class="overlay_icn"><a href=""></a></div>
+              </div>
+        </div>
+         <div class="insideInfo">Username : {{user.user.username}}</div>
+         <div class="insideInfo">First name: {{user.user.first_name}}</div>
+         <div class="insideInfo">Last name: {{user.user.first_name}}</div>
+    </div>
+{{user.user.email}}
+>>>>>>> 675a02381102ef050e7bc3efc2c85e7a359c278f
 {% endblock %}
