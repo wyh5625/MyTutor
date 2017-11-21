@@ -339,6 +339,7 @@ hr {
 .breadcrumbs {
   /* height: 146px; */
   padding: 50px 0;
+ 
 }
 .breadcrumbs .breadcrumb {
   margin-bottom: 0;
@@ -855,27 +856,40 @@ section, .section {
 }
 .best-tutor-carousel {
   position: relative;
+  float : left;
+ 
 }
 .best-tutor_ul {
-  padding: 0;
+  padding: 5px;
   list-style: none;
   margin-bottom: 0;
+  margin-top : 10px;
+
 }
 .best-tutor_li {
-  margin-bottom: 30px;
+  margin-bottom: 5px;
+  
 }
-.best-tutor-info {
+.navbox {
   padding: 30px;
+  border-bottom: 1px solid #E8E8E8;
+}
+.navbox:hover{
+	color : white;
+	background-color : #9CCC65;
+}
+.avater{
+	padding: 30px;
+	border-bottom: 1px solid #E8E8E8;
+}
+.best-tutor-info{
+	padding: 30px;
   -webkit-transition: border-color 0.25s linear;
   -moz-transition: border-color 0.25s linear;
   -ms-transition: border-color 0.25s linear;
   -o-transition: border-color 0.25s linear;
   transition: border-color 0.25s linear;
   background: #fff;
-}
-
-.best-tutor_li:hover .best-tutor-info {
-  border-color: #9CCC65;
 }
 
 .best-tutor_img {
@@ -1007,13 +1021,15 @@ section, .section {
   bottom: 35%;
 }
 .best-tutor_t {
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   text-align: center;
   font-family: Montserrat;
 }
 .best-tutor_t a {
   font-size: 19px;
   font-weight: 400;
+  width : 80%;
+  padding-left : 15px;
 }
 .best-tutor_desc {
   margin-bottom: 15px;
@@ -3089,7 +3105,7 @@ a.btn-nav .btn {
   max-height: 400px; }
 .owl_gallery .item img {max-width: 100%;}
 .comment-ava {width: 60px;height: auto;border-radius: 50%;}
-.reservation-1 .best-tutor-info{
+.reservation-1 {
 background: #fafafa;
 }
 .reservation-1 .module .theme-select {
@@ -3113,4 +3129,53 @@ background-color: #fff !important;
 	background-color : grey ; 
 	color : white;
 	margin : 10px;
+}
+
+#accountHeader{
+	border : 10px, solid, red;
+	 border-collapse:collapse;
+}
+.right{
+	float: right;
+	width : 80%;
+	
+}
+.left{
+	float : left;
+	width : 20%;
+	border-right : 1px solid #E8E8E8;
+	border-top: 1px solid transparent;
+	display: block !important;
+    height: 100% !important;
+    padding-bottom: 0;
+	overflow : auto;
+}
+.roundPicture{
+	width:100px; 
+	height:100px; 
+	border-radius:100px; 
+}
+.small{
+	font-size : 12pt;
+	font-weight : 900;
+	margin-top : 10px;
+	margin-bottom: 10px;
+}
+
+
+.left.fixed {
+	position: fixed;
+	top: 0;
+}
+
+.infoPanel{
+	margin-top : 20px;
+	margin-left : 40px;
+	text-align : left;
+	border : 2px solid #E8E8E8;
+}
+.insideInfo{
+	text-align : left;
+	font-size : 14pt;
+	
 }

@@ -1,8 +1,16 @@
 {% extends "myaccount/myaccount.html" %}
 {% block title %}: my profile{% endblock %}
 {% block right %}
-{{user.user.username}}
+    <div class = "infoPanel">
+        <div class="best-tutor_img" style="float : left; width : 200px; height: 200px; border-radius: 200px;">
+             <img src="/static/bootstrap/images/best-rooms/1.jpg">
+             <div class="best-tutor_overlay">
+                 <div class="overlay_icn"><a href=""></a></div>
+              </div>
+        </div>
+         <div class="insideInfo">Username : {{user.user.username}}</div>
+         <div class="insideInfo">First name: {{user.user.first_name}}</div>
+         <div class="insideInfo">Last name: {{user.user.first_name}}</div>
+    </div>
 {{user.user.email}}
-{{user.profile_content}}
-<button type="submit">Edit</button>
 {% endblock %}

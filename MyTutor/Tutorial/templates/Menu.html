@@ -21,9 +21,10 @@
   <script type="text/javascript" src="/static/bootstrap/js/map.js"></script>
   <script type="text/javascript" src="/static/bootstrap/js/main.js"></script>
             <script>{% block script %}{% endblock %}</script>
+            <script>{% block script1 %}{% endblock %}</script>
 	</head>
 
-	<body >
+	<body style="height : 100%;">
 		<header class="header">
       <div class="header-bottom">
         <nav class="navbar navbar-universal navbar-custom">
@@ -58,7 +59,9 @@
         </nav>
       </div>
 </header>
+        <div style="height : 100%">
         {% block content %}{% endblock %}
+        </div>
 	</body>
 </html>
 
