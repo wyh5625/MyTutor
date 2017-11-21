@@ -520,8 +520,11 @@ def evaluate(request, myuser_id, tutorial_sessions_id):
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
         HttpResponseRedirect('/Tutorial/admin/')
+
     score = request.POST['score']
     comment = request.POST['comment']
+    comment = comment.replace('^space^', ' ')
+    logger.error(comment)
     if len(comment) > 200:
         msg = 'Exceeds limit 200 characters, the left characters will not be stored'
         comment = comment[:200]

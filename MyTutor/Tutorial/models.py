@@ -82,6 +82,8 @@ class TutorialSession(models.Model):
     tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
     student =  models.ForeignKey(Student, on_delete=models.CASCADE)
     price = models.IntegerField(default=0) #TODO: notice that this price does not include commission fee
+    score = models.DecimalField(max_digits=2, decimal_places=1, default=-1)  # TODO: if unevaluated, will use score = -1
+    comment = models.CharField(max_length=200, default="")
     #TODO: intensive change: now has done: when booking, store into price,  when cancel, check price instead of hourly rate, when end, money of price added instead of hourly rate
     def __str__(self):
         return self.starttime + "-student-" + self.student.myuser.user.username + "-tutor-" + self.tutor.myuser.user.username

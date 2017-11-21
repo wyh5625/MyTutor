@@ -14,7 +14,14 @@
     function Evaluate(elem){
         var score = prompt("Score(?/5): " );
         var comment = prompt("Comment: " );
-        alert(score, comment);
+        comment = comment.replace(/ /g, "^space^");
+        /*for (var i = 0;i < comment.length;i++){
+            if (comment[i] == ' '){
+                comment = comment.substring(0,i-1) +'^fuck^'+comment.substring(i,comment.length);
+                alert(comment);
+            }
+        }*/
+        alert(comment);
         elem.innerHTML ="<input type=\"hidden\"  name=\"score\" value=" +score+ "><input type=\"hidden\"  name=\"comment\" value=" +comment+ ">";
         document.getElementById("evaluateR").submit();
     }
