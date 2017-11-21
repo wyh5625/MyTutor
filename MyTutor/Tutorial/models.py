@@ -17,6 +17,7 @@ class MyUser(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE )
     wallet = models.ForeignKey(Wallet, on_delete = models.CASCADE)
     profile_content = models.CharField(max_length=2000, default="")
+    phone = models.IntegerField(null = True)
     def __str__(self):
         return self.user.username
 

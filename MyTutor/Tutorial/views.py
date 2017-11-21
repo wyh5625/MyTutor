@@ -273,7 +273,15 @@ def myprofile(request, myuser_id):
     if not MyUser.objects.filter(user=request.user):
         HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
-    return render(request, 'myaccount/myprofile.html', {'user':myuser })
+    form = ProfileForm(initial = {'last_name': myuser.user.last_name, 'first_name': myuser.user.first_name, 'email': myuser.user.email})
+    edit = False
+    if 'edit' in request.GET:
+        edit_or_not = request.GET['edit']
+        if edit_or_not == '1':
+            edit = True
+        else:
+            edit = False
+    return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit})
 
 def mybooking(request, myuser_id):
     if not request.user.is_authenticated(): #visitor or client

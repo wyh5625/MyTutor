@@ -45,7 +45,8 @@ class ProfileForm(forms.Form):
     last_name = forms.CharField(label='Family Name', max_length=30)
     first_name = forms.CharField(label='Given Name', max_length=30)
     email = forms.EmailField(label='Email')
-    phone = forms.IntegerField()
+    content = forms.CharField(label='About Me', max_length=2000)
+    #phone = forms.IntegerField()
 '''
 class UserProfileForm(forms.Form):
     last_name = forms.CharField(label='Family Name', max_length=30)

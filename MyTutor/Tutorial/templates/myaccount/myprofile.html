@@ -1,8 +1,19 @@
 {% extends "myaccount/myaccount.html" %}
 {% block title %}: my profile{% endblock %}
 {% block right %}
-{{user.user.username}}
-{{user.user.email}}
-{{user.profile_content}}
-<button type="submit">Edit</button>
+{% if not edit %}
+    {{user.user.username}}
+    {{user.user.first_name}}
+    {{user.user.last_name}}
+    {{user.phone}}
+    {{user.user.email}}
+    {{user.profile_content}}
+    <button type="submit">Edit</button>
+{% else %}
+<form method="POST" action="/accounts/profile/" class="" />
+    {{form.as_p}}
+    <button type="submit">Save</button>
+</form>
+    <button type="submit">Cancel</button>
+{% endif %}
 {% endblock %}
