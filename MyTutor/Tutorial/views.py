@@ -938,3 +938,12 @@ def editProfile(request):
 '''
 def saveProfile(request):
     '''
+
+def tutorTimeslot(request, myuser_id):
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
+    myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
+    mytutor = Tutor.objects.filter(myuser=myuser)
+    return render(request, 'myaccount/tutorTimeslot.html', {'user':myuser, 'tutorList': mytutor})

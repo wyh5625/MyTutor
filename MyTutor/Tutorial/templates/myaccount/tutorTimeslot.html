@@ -1,0 +1,78 @@
+{% extends "myaccount/myaccount.html" %}
+{% block title %}: Tutor timeslot selecting{% endblock %}
+{% block right %}
+    {% for tutor in tutorList %}
+    <div id="timeSlots" ></div>
+    <script>
+        var list = "{{ tutor.timeslot}}";
+        alert(list);
+        var d= "<form action=\"\" method=\"post\" name=\"frm\">{% csrf_token %}<table width=\"100%\" class = 'slotTable col-md-9' style='margin-top: 0;'><tbody>";
+        var date = new Date();
+        var week = date.getDay();
+        var year = date.getYear();
+        var month = date.getMonth();
+        var strDate = date.getDate();
+        var months = new Array(8);
+        var days = new Array(8);
+        month ++;
+        if (month == 13){
+            month = 12;
+        }
+        for (var i =0;i < 49;i++){
+            d += "<tr class=\"titleTime row\">";
+            if(i == 0){
+                 d+= "<td rowspan=\"1\" class=\"hour_\" height=\"10%\" width=\"4%\"  style=\"background-color : #003400 ; color : white;margin : 1px; border-collapse: separate; border : 2px solid #989898; line-height : 2;\">Time/Date</td>";
+                for (var j = 0;j<15;j++){
+                    if (month >= 1 && month <= 9) {
+                        month = "0" + month;
+                    }
+                    if (strDate >= 0 && strDate <= 9) {
+                        strDate = "0" + strDate;
+                    }
+                    d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"6%\" style=\"background-color : #003400 ; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee;\">"+month + " - " +strDate+"</td>";
+                    months[j] = month;
+                    days[j] = strDate;
+                    date.setTime(date.getTime()+24*60*60*1000);
+                    month = date.getMonth() + 1;
+                    strDate = date.getDate();
+                }
+            }else{
+                var time48;
+
+                if ((i-1) % 2 == 0){
+                    time48 = (i-1) / 2 + ":00";
+                }else{
+                    time48 = (i-1) / 2 - 0.5+ ":30";
+                }
+                if (time48.length < 5){
+                    var temp;
+                    temp = "0";
+                    temp += time48;
+                    time48 = temp;
+                }
+                d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"4%\" style=\"background-color : #003400 ; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee;\">"+time48+"</td>";
+                var c = 0;
+                for (var j = 0;j<15;j ++ ){
+                   var  month1 = date.getMonth() + 1;
+                    var tomorrow = new Date();
+                    var sessionTime = new Date(tomorrow.getFullYear()+"/"+month + "/"+strDate+" "+ j + ":" +"00:00" );
+                    tomorrow.setTime(tomorrow.getTime()+24*60*60*1000);
+                     var gap = (sessionTime-tomorrow)/1000/60/60;
+                     //alert(i -1+ 48*week + c);
+                    //alert(time48);
+                    if (list[i - 1+ 48*week + c ] == '0')
+                       { d+= "<td rowspan=\"1\" id=\""+year+months[j]+days[j]+"_"+time48+"\" height=\"10%\" width=\"4%\" style=\"background-color : #9CCC65 ; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee; line-height : 2\" onclick=\"select(this)\"></td>";}
+                    else
+                        {d+= "<td rowspan=\"1\" id=\""+year+months[j]+days[j]+"_"+time48+"\" height=\"10%\" width=\"4%\" style=\"background-color : #E8E8E8 ; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee; line-height : 2\" ></td>";}
+                    c += 48;
+                }
+
+            }
+            d += "</tr>";
+        }
+        d += "</tbody></table></form>";
+        document.getElementById('timeSlots').innerHTML= d;
+
+    </script>
+    {% endfor %}
+{% endblock %}
