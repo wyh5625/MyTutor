@@ -20,21 +20,11 @@
 
               <div class="avater" >
                   <div>WALLET BALANCE</div>
-                  <div >
-                     <div style="font-size: 14pt; font-weight: 900; margin-top: 5px;">$ {{user.wallet.balance}}
-                         <a href="{% url 'Tutorial:mywallet' user.id %}" class="moneyButton" ><div class ="btn btn-default">DEPOSIT</div></a>
-                  <a href="{% url 'Tutorial:mywallet' user.id %}" class="moneyButton" style="display : block;" id="withdraw"><div class ="btn btn-default">WITHDRAW</div></a></div>
-                  </div>
-                  <script>
-                      var student="{{isstudent}}";
-                      var tutor = "{{istutor}}";
-                      alert(tutor);
-                      if (tutor == "0"){
-                         document.getElementById("withdraw").style.display = "none";
-                      }
-                  </script>
+                  <div style="font-size: 14pt; font-weight: 900; margin-top: 5px;">$ {{user.wallet.balance}}
+                   <a href="{% url 'Tutorial:mywallet' user.id %}" class="moneyButton" ><div class ="btn btn-default">OPERATION</div></a>
 
                 </div>
+              </div>
 
               <a href="{% url 'Tutorial:mybooking' user.id %}"><div class="navbox">
                 <div class="best-tutor_t">MY BOOKING</div>
@@ -44,7 +34,7 @@
                 <div class="best-tutor_t">MY PROFILE</div>
                 </div>
                 </a>
-            <a href="{% url 'Tutorial:mywallet' user.id %}">
+            <a href="{% url 'Tutorial:mytransaction' user.id %}">
             <div class="navbox" >
                 <div class="best-tutor_t">TRANSACTION RECORD</div>
                 </div>

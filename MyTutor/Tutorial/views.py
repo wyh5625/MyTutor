@@ -539,6 +539,29 @@ def mywallet(request, myuser_id): #TODO filter thirty days!
     return render(request, 'myaccount/mywallet.html', {'user':myuser, 'student_list':student_list, 'tutor_list':tutor_list, 'msg': "", 'isstudent': isstudent, 'istutor': istutor })
 #def forget_password(request, myuser_id):
 
+####mytransaction#####
+def mytransaction(request, myuser_id): #TODO filter thirty days!
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
+    myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
+    student_list = ""
+    tutor_list = ""
+    if Student.objects.filter(myuser=myuser):
+        mystudent = Student.objects.get(myuser=myuser)
+        student_list = TutorialSession.objects.filter(student=mystudent)
+    if Tutor.objects.filter(myuser=myuser):
+        mytutor = Tutor.objects.get(myuser=myuser)
+        tutor_list = TutorialSession.objects.filter(tutor=mytutor)
+    isstudent = "0"
+    istutor = "0"
+    if Student.objects.filter(myuser=myuser):
+        isstudent = "1"
+    if Tutor.objects.filter(myuser=myuser):
+        istutor = "1"
+    return render(request, 'myaccount/mytransaction.html', {'user':myuser, 'student_list':student_list, 'tutor_list':tutor_list, 'msg': "", 'isstudent': isstudent, 'istutor': istutor })
+
 ####message####
 def message(request, myuser_id):
     if not request.user.is_authenticated(): #visitor or client
