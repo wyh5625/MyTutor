@@ -24,6 +24,7 @@ import smtplib
 from django.core.mail import send_mail
 import operator
 import logging
+from decimal import Decimal
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -72,6 +73,8 @@ def login(request):
 
     if user is not None and user.is_active:
         auth.login(request, user)
+        if not MyUser.objects.filter(user=request.user):
+            return HttpResponseRedirect('/Tutorial/admin/') # Assume all tutors share a same page, so noneed for user.id+ str(user.id))
         myuser = MyUser.objects.get(user=request.user)
         return HttpResponseRedirect('/Tutorial/' + str(myuser.id))
     else:
@@ -179,7 +182,7 @@ def locksession(mytime):
 
             # modify timeslot string
             timeslot = list(tutor.timeslot)
-            logger.error("This is the index" + str(weekday * 24 * diff + int (hour_diff * diff) + 24 * diff) + " and " + str(weekday * 48 + hour_diff + 48))
+            logger.error("This is the index" + str(weekday * 24 * diff + int (hour_diff * diff) + 24 * diff) + " and " + str(weekday * 48 + hour_diff * 2 + 48))
             timeslot[weekday * 24 * diff + int (hour_diff * diff) + 24 * diff] = '3' #meaning this session has passed the state to be modified
             #weekday * 24 * diff is how many 24 hours has passed
             #int (hour_diff * diff) means starting from today to 'now', hong long has passed
@@ -190,15 +193,18 @@ def locksession(mytime):
             tutor.timeslot = "".join(timeslot)
             tutor.save()
     else: #then only contracted tutor needed in this case, but currently now working because no interface for half an hour yet
-        """half_hour_diff = (bookingtime - showingtime) / 1800
+        half_hour_diff = int((bookingtime - showingtime) / 1800)
         weekday = (1 + now.weekday()) % 7  # Monday is 0 ... Sunday is 6, but Sunday is the first day of the week, transform to 0
         for tutor in Tutor.objects.filter(hourly_rate=0):
 
             # modify timeslot string
             timeslot = list(tutor.timeslot) 
-            timeslot[weekday * 48 + half_hour_diff + 48 + 1] = '3' #meaning I book the session, 0 only means tutor doesn't want this session to be booked
+            timeslot[weekday * 48 + half_hour_diff + 48] = '3' #meaning I book the session, 0 only means tutor doesn't want this session to be booked
+            logger.error(
+                "This is the index" + str(weekday * 48 + half_hour_diff + 48))
+
             tutor.timeslot = "".join(timeslot)
-            tutor.save()"""
+            tutor.save()
 
         #TODO they should be two times, but curently not, so byebye
 
@@ -220,12 +226,12 @@ def endsession(mytime):
                 slot.save()
 
                 ## transaction
-                slot.tutor.myuser.wallet.balance = slot.tutor.myuser.wallet.balance + slot.tutor.hourly_rate
+                slot.tutor.myuser.wallet.balance = slot.tutor.myuser.wallet.balance + slot.price
                 slot.tutor.myuser.wallet.save()
                 now = datetime.now()
                 content = "System notification [ " + str(datetime(now.year, now.month, now.day, now.hour,
                                                                   now.minute)) + " ]: You have completed the tutorial starting from " + str(
-                    datetime.strptime(slot.starttime, timeformat)) + " to " + str(reftime) + " with student " + slot.student.myuser.user.username + ", tuition fee " + str(slot.tutor.hourly_rate) + " has been transfered to your wallet"
+                    datetime.strptime(slot.starttime, timeformat)) + " to " + str(reftime) + " with student " + slot.student.myuser.user.username + ", tuition fee " + str(slot.price) + " has been transfered to your wallet"
                 notification = Notification(content=content, myuser=slot.tutor.myuser)
                 notification.save()
 
@@ -302,6 +308,7 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
     myuser = MyUser.objects.get(user=request.user) #myuser = MyUser.objects.get(pk=myuser_id)
 
     begintime = request.POST['starttime']
+    logger.error("Start time is " + str(begintime))
     student = Student.objects.filter(myuser=myuser)
     tutor = Tutor.objects.get(pk=tutor_id)
     if not student:
@@ -327,6 +334,7 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
     now = datetime.now()
     showingtime = time.mktime(datetime(now.year, now.month, now.day, 0, 0).timetuple())
     nowbooking = datetime.strptime(begintime, timeformat) #this is the yy mm dd format for what student wants to book
+    logger.error("This is after formatting " + str(nowbooking))
     bookingtime = time.mktime(nowbooking.timetuple()) #transfrom nowbooking into time format
     for slot in tutor.tutorialsession_set.filter(student=student): #for this tutor's session, for student is this student , for loop
         slottime = datetime.strptime(slot.starttime, timeformat)
@@ -342,12 +350,15 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
 
     #later on with beginAllSessions, we update the available string for every tutor each week at the end
     #day difference is because the 14-day long string starts from this Sunday, the first day of the week
-    half_hour_diff = int(bookingtime - showingtime) / 1800 #only consider private tutor
+    half_hour_diff = int((bookingtime - showingtime) / 1800) #only consider private tutor
     hour_diff = int(half_hour_diff / 2)
     weekday = (1 + now.weekday()) % 7 #Monday is 0 ... Sunday is 6, but Sunday is the first day of the week, transform to 0
     # modify timeslot string
     timeslot = list(tutor.timeslot)
-    timeslot[weekday * 24 + hour_diff] = '2' #meaning I book the session, 0 only means tutor doesn't want this session to be booked
+    if tutor.hourly_rate == 0:
+        timeslot[weekday * 48 + half_hour_diff] = '2' #meaning I book the session, 0 only means tutor doesn't want this session to be booked
+    else :
+        timeslot[weekday * 24 + hour_diff] = '2' #meaning I book the session, 0 only means tutor doesn't want this session to be booked
     tutor.timeslot = "".join(timeslot)
     #tutor.myuser.wallet.balance = tutor.myuser.wallet.balance + tutor.hourly_rate
     tutor.myuser.wallet.save()
@@ -364,7 +375,7 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
         #send_mail('Booking Notification', content, settings.EMAIL_HOST_USER, [tutor.myuser.user.email], fail_silently=False)
 
     tutor.save()
-    tutor.tutorialsession_set.create(starttime=begintime, status=0, tutor=tutor, student=student)
+    tutor.tutorialsession_set.create(starttime=begintime, status=0, tutor=tutor, student=student, price=tutor.hourly_rate)
     #wallet deduction
     wallet.balance = wallet.balance - Decimal.from_float(
         tutor.hourly_rate * COMMISION)
@@ -399,12 +410,15 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
     bookingtime = time.mktime(datetime.strptime(tutorial_session.starttime, timeformat).timetuple())
     now = datetime.now()
     showingtime = time.mktime(datetime(now.year, now.month, now.day, 0, 0).timetuple())
-    half_hour_diff = int(bookingtime - showingtime) / 1800
+    half_hour_diff = int((bookingtime - showingtime) / 1800)
     hour_diff = int(half_hour_diff / 2)
     weekday = (1 + now.weekday()) % 7 #Monday is 0 ... Sunday is 6, but Sunday is the first day of the week, transform to 0
     # modify timeslot string
     timeslot = list(tutor.timeslot)
-    timeslot[weekday * 24 + hour_diff] = '1'
+    if tutor.hourly_rate == 0:
+        timeslot[weekday * 48 + half_hour_diff] = '1'
+    else:
+        timeslot[weekday * 24 + hour_diff] = '1'
     tutor.timeslot = "".join(timeslot)
     #tutor.myuser.wallet.balance = tutor.myuser.wallet.balance - tutor.hourly_rate
     #tutor.myuser.wallet.save()
@@ -425,12 +439,12 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
     #wallet repaying
     wallet = mystudent.myuser.wallet
     wallet.balance = wallet.balance + Decimal.from_float(
-        tutor.hourly_rate * COMMISION)  # fixme didn't add money to tutor account
+        tutorial_session.price * COMMISION)
     wallet.save()
     # message delivering
     content = "System notification [ " + str(
         datetime(now.year, now.month, now.day, now.hour, now.minute)) + " ]: You have cancelled the session on " + str(
-        datetime.strptime(tutorial_session.starttime, timeformat)) + " with tutor " + tutor.myuser.user.username + " ,with wallet repaid by " + str(tutor.hourly_rate * COMMISION) + " to " + str(wallet.balance)
+        datetime.strptime(tutorial_session.starttime, timeformat)) + " with tutor " + tutor.myuser.user.username + " ,with wallet repaid by " + str(tutorial_session.price * COMMISION) + " to " + str(wallet.balance)
     notification = Notification(content=content, myuser=myuser)
     notification.save()
 
@@ -450,7 +464,7 @@ def mywallet(request, myuser_id): #TODO filter thirty days!
     if Tutor.objects.filter(myuser=myuser):
         mytutor = Tutor.objects.get(myuser=myuser)
         tutor_list = TutorialSession.objects.filter(tutor=mytutor)
-    return render(request, 'myaccount/mywallet.html', {'user':myuser, 'student_list':student_list, 'tutor_list':tutor_list })
+    return render(request, 'myaccount/mywallet.html', {'user':myuser, 'student_list':student_list, 'tutor_list':tutor_list, 'msg': "" })
 
 #def forget_password(request, myuser_id):
 
@@ -464,6 +478,87 @@ def message(request, myuser_id):
     messages = Notification.objects.filter(myuser=myuser)
     return render(request, 'message/message.html', {'user': myuser, 'messages': messages})
 
+def withdraw(request, myuser_id):
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
+    myuser = MyUser.objects.get(user=request.user)  # myuser = get_object_or_404(MyUser, pk=myuser_id)
+    student_list = ""
+    tutor_list = ""
+    if Student.objects.filter(myuser=myuser):
+        mystudent = Student.objects.get(myuser=myuser)
+        student_list = TutorialSession.objects.filter(student=mystudent)
+    if Tutor.objects.filter(myuser=myuser):
+        mytutor = Tutor.objects.get(myuser=myuser)
+        tutor_list = TutorialSession.objects.filter(tutor=mytutor)
+    #filter1: not tutor
+    if not Tutor.objects.filter(myuser=myuser):
+        messages = "Only a tutor can withdraw money from wallet"
+        return render(request, 'myaccount/mywallet.html',
+                      {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
+    amount = request.POST['withdraw']
+    #filter2: not number
+    try:
+        cashflow = Decimal(amount)
+    except Exception as e:
+        messages = "Please enter a valid number"
+        return render(request, 'myaccount/mywallet.html',
+                      {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
+    #filter3: not possitive
+    if cashflow <= 0:
+        messages = "Please enter a positive number"
+        return render(request, 'myaccount/mywallet.html',
+                      {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
+    #filter4: not enough moneyD
+    if cashflow > myuser.wallet.balance:
+        messages = "You don't have enough money in your account"
+        return render(request, 'myaccount/mywallet.html',
+                      {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
+    myuser.wallet.balance = myuser.wallet.balance - cashflow
+    myuser.wallet.save()
+    messages = "Withdrawal success!" #TODO: remember that tutorialsession should keep track of hourly rate, and it records depost & withdraw
+    return render(request, 'myaccount/mywallet.html',
+                  {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
+
+
+def deposit(request, myuser_id):
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
+    myuser = MyUser.objects.get(user=request.user)  # myuser = get_object_or_404(MyUser, pk=myuser_id)
+    student_list = ""
+    tutor_list = ""
+    if Student.objects.filter(myuser=myuser):
+        mystudent = Student.objects.get(myuser=myuser)
+        student_list = TutorialSession.objects.filter(student=mystudent)
+    if Tutor.objects.filter(myuser=myuser):
+        mytutor = Tutor.objects.get(myuser=myuser)
+        tutor_list = TutorialSession.objects.filter(tutor=mytutor)
+    #filter1: only tutor can withdraw
+    if not Student.objects.filter(myuser=myuser):
+        messages = "Only a student can deposit money from wallet"
+        return render(request, 'myaccount/mywallet.html',
+                      {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
+    amount = request.POST['deposit']
+    #filter2: not number
+    try:
+        cashflow = Decimal(amount)
+    except Exception as e:
+        messages = "Please enter a valid number"
+        return render(request, 'myaccount/mywallet.html',
+                      {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
+    #filter3: not positive
+    if cashflow <= 0:
+        messages = "Please enter a positive number"
+        return render(request, 'myaccount/mywallet.html',
+                      {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
+    myuser.wallet.balance = myuser.wallet.balance + cashflow
+    myuser.wallet.save()
+    messages = "Deposit success!" #TODO: remember that tutorialsession should keep track of hourly rate, and it records depost & withdraw
+    return render(request, 'myaccount/mywallet.html',
+                  {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
 
 def register_page(request):
     if request.method == 'POST':
@@ -503,21 +598,6 @@ def register_page(request):
 #def forget_password(request):
 
 
-
-"""class MyCronJob(CronJobBase):
-    RUN_EVERY_MINS = 0.5 # every half minte
-
-    schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
-    code = 'my_app.my_cron_job'    # a unique code
-
-    CRON_CLASSES = [
-        "my_app.cron.MyCronJob"
-    ]
-
-    def do(self):
-        user = User.objects.get(username='plus')
-        myuser = MyUser.objects.get(user=user)
-        myuser.wallet.balance = myuser.wallet.balance + 10"""
 
 
 def search_tutor_name(request,myuser_id ): #TODO don't know what should admin be able to see lol
