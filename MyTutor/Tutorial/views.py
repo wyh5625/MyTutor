@@ -571,19 +571,25 @@ def mytransaction(request, myuser_id): #TODO filter thirty days!
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     student_list = ""
     tutor_list = ""
-    if Student.objects.filter(myuser=myuser):
-        mystudent = Student.objects.get(myuser=myuser)
-        student_list = TutorialSession.objects.filter(student=mystudent)
-    if Tutor.objects.filter(myuser=myuser):
-        mytutor = Tutor.objects.get(myuser=myuser)
-        tutor_list = TutorialSession.objects.filter(tutor=mytutor)
     isstudent = "0"
     istutor = "0"
+    timeformat = '%Y%m%d%H%M'
+    now = datetime.now()
+    nowtime = time.mktime(now.timetuple())
+    refdelta = int(60 * 60 * 24 * 29 + now.hour * 3600 + now.minute * 60 + now.second) #The last 29 days + today
     if Student.objects.filter(myuser=myuser):
+        mystudent = Student.objects.get(myuser=myuser)
         isstudent = "1"
+
+        #for each session in transaction, calculate the time now and the time that transaction happen, if it happens 30 days ago, lambda function returns false
     if Tutor.objects.filter(myuser=myuser):
+        mytutor = Tutor.objects.get(myuser=myuser)
         istutor = "1"
-    return render(request, 'myaccount/mytransaction.html', {'user':myuser, 'student_list':student_list, 'tutor_list':tutor_list, 'msg': "", 'isstudent': isstudent, 'istutor': istutor })
+    list = filter(
+        lambda session: nowtime - time.mktime(datetime.strptime(session.time, timeformat).timetuple()) <= refdelta,
+        Transaction.objects.filter(myuser=myuser))
+
+    return render(request, 'myaccount/mytransaction.html', {'user':myuser, 'list': list, 'isstudent': isstudent, 'istutor': istutor })
 
 ####message####
 def message(request, myuser_id):
