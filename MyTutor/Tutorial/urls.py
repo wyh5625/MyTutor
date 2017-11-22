@@ -28,8 +28,8 @@ urlpatterns = [
     url(r'^register/$', views.register_page, name='register'),
     url(r'^(?P<myuser_id>[0-9]+)/searchTutorName/$', views.search_tutor_name, name='search_tutor_name'),
     url(r'^(?P<myuser_id>[0-9]+)/searchTutorTag/$', views.search_tutor_tag, name='search_tutor_tag'),
-    url(r'^(?P<myuser_id>[0-9]+)/myAccount/tutorTimeslot/$', views.tutorTimeslot, name='tutorTimeslot'),
-
+    url(r'^(?P<myuser_id>[0-9]+)/myAccount/tutorTimeslot/(?P<tutor_id>[0-9]+)/$', views.tutorTimeslot, name='tutorTimeslot'),
+    url(r'^(?P<myuser_id>[0-9]+)/myAccount/tutorTimeslotSelect/(?P<tutor_id>[0-9]+)/$', views.tutorTimeslotSelecting, name='tutorTimeslotSelecting'),
 
     #url(r'^registerSuccess/$', views.register_page, name='registerSuccess'),
     #test

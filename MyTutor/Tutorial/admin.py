@@ -13,5 +13,6 @@ admin.site.register(Wallet)
 admin.site.register(Tag)
 admin.site.register(University)
 admin.site.register(Course)
+admin.site.register(Transaction)
 
 

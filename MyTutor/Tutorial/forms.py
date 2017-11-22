@@ -55,14 +55,10 @@ class UserProfileForm(forms.Form):
     phone = forms.IntegerField()
     def __init__(self, *args, ):
 '''
-'''
-class PrivateTutorProfileForm(forms.Form):
-    last_name = forms.CharField(label='Family Name', max_length=30)
-    first_name = forms.CharField(label='Given Name', max_length=30)
-    email = forms.EmailField(label='Email')
-    phone = forms.IntegerField()
-    hourly_rate = forms.IntegerField()
 
+class PrivateTutorProfileForm(ProfileForm):
+    hourly_rate = forms.IntegerField(label='Price')
+'''
 class ContractedTutorProfile(UserProfileForm):
     last_name = forms.CharField(label='Family Name', max_length=30)
     first_name = forms.CharField(label='Given Name', max_length=30)

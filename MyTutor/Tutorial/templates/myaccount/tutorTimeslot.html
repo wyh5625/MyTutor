@@ -1,12 +1,10 @@
 {% extends "myaccount/myaccount.html" %}
 {% block title %}: Tutor timeslot selecting{% endblock %}
 {% block right %}
-    {% for tutor in tutorList %}
     <div id="timeSlots" ></div>
     <script>
         var list = "{{ tutor.timeslot}}";
-        alert(list);
-        var d= "<form action=\"\" method=\"post\" name=\"frm\">{% csrf_token %}<table width=\"100%\" class = 'slotTable col-md-9' style='margin-top: 0;'><tbody>";
+        var d= "<form action=\"{% url 'Tutorial:tutorTimeslotSelecting' user.id tutor.id %}\" method=\"post\" name=\"frm\">{% csrf_token %}<table width=\"100%\" class = 'slotTable col-md-9' style='margin-top: 0;'><tbody>";
         var date = new Date();
         var week = date.getDay();
         var year = date.getYear();
@@ -72,13 +70,13 @@
                     //alert(time48);
                     var which = i-1+c;
                     if (list[which] == '0')
-                       { d+= "<td rowspan=\"1\" id=\""+which+"\" height=\"10%\" width=\"4%\" style=\"background-color : #9CCC65 ; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee; line-height : 2\" onclick=\"select(this)\"></td>";}
+                       { d+= "<td rowspan=\"1\" id=\""+which+"\" height=\"10%\" width=\"4%\" style=\"background-color : #E8E8E8; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee; line-height : 2\" onclick=\"select(this)\"></td>";}
                     else if (list[i - 1 + c ] == '2')
-                        {d+= "<td rowspan=\"1\" id=\""+which+"\" height=\"10%\" width=\"4%\" style=\"background-color : #E8E8E8 ; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee; line-height : 2\" ></td>";}
-                    else if (list[i - 1 + c ] == '2')
+                        {d+= "<td rowspan=\"1\" id=\""+which+"\" height=\"10%\" width=\"4%\" style=\"background-color : #FF7F50   ; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee; line-height : 2\" ></td>";}
+                    else if (list[i - 1 + c ] == '3')
                         {d+= "<td rowspan=\"1\" id=\""+which+"\" height=\"10%\" width=\"4%\" style=\"background-color : #6495ED ; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee; line-height : 2\" ></td>";}
                     else
-                        {d+= "<td rowspan=\"1\" id=\""+which+"\" height=\"10%\" width=\"4%\" style=\"background-color : #FF7F50 ; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee; line-height : 2\" ></td>";}
+                        {d+= "<td rowspan=\"1\" id=\""+which+"\" height=\"10%\" width=\"4%\" style=\"background-color : #9CCC65; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee; line-height : 2\" ></td>";}
                     c += hour_num;
                 }
 
@@ -91,68 +89,44 @@
 
 
 
-         function select(elem){
-
-       var slot = elem.getAttribute('id');
-       var showStr = "Create a new booking : \rName : ";
-       showStr += "{{ tutor.myuser.user.username }}";
-        showStr += "\rTime : ";
-        if ("{{ tutor.hourly_rate }}" != 0){
-             var value = "20"+ slot.substring(1,3) + slot.substring(3,5) + slot.substring(5,7) + slot.substring(8,10) + "00";
-            if (value.length < 12){
-                value = "20"+ slot.substring(1,3) + slot.substring(3,5) + slot.substring(5,7) + "0"+slot.substring(8,10) + "00";
-            }
-            showStr += slot.substring(3,5) + "-" + slot.substring(5,7) +" , "+ slot.substring(8,10) + ":00";
-        }else{
-            var value = "20"+ slot.substring(1,3) + slot.substring(3,5) + slot.substring(5,7) + slot.substring(8,10) +  slot.substring(11,13);
-
-            showStr += slot.substring(3,5) + "-" + slot.substring(5,7) +" , "+ slot.substring(8,13);
-        }
-        alert(value);
-        showStr += "\rCommision:" + parseInt("{{ tutor.hourly_rate }}") * 0.05;
-        showStr += "\rTotal:" + parseInt("{{ tutor.hourly_rate }}") * 1.05;
-        if (confirm(showStr)){
-            elem.innerHTML ="<input type=\"hidden\" name='starttime' value= \""+value+"\" id=\"good\">"
-            document.frm.submit();
-
-       }
-
-    }
-
 
     </script>
 
 
 
     <script type="text/javascript">
-        var newList = "{{tutor.timeslot}}";
+        var temp = "{{tutor.timeslot}}";
+        var newList = temp.toString();
         $("td").mousedown(function() {
             $(this).css('background-color', 'blue');
-            var id = $(this).attr('id');
-            newList[id] = 1;
-            //alert(id);
-            $("td").mouseup(onMouseUp);
+            temp = $(this).attr('id');
+            var id = parseInt(temp);
+            if (newList[id] == '0'){
+                newList=newList.substring(0,id) + '1' + newList.substring(id+1,newList.length);
+            }
+
+           $("td").mouseup(onMouseUp);
             $("td").mouseover(onMouseOver);
         })
 
         function onMouseUp(){
         /* Act on the event */
-
             $("td").unbind('mouseover',onMouseOver);
             $("td").unbind('mouseup',onMouseUp);
+            $(this).html("<input type=\"hidden\" name='newList' value= \""+newList+"\">");
+            document.frm.submit();
         }
 
         function onMouseOver (argument) {
             $(this).css('background-color','blue');
-             var id = $(this).attr('id');
-            newList[id] = 1;
+            var temp = $(this).attr('id');
+            var id = parseInt(temp);
+            if (newList[id] == '0'){
+                newList=newList.substring(0,id) + '1' + newList.substring(id+1,newList.length);
+            }
             //alert(id);
 
         }
 
-        function onMouseOut (argument) {
-        // body...
-        }
         </script>
-    {% endfor %}
 {% endblock %}

@@ -15,6 +15,25 @@
          <div class="insideInfo">Phone Number: {{user.phone}}</div>
          <div class="insideInfo">Email: {{user.user.email}}</div>
          <div class="insideInfo">About Me: {{user.profile_content}}</div>
+
+        {% if privateTutor %}
+         <div class="insideInfo">Hourly Price: {{hourly_rate}}</div>
+         {% endif %}
+         {% if tutor %}
+            // show tags
+            // show timeslots for blacking out
+             <form method="GET" action="{% url 'Tutorial:myprofile' user.id %}" class="" />
+            {% if profileActivated %}
+                <input type="hidden" name="edit" value="0" />
+                <input type="hidden" name="show_or_not" value="0" />
+                <input type="submit" value="Deactivate" />
+            {% else %}
+                <input type="hidden" name="edit" value="0" />
+                <input type="hidden" name="show_or_not" value="1" />
+                <input type="submit" value="Activate" />
+            {% endif %}
+            </form>
+         {% endif %}
     </div>
     <form method="GET" action="{% url 'Tutorial:myprofile' user.id %}" class="" />
         <input type="hidden" name="edit" value="1" />

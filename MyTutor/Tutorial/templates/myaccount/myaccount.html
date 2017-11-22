@@ -39,17 +39,14 @@
                     <div class="best-tutor_t">TRANSACTION RECORD</div>
                 </div>
             </a>
-            <a href="{% url 'Tutorial:tutorTimeslot' user.id %}" id="fortutoronly" style="display : none;">
+            {% if tutor %}
+            <a href="{% url 'Tutorial:tutorTimeslot' user.id tutor.id %}" id="fortutoronly" >
                 <div class="navbox" >
                     <div class="best-tutor_t">SELECT TIME</div>
                 </div>
             </a>
-            <script>
-                var tutor = "{{istutor}}";
-                if (tutor == "1"){
-                    document.getElementById("fortutoronly").style.display="block";
-                }
-            </script>
+            {% endif %}
+
      </div>
 
         <div class="right">
