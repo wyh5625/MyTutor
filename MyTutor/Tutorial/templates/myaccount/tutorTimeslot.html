@@ -70,14 +70,15 @@
                 for (var j = 0;j<15;j ++ ){
                      //alert(i -1+ 48*week + c);
                     //alert(time48);
-                    if (list[i - 1 + c ] == '0')
-                       { d+= "<td rowspan=\"1\" id=\""+year+months[j]+days[j]+"_"+time48+"\" height=\"10%\" width=\"4%\" style=\"background-color : #9CCC65 ; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee; line-height : 2\" onclick=\"select(this)\"></td>";}
+                    var which = i-1+c;
+                    if (list[which] == '0')
+                       { d+= "<td rowspan=\"1\" id=\""+which+"\" height=\"10%\" width=\"4%\" style=\"background-color : #9CCC65 ; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee; line-height : 2\" onclick=\"select(this)\"></td>";}
                     else if (list[i - 1 + c ] == '2')
-                        {d+= "<td rowspan=\"1\" id=\""+year+months[j]+days[j]+"_"+time48+"\" height=\"10%\" width=\"4%\" style=\"background-color : #E8E8E8 ; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee; line-height : 2\" ></td>";}
+                        {d+= "<td rowspan=\"1\" id=\""+which+"\" height=\"10%\" width=\"4%\" style=\"background-color : #E8E8E8 ; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee; line-height : 2\" ></td>";}
                     else if (list[i - 1 + c ] == '2')
-                        {d+= "<td rowspan=\"1\" id=\""+year+months[j]+days[j]+"_"+time48+"\" height=\"10%\" width=\"4%\" style=\"background-color : #6495ED ; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee; line-height : 2\" ></td>";}
+                        {d+= "<td rowspan=\"1\" id=\""+which+"\" height=\"10%\" width=\"4%\" style=\"background-color : #6495ED ; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee; line-height : 2\" ></td>";}
                     else
-                        {d+= "<td rowspan=\"1\" id=\""+year+months[j]+days[j]+"_"+time48+"\" height=\"10%\" width=\"4%\" style=\"background-color : #FF7F50 ; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee; line-height : 2\" ></td>";}
+                        {d+= "<td rowspan=\"1\" id=\""+which+"\" height=\"10%\" width=\"4%\" style=\"background-color : #FF7F50 ; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee; line-height : 2\" ></td>";}
                     c += hour_num;
                 }
 
@@ -118,6 +119,40 @@
 
     }
 
+
     </script>
+
+
+
+    <script type="text/javascript">
+        var newList = "{{tutor.timeslot}}";
+        $("td").mousedown(function() {
+            $(this).css('background-color', 'blue');
+            var id = $(this).attr('id');
+            newList[id] = 1;
+            //alert(id);
+            $("td").mouseup(onMouseUp);
+            $("td").mouseover(onMouseOver);
+        })
+
+        function onMouseUp(){
+        /* Act on the event */
+
+            $("td").unbind('mouseover',onMouseOver);
+            $("td").unbind('mouseup',onMouseUp);
+        }
+
+        function onMouseOver (argument) {
+            $(this).css('background-color','blue');
+             var id = $(this).attr('id');
+            newList[id] = 1;
+            //alert(id);
+
+        }
+
+        function onMouseOut (argument) {
+        // body...
+        }
+        </script>
     {% endfor %}
 {% endblock %}
