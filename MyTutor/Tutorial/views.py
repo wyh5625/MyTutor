@@ -299,6 +299,7 @@ def myprofile(request, myuser_id):
     if tutor:
         hourly_rate = tutor[0].hourly_rate
         activated = tutor[0].showProfile
+        show_tags = tutor[0].tag_set.all()
     privateTutor = PrivateTutor.objects.filter(tutor=tutor)
     if privateTutor:
         form = PrivateTutorProfileForm(initial = {'last_name': myuser.user.last_name, 'first_name': myuser.user.first_name, 'email': myuser.user.email, 'phone': myuser.phone, 'content': myuser.profile_content, 'hourly_rate': hourly_rate})
@@ -324,9 +325,21 @@ def myprofile(request, myuser_id):
                 edit = True
             else:
                 edit = False
-        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor': tutor[0]})
+        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor': tutor[0], 'tags': show_tags})
     else:   # POST
         logger.error("get post request")
+        if 'tags' in request.POST:
+            query = request.POST['tags']
+            tagset = query.split(',')
+            if tagset != ['']:
+                for tag_name in tagset:
+                    tag = Tag.objects.filter(name=tag_name)
+                    if tag:
+                        tag[0].tutors.add(tutor[0])
+                    else:
+                        newTag = Tag.objects.create(name=tag_name)
+                        newTag.tutors.add(tutor[0])
+                        newTag.save()
         if privateTutor:
             form = PrivateTutorProfileForm(request.POST)
         else:
@@ -349,7 +362,7 @@ def myprofile(request, myuser_id):
             myuser.save()
             myuser.user.save()
         edit = False
-        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor':tutor[0]})
+        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor':tutor[0], 'tags': show_tags})
 
 def mybooking(request, myuser_id):
     if not request.user.is_authenticated(): #visitor or client
@@ -823,6 +836,7 @@ def search_tutor_tag(request,myuser_id ):
         "tutors": zipped
     }
     return render(request, 'searchtutors/index.html', variables)
+
 def selectAllTutors(request, tutor_set):
     tutors = Tutor.objects.all()
     for tut in tutors:
