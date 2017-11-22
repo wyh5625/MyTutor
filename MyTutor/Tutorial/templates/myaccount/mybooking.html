@@ -14,8 +14,15 @@
     function Evaluate(elem){
         var score = prompt("Score(?/5): " );
         var comment = prompt("Comment: " );
-        alert(score, comment);
-        elem.innerHTML ="<input type=\"hidden\"  name=\"score\" value=" +score+ " name=\"comment\" value=" +comment+ ">";
+        comment = comment.replace(/ /g, "^space^");
+        /*for (var i = 0;i < comment.length;i++){
+            if (comment[i] == ' '){
+                comment = comment.substring(0,i-1) +'^fuck^'+comment.substring(i,comment.length);
+                alert(comment);
+            }
+        }*/
+        alert(comment);
+        elem.innerHTML ="<input type=\"hidden\"  name=\"score\" value=" +score+ "><input type=\"hidden\"  name=\"comment\" value=" +comment+ ">";
         document.getElementById("evaluateR").submit();
     }
 {% endblock %}
@@ -66,7 +73,7 @@
                            "            <h3 class=\"service_title\">Can't Cancel</h3>" +
                            "          </div>");
                       }else if("{{ session.status }}" == '2'){
-                          document.write(" <form action= \"{ url 'Tutorial:evaluate' user.id session.id }\" method=\"post\" id=\"evaluateR\" >{% csrf_token %}{{uf.as_p}}<div class=\"col-lg-2 col-md-4 col-sm-6\" onclick = 'Evaluate(this)'>" +
+                          document.write(" <form action= \"{% url 'Tutorial:evaluate' user.id session.id %}\" method=\"post\" id=\"evaluateR\" >{% csrf_token %}{{uf.as_p}}<div class=\"col-lg-2 col-md-4 col-sm-6\" onclick = 'Evaluate(this)'>" +
                            "            <h3 class=\"service_title\">To be evaluated</h3>" +
                            "          </div></form>");
                       }else if("{{ session.status }}" == '3'){

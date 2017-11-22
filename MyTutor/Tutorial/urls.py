@@ -13,8 +13,11 @@ urlpatterns = [
     url(r'^(?P<myuser_id>[0-9]+)/searchTutors/(?P<tutor_id>[0-9]+)/$', views.tutorpage, name='tutorpage'),
     url(r'^(?P<myuser_id>[0-9]+)/myAccount/$', views.myaccount, name='myaccount'),
     url(r'^(?P<myuser_id>[0-9]+)/myAccount/mybooking/$', views.mybooking, name='mybooking'),
+    url(r'^(?P<myuser_id>[0-9]+)/myAccount/mybooking/evaluate/(?P<tutorial_sessions_id>[0-9]+)/$', views.evaluate,
+        name='evaluate'),
     url(r'^(?P<myuser_id>[0-9]+)/myAccount/myprofile/$', views.myprofile, name='myprofile'),
     url(r'^(?P<myuser_id>[0-9]+)/myAccount/mywallet/$', views.mywallet, name='mywallet'),
+    url(r'^(?P<myuser_id>[0-9]+)/myAccount/mytransaction/$', views.mytransaction, name='mytransaction'),
     url(r'^(?P<myuser_id>[0-9]+)/myAccount/mywallet/deposit/$', views.deposit, name='deposit'),
     url(r'^(?P<myuser_id>[0-9]+)/myAccount/mywallet/withdraw/$', views.withdraw, name='withdraw'),
     url(r'^(?P<myuser_id>[0-9]+)/message/$', views.message, name='message'),
@@ -25,6 +28,7 @@ urlpatterns = [
     url(r'^register/$', views.register_page, name='register'),
     url(r'^(?P<myuser_id>[0-9]+)/searchTutorName/$', views.search_tutor_name, name='search_tutor_name'),
     url(r'^(?P<myuser_id>[0-9]+)/searchTutorTag/$', views.search_tutor_tag, name='search_tutor_tag'),
+    url(r'^(?P<myuser_id>[0-9]+)/myAccount/tutorTimeslot/$', views.tutorTimeslot, name='tutorTimeslot'),
 
 
     #url(r'^registerSuccess/$', views.register_page, name='registerSuccess'),

@@ -248,7 +248,9 @@ def endsession(mytime):
                                            cashflow=slot.price,
                                            information=slot, type=4)
 
-
+                company = MyTutor.objects.get(pk=1)
+                company.wallet.balance = company.wallet.balance + Decimal(str(slot.price * (COMMISION - 1)))
+                company.wallet.save()
                 ## mytutor receives commision fee
     return
 
@@ -537,6 +539,27 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
                       {'user': myuser, 'session_list': booking, "booked_list": booked, 'isstudent': "1",
                        'istutor': istutor})
 
+def evaluate(request, myuser_id, tutorial_sessions_id):
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
+
+    score = request.POST['score']
+    comment = request.POST['comment']
+    comment = comment.replace('^space^', ' ')
+    logger.error(comment)
+    if len(comment) > 200:
+        msg = 'Exceeds limit 200 characters, the left characters will not be stored'
+        comment = comment[:200]
+    logger.error("check it")
+    session = TutorialSession.objects.get(pk=tutorial_sessions_id)
+    session.score = score
+    session.comment = comment
+    session.status = 4
+    session.save()
+    return mybooking(request, myuser_id)
+
 
 def mywallet(request, myuser_id): #TODO filter thirty days!
     if not request.user.is_authenticated(): #visitor or client
@@ -560,6 +583,35 @@ def mywallet(request, myuser_id): #TODO filter thirty days!
         istutor = "1"
     return render(request, 'myaccount/mywallet.html', {'user':myuser, 'student_list':student_list, 'tutor_list':tutor_list, 'msg': "", 'isstudent': isstudent, 'istutor': istutor })
 #def forget_password(request, myuser_id):
+
+####mytransaction#####
+def mytransaction(request, myuser_id): #TODO filter thirty days!
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
+    myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
+    student_list = ""
+    tutor_list = ""
+    isstudent = "0"
+    istutor = "0"
+    timeformat = '%Y%m%d%H%M'
+    now = datetime.now()
+    nowtime = time.mktime(now.timetuple())
+    refdelta = int(60 * 60 * 24 * 29 + now.hour * 3600 + now.minute * 60 + now.second) #The last 29 days + today
+    if Student.objects.filter(myuser=myuser):
+        mystudent = Student.objects.get(myuser=myuser)
+        isstudent = "1"
+
+        #for each session in transaction, calculate the time now and the time that transaction happen, if it happens 30 days ago, lambda function returns false
+    if Tutor.objects.filter(myuser=myuser):
+        mytutor = Tutor.objects.get(myuser=myuser)
+        istutor = "1"
+    list = filter(
+        lambda session: nowtime - time.mktime(datetime.strptime(session.time, timeformat).timetuple()) <= refdelta,
+        Transaction.objects.filter(myuser=myuser))
+
+    return render(request, 'myaccount/mytransaction.html', {'user':myuser, 'list': list, 'isstudent': isstudent, 'istutor': istutor })
 
 ####message####
 def message(request, myuser_id):
@@ -919,3 +971,12 @@ def editProfile(request):
 '''
 def saveProfile(request):
     '''
+
+def tutorTimeslot(request, myuser_id):
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
+    myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
+    mytutor = Tutor.objects.filter(myuser=myuser)
+    return render(request, 'myaccount/tutorTimeslot.html', {'user':myuser, 'tutorList': mytutor})
