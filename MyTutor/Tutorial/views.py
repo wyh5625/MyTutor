@@ -98,6 +98,7 @@ def password_reset_complete(request):
 
 ####search tutor####
 def index(request, myuser_id):
+    show_tags = []
     if not request.user.is_authenticated(): #visitor or client
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
@@ -108,8 +109,10 @@ def index(request, myuser_id):
     #fixme 2's now ,but the url shows 3 still
 
     all_tutors = Tutor.objects.all()
+    for tut in all_tutors:
+        show_tags.append(tut.tag_set.all())
     private_tutors = PrivateTutor.objects.all()
-    zipped = zip(all_tutors, all_tutors)
+    zipped = zip(all_tutors, show_tags)
     params = {"user": myuser, "latest_Tutor_list": all_tutors, "tutors": zipped}
     return render(request, 'searchtutors/index.html', params)
 
@@ -336,10 +339,19 @@ def myprofile(request, myuser_id):
                     tag = Tag.objects.filter(name=tag_name)
                     if tag:
                         tag[0].tutors.add(tutor[0])
+                        tag[0].save()
                     else:
                         newTag = Tag.objects.create(name=tag_name)
                         newTag.tutors.add(tutor[0])
                         newTag.save()
+        if 'deleteTags' in request.POST:
+            delete_query = request.POST['deleteTags']
+            deletetagset = delete_query.split(',')
+            if deletetagset != ['']:
+                for tag_name in deletetagset:
+                    tag = Tag.objects.filter(name=tag_name)
+                    tag[0].tutors.remove(tutor[0])
+                    tag[0].save()
         if privateTutor:
             form = PrivateTutorProfileForm(request.POST)
         else:
@@ -647,13 +659,14 @@ def withdraw(request, myuser_id):
     myuser = MyUser.objects.get(user=request.user)  # myuser = get_object_or_404(MyUser, pk=myuser_id)
     student_list = ""
     tutor_list = ""
+    messages = ""
     if Student.objects.filter(myuser=myuser):
         mystudent = Student.objects.get(myuser=myuser)
         student_list = TutorialSession.objects.filter(student=mystudent)
     if Tutor.objects.filter(myuser=myuser):
         mytutor = Tutor.objects.get(myuser=myuser)
         tutor_list = TutorialSession.objects.filter(tutor=mytutor)
-        return render(request, 'myaccount/mywallet.html',{'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages, 'tutor':mytutor})
+        #return render(request, 'myaccount/mywallet.html',{'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages, 'tutor':mytutor})
     #filter1: not tutor
     if not Tutor.objects.filter(myuser=myuser):
         messages = "Only a tutor can withdraw money from wallet"
@@ -848,15 +861,28 @@ def tagFilter(request, tutor_set):
     if 'tags' in request.GET:
         query = request.GET['tags']
         tagset = query.split(',')
-        if tagset != ['']:
-            for tag_name in tagset:
+        if 'deleteTags' in request.GET:
+            delete_query = request.GET['deleteTags']
+            delete_tagset = delete_query.split(',')
+            ret_list = []
+            for item in tagset:
+                if item not in delete_tagset:
+                    ret_list.append(item)
+            logger.error("-----aaa")
+            logger.error(tagset)
+            logger.error(delete_tagset)
+            logger.error(ret_list)
+        else:
+            ret_list = tagset
+        if ret_list != ['']:
+            for tag_name in ret_list:
                 tag = Tag.objects.filter(name=tag_name)
                 if tag:
                     tutors = tag[0].tutors.all()
                     for tut in tutor_set:
                         tags = tut.tag_set.all()
                         for tag in tags:
-                            if tag.name in tagset and tut not in result_tutors:
+                            if tag.name in ret_list and tut not in result_tutors:
                                 result_tutors.append(tut)
                                 break
             tutor_set.clear()

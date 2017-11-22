@@ -51,10 +51,11 @@
          <p style="font-weight:900;">Tags: <input type="text" id="subjectTags" placeholder="Press enter to add tags.">
              <span id="tags">
                  {% for tag in tags %}
-                    <span style='background-color: #9CCC65; color : darkred; padding : 2px; border:1px;margin-right : 0;'>X</span>
-                    <span style='background-color: #9CCC65; color : black; margin : 2px; margin-left: 0; padding: 2px; '>{{tag}}</span>
+                 <script>
+                 var Tag = "{{tag}}"
+                 document.write("<span style='background-color: #9CCC65; color : black; margin : 2px; margin-left: 0; padding: 2px; ' id="+Tag+" ><span style='background-color: #9CCC65; color : darkred; padding : 2px; border:1px;margin-right : 0;' id=\"deleteTags\">X</span>{{tag}}</span>");
+                  </script>
                  {% endfor %}
-            </span>
          </p>
             <input type="submit" value="Save" class = "btn btn-default" style="float : right; margin : 10px;"/>
         </form>
@@ -70,39 +71,50 @@
 
 {% block script%}
          $(document).ready(function(){
-         var tags = new Array(10);
-         i = 0;
-         var strTags="";
-
-        $("#subjectTags").keypress(function (e) {
-            var repeat = false;
-            if (e.which == 13) {
-                e.preventDefault();
-                tags[i] = $("#subjectTags").val();
-                if (tags[i] == ""){
-                    alert("Tag cannot be empty!");
-                    repeat = true;
-                }
-                var j = 0;
-                for (j = 0;j < i;j++){
-                    if(tags[j] == tags[i]){
-                        alert("Tag " +tags[i]+" already exists!");
+             var tags = new Array(10);
+             i = 0;
+             var strTags="";
+            $("#subjectTags").keypress(function (e) {
+                var repeat = false;
+                if (e.which == 13) {
+                    e.preventDefault();
+                    tags[i] = $("#subjectTags").val();
+                    if (tags[i] == ""){
+                        alert("Tag cannot be empty!");
                         repeat = true;
-                         $("#subjectTags").val("");
-                        break;
                     }
-                }
-                if (repeat == false){
-                    strTags = "<span style='background-color: #9CCC65; color : darkred; padding : 2px; border:1px;'  id='deleteTags' target = '"+i+"'>X</span>";
-                     strTags += "<span style='background-color: #9CCC65; color : black; margin : 2px; margin-left: 0; padding: 2px; ' id='tags_"+i+"'>"+tags[i]+"</span>";
-                    $("#tags").append(strTags);
-                     $("#subjectTags").val("");
-                     $("#subjectTags").html( "<input type='text' class='form-control' placeholder='Press enter to add tags.' id='subjectTags'name='tags' value='"+tags+"' >");
-                    i++;
-                 }
+                    var j = 0;
+                    for (j = 0;j < i;j++){
+                        if(tags[j] == tags[i]){
+                            alert("Tag " +tags[i]+" already exists!");
+                            repeat = true;
+                             $("#subjectTags").val("");
+                            break;
+                        }
+                    }
+                    if (repeat == false){
+                        strTags = "<span style='background-color: #9CCC65; color : black; margin : 2px; margin-left: 0; padding: 2px; ' id='tags_"+i+"'><span style='background-color: #9CCC65; color : darkred; padding : 2px; border:1px;'  id='deleteTags' target = '"+i+"'>X</span>";
+                         strTags += ""+tags[i]+"</span>";
+                        $("#tags").append(strTags);
+                         $("#subjectTags").val("");
+                         $("#subjectTags").html( "<input type='text' class='form-control' placeholder='Press enter to add tags.' id='subjectTags'name='tags' value='"+tags+"' >");
+                        i++;
+                     }
 
-            }
+                }
+            });// End of press enter
+
+            var deleteTags = "";
+
+             $(document).on('click', '#deleteTags', function(){
+                var pare = $(this).parent();
+                var tagContent = pare.attr('id');
+                deleteTags += tagContent + ",";
+                $("#subjectTags").html( "<input type='text' class='form-control' placeholder='Press enter to add tags.' id='subjectTags'name='tags' value='"+tags+"'><input type=\"hidden\" name='deleteTags' value='"+deleteTags+"'>");
+                $(this).parent().remove();
+
+
 });
-});
+    });// End of document
 
     {% endblock %}
