@@ -286,16 +286,32 @@ def myprofile(request, myuser_id):
     if not MyUser.objects.filter(user=request.user):
         HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
-    form = ProfileForm(initial = {'last_name': myuser.user.last_name, 'first_name': myuser.user.first_name, 'email': myuser.user.email, 'phone': myuser.phone, 'content': myuser.profile_content})
     edit = False
     myuser = MyUser.objects.get(user=request.user)  # myuser = get_object_or_404(MyUser, pk=myuser_id)
-    isstudent = "0"
-    istutor = "0"
-    if Student.objects.filter(myuser=myuser):
-        isstudent = "1"
-    if Tutor.objects.filter(myuser=myuser):
-        istutor = "1"
+    student = Student.objects.filter(myuser=myuser)
+    tutor = Tutor.objects.filter(myuser=myuser)
+    hourly_rate = 0
+    activated = False
+    if tutor:
+        hourly_rate = tutor[0].hourly_rate
+        activated = tutor[0].showProfile
+    privateTutor = PrivateTutor.objects.filter(tutor=tutor)
+    if privateTutor:
+        form = PrivateTutorProfileForm(initial = {'last_name': myuser.user.last_name, 'first_name': myuser.user.first_name, 'email': myuser.user.email, 'phone': myuser.phone, 'content': myuser.profile_content, 'hourly_rate': hourly_rate})
+    else:
+        form = ProfileForm(initial = {'last_name': myuser.user.last_name, 'first_name': myuser.user.first_name, 'email': myuser.user.email, 'phone': myuser.phone, 'content': myuser.profile_content})
     if request.method == "GET":
+        if 'show_or_not' in request.GET:
+            show_or_not = request.GET['show_or_not']
+            if show_or_not == '1':
+                tutor[0].showProfile = True
+                activated = True
+            else:
+                tutor[0].showProfile = False
+                activated = False
+            tutor[0].save()
+            logger.error("get show value")
+            logger.error(tutor[0].showProfile)
         if 'edit' in request.GET:
             edit_or_not = request.GET['edit']
             logger.error("get edit value")
@@ -304,17 +320,23 @@ def myprofile(request, myuser_id):
                 edit = True
             else:
                 edit = False
-
-        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'isstudent': isstudent, 'istutor': istutor})
+        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated})
     else:   # POST
         logger.error("get post request")
-        form = ProfileForm(request.POST)
+        if privateTutor:
+            form = PrivateTutorProfileForm(request.POST)
+        else:
+            form = ProfileForm(request.POST)
         if form.is_valid():
             firstName = form.cleaned_data['first_name']
             lastName = form.cleaned_data['last_name']
             phone = form.cleaned_data['phone']
             email = form.cleaned_data['email']
             profile_content = form.cleaned_data['content']
+            if privateTutor:
+                tutor[0].hourly_rate = form.cleaned_data['hourly_rate']
+                tutor[0].save()
+                hourly_rate = tutor[0].hourly_rate
             myuser.user.first_name = firstName
             myuser.user.last_name = lastName
             myuser.phone = phone
@@ -323,7 +345,7 @@ def myprofile(request, myuser_id):
             myuser.save()
             myuser.user.save()
         edit = False
-        return render(request, 'myaccount/myprofile.html', {'user': myuser, 'form': form, 'edit': edit, 'isstudent': isstudent, 'istutor': istutor})
+        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated})
 
 def mybooking(request, myuser_id):
     if not request.user.is_authenticated(): #visitor or client
@@ -708,9 +730,12 @@ def search_tutor_tag(request,myuser_id ):
     course_query = request.GET['course']
 
     selectAllTutors(request, tutor_set)
-
+    
+    logger.error(tutor_set)
     tagFilter(request, tutor_set)
-
+    logger.error("tag filtered")
+    logger.error(tutor_set)
+    
     courseFilter(request, tutor_set)
 
     #university filter
@@ -761,7 +786,7 @@ def tagFilter(request, tutor_set):
                     for tut in tutor_set:
                         tags = tut.tag_set.all()
                         for tag in tags:
-                            if tag.name in tagset:
+                            if tag.name in tagset and tut not in result_tutors:
                                 result_tutors.append(tut)
                                 break
             tutor_set.clear()

@@ -40,6 +40,7 @@ class Tutor(models.Model):
     # 0-unavailable, 1-available, half an hour per digit, 336 timeslots is a week
     hourly_rate = models.IntegerField(default=0) #todo: eight digit for student so can tell if he have
     university = models.ForeignKey(University, on_delete=models.CASCADE, null=True)
+    showProfile = models.BooleanField(default=True)
     def __str__(self):
         if self.myuser is None:
             return "null"
