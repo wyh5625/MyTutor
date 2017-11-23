@@ -311,6 +311,7 @@ def myprofile(request, myuser_id):
     else:
         form = ProfileForm(initial = {'last_name': myuser.user.last_name, 'first_name': myuser.user.first_name, 'email': myuser.user.email, 'phone': myuser.phone, 'content': myuser.profile_content})
     if request.method == "GET":
+        logger.error("get method")
         if 'show_or_not' in request.GET:
             show_or_not = request.GET['show_or_not']
             if show_or_not == '1':
