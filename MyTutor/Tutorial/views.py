@@ -287,9 +287,9 @@ def myaccount(request, myuser_id):
         return render(request, 'myaccount/myaccount.html',{'user': myuser, 'isstudent': isstudent, 'istutor': istutor, 'tutor': mytutor})
     return render(request, 'myaccount/myaccount.html', {'user':myuser, 'isstudent': isstudent, 'istutor': istutor})
 
-<<<<<<< HEAD
-=======
+
 def myprofile(request, myuser_id):
+    logger.error("------render profile")
     if not request.user.is_authenticated(): #visitor or client
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
@@ -377,7 +377,6 @@ def myprofile(request, myuser_id):
             myuser.user.save()
         edit = False
         return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor':tutor[0], 'tags': show_tags})
->>>>>>> e1d19afbfa0b9d7d7ee0e3ebb75e7c8d2264902c
 
 def mybooking(request, myuser_id):
     if not request.user.is_authenticated(): #visitor or client
