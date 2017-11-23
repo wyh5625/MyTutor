@@ -38,6 +38,23 @@
     <form method="GET" action="{% url 'Tutorial:myprofile' user.id %}" class="" />
         <input type="hidden" name="edit" value="1" />
         <button type="submit">Edit</button>
+    </form>
+    <form method="POST" action="{% url 'Tutorial:myprofile' user.id %}" class="" />
+        <input type="hidden" name="changePassWord" value="1" />
+        <input type="hidden" name="newForm" value="1" />
+        <input type="hidden" name="edit" value="1" />
+        <button type="submit">ChangePassword</button>
+    </form>
+{% elif resetPassword %}
+    <form method="POST" action="{% url 'Tutorial:myprofile' user.id %}" class="" />
+        <input type="hidden" name="edit" value="1" />
+        <input type="hidden" name="changePassWord" value="1" />
+        {{form.as_p}}
+        <input type="submit" value="Submit" />
+    </form>
+    <form method="GET" action="{% url 'Tutorial:myprofile' user.id %}" class="" />
+        <input type="hidden" name="edit" value="0" />
+        <button type="submit">Cancel</button>
     <form>
 {% else %}
 <form method="POST" action="{% url 'Tutorial:myprofile' user.id %}" class="" />

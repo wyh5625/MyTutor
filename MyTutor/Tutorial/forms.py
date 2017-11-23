@@ -2,6 +2,10 @@ from django import forms
 import re
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
+import logging
+
+logger = logging.getLogger(__name__)
+
 class RegistrationForm(forms.Form):
     CHOICES = (('Student', 'Student'), ('Private Tutor', 'Private Tutor'), ('Contracted Tutor', 'Contracted Tutor'))
     identity = forms.ChoiceField(label='Identity',choices=CHOICES)
@@ -35,6 +39,37 @@ class RegistrationForm(forms.Form):
             return password2
         raise forms.ValidationError('Passwords do not match.')
 
+class ResetPasswordForm(forms.Form):
+    old_password = forms.CharField(
+        label='Old Password',
+        widget=forms.PasswordInput()
+    )
+    new_password1 = forms.CharField(
+        label='New Password',
+        widget=forms.PasswordInput()
+    )
+    new_password2 = forms.CharField(
+        label='New Password(Again)',
+        widget=forms.PasswordInput()
+    )
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super(ResetPasswordForm, self).__init__(*args, **kwargs)
+    def clean_new_password2(self):
+        if 'new_password1' in self.cleaned_data:  # when password1 is valid it will exist in self.clean_data
+            password1 = self.cleaned_data['new_password1']
+            password2 = self.cleaned_data['new_password2']
+        if password1 == password2:
+            return password2
+        raise forms.ValidationError('Passwords do not match.')
+    def clean_old_password(self):
+        oldPassword = self.cleaned_data['old_password']
+        logger.error("compare password")
+        logger.error(oldPassword)
+        logger.error(self.user.user.password)
+        if self.user.user.check_password(oldPassword):
+            return oldPassword
+        raise forms.ValidationError('Incorrect Password.')
 
 class SearchForm(forms.Form):
     query = forms.CharField(
@@ -58,6 +93,14 @@ class UserProfileForm(forms.Form):
 
 class PrivateTutorProfileForm(ProfileForm):
     hourly_rate = forms.IntegerField(label='Price')
+    def clean_hourly_rate(self):
+        price = self.cleaned_data['hourly_rate']
+        if price <= 0:
+            raise forms.ValidationError('Plase input positive price.')
+        elif price % 10 != 0:
+                raise forms.ValidationError('Plase input price which is multiple of 10.')
+        else:
+            return price
 '''
 class ContractedTutorProfile(UserProfileForm):
     last_name = forms.CharField(label='Family Name', max_length=30)
