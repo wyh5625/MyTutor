@@ -108,7 +108,7 @@ def index(request, myuser_id):
     #fixme  but I haven't tried how to also relink the url i.e. if id = 2 enter 3/..., the content can be
     #fixme 2's now ,but the url shows 3 still
 
-    all_tutors = Tutor.objects.all()
+    all_tutors = Tutor.objects.filter(showProfile=True)
     for tut in all_tutors:
         show_tags.append(tut.tag_set.all())
     private_tutors = PrivateTutor.objects.all()
@@ -287,7 +287,9 @@ def myaccount(request, myuser_id):
         return render(request, 'myaccount/myaccount.html',{'user': myuser, 'isstudent': isstudent, 'istutor': istutor, 'tutor': mytutor})
     return render(request, 'myaccount/myaccount.html', {'user':myuser, 'isstudent': isstudent, 'istutor': istutor})
 
+
 def myprofile(request, myuser_id):
+    logger.error("------render profile")
     if not request.user.is_authenticated(): #visitor or client
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
@@ -331,10 +333,40 @@ def myprofile(request, myuser_id):
         return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor': tutor[0], 'tags': show_tags})
     else:   # POST
         logger.error("get post request")
+        if 'changePassWord' in request.POST:
+            resetPassword = True
+            passWordForm = ResetPasswordForm(request.POST, user=myuser)
+            if passWordForm.is_valid():
+                myuser.user.set_password(passWordForm.cleaned_data['new_password1'])
+                myuser.user.save()
+                edit = False
+
+                return render(request, 'myaccount/myprofile.html',
+                              {'user': myuser, 'form': passWordForm, 'edit': edit, 'tutor': tutor,
+                               'privateTutor': privateTutor,
+                               'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor': tutor[0], 'tags': show_tags})
+            else:
+                if 'newForm' in request.POST:
+                    passWordForm = ResetPasswordForm(user=myuser)
+            edit = True
+            return render(request, 'myaccount/myprofile.html',
+                          {'user': myuser, 'form': passWordForm, 'edit': edit, 'resetPassword': resetPassword,
+                           'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate,
+                           'profileActivated': activated, 'tutor': tutor[0], 'tags': show_tags})
         if 'tags' in request.POST:
             query = request.POST['tags']
             tagset = query.split(',')
-            if tagset != ['']:
+            if 'deleteTags' in request.POST:
+                delete_query = request.POST['deleteTags']
+                delete_tagset = delete_query.split(',')
+                ret_list = []
+                for item in tagset:
+                    if item not in delete_tagset:
+                        ret_list.append(item)
+            else:
+                ret_list = tagset
+            logger.error(delete_tagset)
+            if ret_list != ['']:
                 for tag_name in tagset:
                     tag = Tag.objects.filter(name=tag_name)
                     if tag:
@@ -350,8 +382,9 @@ def myprofile(request, myuser_id):
             if deletetagset != ['']:
                 for tag_name in deletetagset:
                     tag = Tag.objects.filter(name=tag_name)
-                    tag[0].tutors.remove(tutor[0])
-                    tag[0].save()
+                    if tag:
+                        tag[0].tutors.remove(tutor[0])
+                        tag[0].save()
         if privateTutor:
             form = PrivateTutorProfileForm(request.POST)
         else:
@@ -373,7 +406,9 @@ def myprofile(request, myuser_id):
             myuser.profile_content = profile_content
             myuser.save()
             myuser.user.save()
-        edit = False
+            edit = False
+        else:
+            edit = True
         return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor':tutor[0], 'tags': show_tags})
 
 def mybooking(request, myuser_id):
@@ -776,15 +811,44 @@ def register_page(request):
         variables, RequestContext(request)
     )
 
-#def forget_password(request):
-
-
+def reset_password(request):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = User.objects.create_user(
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password1'],
+                email=form.cleaned_data['email'],
+                last_name = form.cleaned_data['last_name'],
+                first_name = form.cleaned_data['first_name']
+            )
+            wallet = Wallet.objects.create()
+            myuser = MyUser.objects.create(user=user, wallet=wallet)
+            identity = form.cleaned_data['identity']
+            if identity == 'Student':
+                student = Student.objects.create(myuser=myuser)
+            elif identity == 'Private Tutor':
+                tutor = Tutor.objects.create(myuser=myuser)
+                privateTutor = PrivateTutor.objects.create(tutor=tutor)
+            else:   # contracted tutor
+                tutor = Tutor.objects.create(myuser=myuser)
+                setattr(tutor,'timeslot','111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111')
+                tutor.save()
+                contractedTutor = ContractedTutor.objects.create(tutor=tutor)
+            #return render(request, 'home.html')
+        else:
+            form = RegistrationForm()
+        variables = {
+            'form': form
+        }
+        return render_to_response(
+            'registration/register.html',
+            variables, RequestContext(request)
+        )
 
 
 def search_tutor_name(request,myuser_id ): #TODO don't know what should admin be able to see lol
-    tutors = []
-    tutors=Tutor.objects.all()
-    show_results = False
+    tutors=Tutor.objects.filter(showProfile=True)
     if 'givenName' in request.GET:
         show_results = True
         query = request.GET['givenName'].strip()
@@ -811,6 +875,7 @@ def search_tutor_tag(request,myuser_id ):
     tag_query = request.GET['tags']
     course_query = request.GET['course']
 
+    # only activated profile tutors
     selectAllTutors(request, tutor_set)
     
     logger.error(tutor_set)
@@ -851,9 +916,12 @@ def search_tutor_tag(request,myuser_id ):
     return render(request, 'searchtutors/index.html', variables)
 
 def selectAllTutors(request, tutor_set):
-    tutors = Tutor.objects.all()
+    tutors = Tutor.objects.filter(showProfile=True)
+    logger.error("select all shown tutor")
+    logger.error(tutors)
     for tut in tutors:
-        tutor_set.append(tut)
+        if tut.showProfile:
+            tutor_set.append(tut)
 
 def tagFilter(request, tutor_set):
     result_tutors = []
@@ -868,10 +936,6 @@ def tagFilter(request, tutor_set):
             for item in tagset:
                 if item not in delete_tagset:
                     ret_list.append(item)
-            logger.error("-----aaa")
-            logger.error(tagset)
-            logger.error(delete_tagset)
-            logger.error(ret_list)
         else:
             ret_list = tagset
         if ret_list != ['']:
@@ -885,6 +949,8 @@ def tagFilter(request, tutor_set):
                             if tag.name in ret_list and tut not in result_tutors:
                                 result_tutors.append(tut)
                                 break
+        else:
+            result_tutors = tutor_set
             tutor_set.clear()
             for ele in result_tutors:
                 tutor_set.append(ele)
@@ -1002,6 +1068,20 @@ def orderFilter(request, tutor_set):
                 tutor_set.sort(key=operator.attrgetter('hourly_rate'))
     else:
         tutor_set.sort(key=operator.attrgetter('hourly_rate'))
+
+def deleteTag(tutor, tag):
+    tutor.tag_set.remove(tag=tag)
+    tutor.save()
+
+def addTag(tutor, tag_name):
+    tags = Tag.objects.filter(name = tag_name)
+    if tags:
+        tags[0].tutors.add(tutor)
+        tags[0].save()
+    else:
+        tag = Tag.objects.create(name=tag_name)
+        tag.tutors.add(tutor)
+        tag.save()
 '''
 def editProfile(request):
     user = request.GET['user']
