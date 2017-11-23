@@ -732,7 +732,9 @@ hr {
 /**
 * Parallax styles
 **/
-
+.home-parallax{
+	background: url(../img/home.jpg);
+}
 .bg-parallax {
   background: url(../images/parallax/searchTutor.jpg);
 }
@@ -740,7 +742,7 @@ hr {
   background: url(../images/parallax/slide2.jpg);
 }
 
-.bg-parallax, .bg-parallax2 {
+.bg-parallax, .bg-parallax2 ,.home-parallax{
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-position: 50% 50%;
@@ -2683,7 +2685,7 @@ section.map {
   .top-nav-collapse .container {
     width: 1170px !important; } }
 .navbar-custom .navbar-brand .logo {
-  max-height: 28px;
+  max-height: 18px;
   display: inline-block; }
 
 .logoborder {

@@ -6,7 +6,7 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import login, logout
 app_name = 'Tutorial'
 urlpatterns = [
-    url(r'^$', views.home, name='home'),
+    url(r'^$', views.login, name='home'),
     url(r'^admin/$', views.adminpage, name='adminpage'),
     url(r'^admin/triggersession$', views.triggersession, name='triggersession'),
     url(r'^(?P<myuser_id>[0-9]+)/$', views.index, name='index'),
