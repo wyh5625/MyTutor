@@ -849,7 +849,11 @@ def search_tutor_name(request,myuser_id ): #TODO don't know what should admin be
         query = request.GET['familyName'].strip()
         if query:
             tutors = tutors.filter(myuser__user__last_name__contains=query)
-    zipped = zip(tutors, tutors)
+    show_tag = []
+    for tut in tutors:
+        tags = tut.tag_set.all()
+        show_tag.append(tags)
+    zipped = zip(tutors, show_tag)
     variables = {
         "tutors": zipped
     }
