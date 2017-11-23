@@ -357,7 +357,17 @@ def myprofile(request, myuser_id):
         if 'tags' in request.POST:
             query = request.POST['tags']
             tagset = query.split(',')
-            if tagset != ['']:
+            if 'deleteTags' in request.POST:
+                delete_query = request.POST['deleteTags']
+                delete_tagset = delete_query.split(',')
+                ret_list = []
+                for item in tagset:
+                    if item not in delete_tagset:
+                        ret_list.append(item)
+            else:
+                ret_list = tagset
+            logger.error(delete_tagset)
+            if ret_list != ['']:
                 for tag_name in tagset:
                     tag = Tag.objects.filter(name=tag_name)
                     if tag:
@@ -373,8 +383,9 @@ def myprofile(request, myuser_id):
             if deletetagset != ['']:
                 for tag_name in deletetagset:
                     tag = Tag.objects.filter(name=tag_name)
-                    tag[0].tutors.remove(tutor[0])
-                    tag[0].save()
+                    if tag:
+                        tag[0].tutors.remove(tutor[0])
+                        tag[0].save()
         if privateTutor:
             form = PrivateTutorProfileForm(request.POST)
         else:
@@ -930,10 +941,6 @@ def tagFilter(request, tutor_set):
             for item in tagset:
                 if item not in delete_tagset:
                     ret_list.append(item)
-            logger.error("-----aaa")
-            logger.error(tagset)
-            logger.error(delete_tagset)
-            logger.error(ret_list)
         else:
             ret_list = tagset
         if ret_list != ['']:
@@ -947,6 +954,8 @@ def tagFilter(request, tutor_set):
                             if tag.name in ret_list and tut not in result_tutors:
                                 result_tutors.append(tut)
                                 break
+        else:
+            result_tutors = tutor_set
             tutor_set.clear()
             for ele in result_tutors:
                 tutor_set.append(ele)

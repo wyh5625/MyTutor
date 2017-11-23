@@ -107,7 +107,7 @@
                         }
                     }
                     if (repeat == false){
-                        strTags = "<span style='background-color: #9CCC65; color : black; margin : 2px; margin-left: 0; padding: 2px; ' id='tags_"+i+"'><span style='background-color: #9CCC65; color : darkred; padding : 2px; border:1px;'  id='deleteTags' target = '"+i+"'>X</span>";
+                        strTags = "<span style='background-color: #9CCC65; color : black; margin : 2px; margin-left: 0; padding: 2px; ' id='"+tags[i]+"'><span style='background-color: #9CCC65; color : darkred; padding : 2px; border:1px;'  id='deleteTags' target = '"+i+"'>X</span>";
                          strTags += ""+tags[i]+"</span>";
                         $("#tags").append(strTags);
                          $("#subjectTags").val("");
@@ -128,7 +128,7 @@
                 $(this).parent().remove();
 
 
-});
+            });
     });// End of document
 
     {% endblock %}
