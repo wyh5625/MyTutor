@@ -108,7 +108,7 @@ def index(request, myuser_id):
     #fixme  but I haven't tried how to also relink the url i.e. if id = 2 enter 3/..., the content can be
     #fixme 2's now ,but the url shows 3 still
 
-    all_tutors = Tutor.objects.all()
+    all_tutors = Tutor.objects.filter(showProfile=True)
     for tut in all_tutors:
         show_tags.append(tut.tag_set.all())
     private_tutors = PrivateTutor.objects.all()
@@ -333,6 +333,26 @@ def myprofile(request, myuser_id):
         return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor': tutor[0], 'tags': show_tags})
     else:   # POST
         logger.error("get post request")
+        if 'changePassWord' in request.POST:
+            resetPassword = True
+            passWordForm = ResetPasswordForm(request.POST, user=myuser)
+            if passWordForm.is_valid():
+                myuser.user.set_password(passWordForm.cleaned_data['new_password1'])
+                myuser.user.save()
+                edit = False
+
+                return render(request, 'myaccount/myprofile.html',
+                              {'user': myuser, 'form': passWordForm, 'edit': edit, 'tutor': tutor,
+                               'privateTutor': privateTutor,
+                               'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor': tutor[0], 'tags': show_tags})
+            else:
+                if 'newForm' in request.POST:
+                    passWordForm = ResetPasswordForm(user=myuser)
+            edit = True
+            return render(request, 'myaccount/myprofile.html',
+                          {'user': myuser, 'form': passWordForm, 'edit': edit, 'resetPassword': resetPassword,
+                           'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate,
+                           'profileActivated': activated, 'tutor': tutor[0], 'tags': show_tags})
         if 'tags' in request.POST:
             query = request.POST['tags']
             tagset = query.split(',')
@@ -375,7 +395,9 @@ def myprofile(request, myuser_id):
             myuser.profile_content = profile_content
             myuser.save()
             myuser.user.save()
-        edit = False
+            edit = False
+        else:
+            edit = True
         return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor':tutor[0], 'tags': show_tags})
 
 def mybooking(request, myuser_id):
@@ -813,92 +835,6 @@ def reset_password(request):
             variables, RequestContext(request)
         )
 
-def myprofile(request, myuser_id):
-    if not request.user.is_authenticated(): #visitor or client
-        return render(request, 'home.html')
-    if not MyUser.objects.filter(user=request.user):
-        HttpResponseRedirect('/Tutorial/admin/')
-    myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
-    edit = False
-    myuser = MyUser.objects.get(user=request.user)  # myuser = get_object_or_404(MyUser, pk=myuser_id)
-    student = Student.objects.filter(myuser=myuser)
-    tutor = Tutor.objects.filter(myuser=myuser)
-    hourly_rate = 0
-    activated = False
-    if tutor:
-        hourly_rate = tutor[0].hourly_rate
-        activated = tutor[0].showProfile
-    privateTutor = PrivateTutor.objects.filter(tutor=tutor)
-    if privateTutor:
-        form = PrivateTutorProfileForm(initial = {'last_name': myuser.user.last_name, 'first_name': myuser.user.first_name, 'email': myuser.user.email, 'phone': myuser.phone, 'content': myuser.profile_content, 'hourly_rate': hourly_rate})
-    else:
-        form = ProfileForm(initial = {'last_name': myuser.user.last_name, 'first_name': myuser.user.first_name, 'email': myuser.user.email, 'phone': myuser.phone, 'content': myuser.profile_content})
-    if request.method == "GET":
-        if 'show_or_not' in request.GET:
-            show_or_not = request.GET['show_or_not']
-            if show_or_not == '1':
-                tutor[0].showProfile = True
-                activated = True
-            else:
-                tutor[0].showProfile = False
-                activated = False
-            tutor[0].save()
-            logger.error("get show value")
-            logger.error(tutor[0].showProfile)
-        if 'edit' in request.GET:
-            edit_or_not = request.GET['edit']
-            logger.error("get edit value")
-            logger.error(edit_or_not)
-            if edit_or_not == '1':
-                edit = True
-            else:
-                edit = False
-        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated})
-    else:   # POST
-        logger.error("get post request")
-        if 'changePassWord' in request.POST:
-            resetPassword = True
-            passWordForm = ResetPasswordForm(request.POST, user=myuser)
-            if passWordForm.is_valid():
-                myuser.user.password = passWordForm.cleaned_data['new_password1']
-                myuser.user.save()
-                edit = False
-
-                return render(request, 'myaccount/myprofile.html',
-                              {'user': myuser, 'form': passWordForm, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor,
-                               'hourly_rate': hourly_rate, 'profileActivated': activated})
-            else:
-                if 'newForm' in request.POST:
-                    passWordForm = ResetPasswordForm(user=myuser)
-            edit = True
-            return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': passWordForm, 'edit': edit, 'resetPassword': resetPassword, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated})
-        if privateTutor:
-            form = PrivateTutorProfileForm(request.POST)
-        else:
-            form = ProfileForm(request.POST)
-        if form.is_valid():
-            firstName = form.cleaned_data['first_name']
-            lastName = form.cleaned_data['last_name']
-            phone = form.cleaned_data['phone']
-            email = form.cleaned_data['email']
-            profile_content = form.cleaned_data['content']
-            if privateTutor:
-                tutor[0].hourly_rate = form.cleaned_data['hourly_rate']
-                tutor[0].save()
-                hourly_rate = tutor[0].hourly_rate
-            myuser.user.first_name = firstName
-            myuser.user.last_name = lastName
-            myuser.phone = phone
-            myuser.user.email = email
-            myuser.profile_content = profile_content
-            myuser.save()
-            myuser.user.save()
-            edit = False
-        else:
-            edit = True
-        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated})
-
-
 
 def search_tutor_name(request,myuser_id ): #TODO don't know what should admin be able to see lol
     tutors=Tutor.objects.filter(showProfile=True)
@@ -969,7 +905,9 @@ def search_tutor_tag(request,myuser_id ):
     return render(request, 'searchtutors/index.html', variables)
 
 def selectAllTutors(request, tutor_set):
-    tutors = Tutor.objects.all()
+    tutors = Tutor.objects.filter(showProfile=True)
+    logger.error("select all shown tutor")
+    logger.error(tutors)
     for tut in tutors:
         if tut.showProfile:
             tutor_set.append(tut)
