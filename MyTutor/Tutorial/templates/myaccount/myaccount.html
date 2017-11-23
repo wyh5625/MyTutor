@@ -19,8 +19,8 @@
                  </div>
 
               <div class="avater" >
-                  <div>WALLET BALANCE</div>
-                  <div style="font-size: 14pt; font-weight: 900; margin-top: 5px;">$ {{user.wallet.balance}}
+                  <div style="margin-bottom : 10px;">WALLET BALANCE</div>
+                  <div style="font-size: 18pt; font-weight: 400; margin-top: 5px; margin-bottom: 0;">$ {{user.wallet.balance}}
                    <a href="{% url 'Tutorial:mywallet' user.id %}" class="moneyButton" ><div class ="btn btn-default">OPERATION</div></a>
 
                 </div>
@@ -39,17 +39,14 @@
                     <div class="best-tutor_t">TRANSACTION RECORD</div>
                 </div>
             </a>
-            <a href="{% url 'Tutorial:tutorTimeslot' user.id %}" id="fortutoronly" style="display : none;">
+            {% if tutor %}
+            <a href="{% url 'Tutorial:tutorTimeslot' user.id tutor.id %}" id="fortutoronly" >
                 <div class="navbox" >
                     <div class="best-tutor_t">SELECT TIME</div>
                 </div>
             </a>
-            <script>
-                var tutor = "{{istutor}}";
-                if (tutor == "1"){
-                    document.getElementById("fortutoronly").style.display="block";
-                }
-            </script>
+            {% endif %}
+
      </div>
 
         <div class="right">

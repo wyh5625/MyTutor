@@ -77,11 +77,11 @@ class SearchForm(forms.Form):
         widget=forms.TextInput(attrs={'size': 32})
     )
 class ProfileForm(forms.Form):
-    last_name = forms.CharField(label='Family Name', max_length=30)
-    first_name = forms.CharField(label='Given Name', max_length=30)
-    phone = forms.IntegerField(label='Phone Number')
+    last_name = forms.CharField(label='Family Name', max_length=50)
+    first_name = forms.CharField(label='Given Name', max_length=50)
+    phone = forms.CharField(label='Phone Number')
     email = forms.EmailField(label='Email')
-    content = forms.CharField(label='About Me', max_length=2000)
+    content = forms.CharField(widget=forms.Textarea,label='About Me', max_length=2000)
 '''
 class UserProfileForm(forms.Form):
     last_name = forms.CharField(label='Family Name', max_length=30)

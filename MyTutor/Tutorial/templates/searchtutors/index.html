@@ -1,7 +1,7 @@
 {% extends "Menu.html" %}
 {% block title %}: search tutor{% endblock %}
 {% block content %}
-     <section class="bg-parallax parallax-window" onload="getValue();">
+<section class="bg-parallax parallax-window" onload="getValue();" xmlns:Tutorial="http://www.w3.org/1999/xhtml">
         <div class="overlay"></div>
         <div class="container">
           <div class="row">
@@ -138,17 +138,11 @@
               <div class="best-tutor-info">
                   <div class="best-tutor_t"><a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}">{{ Tutor.myuser.user.username }}</a></div>
                 <div class="best-tutor_t"><a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}">{{Tutor.myuser.user.first_name}} {{Tutor.myuser.user.last_name}}</a></div>
-                <script>
-                    var Tags = "{{ Tags }}";
-
-                    for (var j = 0;j < Tags.length;j++){
-                        if ( (Tags[j] >= 'a' && Tags[j] <= 'z') || (Tags[j] >= 'A' && Tags[j] <= 'Z') ){
-                            Tags[j] = " ";
-                         }
-                    }
-                    document.write("<div class=\"best-tutor_desc\">"+Tags+"\n" +
-                        "                </div>");
-                  </script>
+                <div class="best-tutor_t">Tags :
+                  {% for Tag in Tags %}
+                     <span>{{Tag}} , </span>
+                  {% endfor %}
+                    </div>
 
                 <div class="best-tutor_rate">
                   <span>${{Tutor.hourly_rate}}</span>
@@ -186,8 +180,9 @@
     $(document).ready(function(){
 
          var tags = new Array(10);
-        i = 0;
+         i = 0;
          var strTags="";
+        var deleteTags = "";
 
         $("#subjectTags").keypress(function (e) {
             var repeat = false;
@@ -208,8 +203,8 @@
                     }
                 }
                 if (repeat == false){
-                    strTags = "<span style='background-color: lightgrey; color : darkred; padding : 2px; border:1px;'  id='deleteTags' target = '"+i+"'>X</span>";
-                     strTags += "<span style='background-color: lightgrey; color : black; margin : 2px; margin-left: 0; padding: 2px; ' id='tags_"+i+"'>"+tags[i]+"</span>";
+                    strTags = "<span style='background-color: lightgrey; color : black; margin : 2px; margin-left: 0; padding: 2px; ' id='"+tags[i]+"'><span style='background-color: lightgrey; color : darkred; padding : 2px; border:1px;'  id='deleteTags' target = '"+i+"'>X</span>";
+                     strTags += ""+tags[i]+"</span>";
                     $("#tags").append(strTags);
                      $("#subjectTags").val("");
                      $("#subjectTags").html( "<input type='text' class='form-control' placeholder='Enter the key words to seach tags' id='subjectTags'name='tags' value='"+tags+"' >");
@@ -253,15 +248,13 @@
 
     });
 
-    $(document).on('click', '#deleteTags', function(tags){
-        var intNum = parseInt($(this).attr("target"));
-        tags[intNum]="";
-        i--;
-        var tagID = "#tags_"+$(this).attr("target");
+    $(document).on('click', '#deleteTags', function(){
 
-        $("#subjectTags").html( "<input type='text' class='form-control' placeholder='Enter the key words to seach tags' id='subjectTags'name='tags' value='"+tags+"' >");
-        $(this).remove();
-        $(tagID).remove();
+        var pare = $(this).parent();
+        var tagContent = pare.attr('id');
+        deleteTags += tagContent + ",";
+        $("#subjectTags").html( "<input type='text' class='form-control' placeholder='Press enter to add tags.' id='subjectTags'name='tags' value='"+tags+"'><input type=\"hidden\" name='deleteTags' value='"+deleteTags+"'>");
+        $(this).parent().remove();
     });
     });
 

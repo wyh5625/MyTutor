@@ -98,6 +98,7 @@ def password_reset_complete(request):
 
 ####search tutor####
 def index(request, myuser_id):
+    show_tags = []
     if not request.user.is_authenticated(): #visitor or client
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
@@ -108,8 +109,10 @@ def index(request, myuser_id):
     #fixme 2's now ,but the url shows 3 still
 
     all_tutors = Tutor.objects.all()
+    for tut in all_tutors:
+        show_tags.append(tut.tag_set.all())
     private_tutors = PrivateTutor.objects.all()
-    zipped = zip(all_tutors, all_tutors)
+    zipped = zip(all_tutors, show_tags)
     params = {"user": myuser, "latest_Tutor_list": all_tutors, "tutors": zipped}
     return render(request, 'searchtutors/index.html', params)
 
@@ -280,8 +283,101 @@ def myaccount(request, myuser_id):
        isstudent = "1"
     if Tutor.objects.filter(myuser=myuser):
         istutor = "1"
+        mytutor = Tutor.objects.get(myuser=myuser)
+        return render(request, 'myaccount/myaccount.html',{'user': myuser, 'isstudent': isstudent, 'istutor': istutor, 'tutor': mytutor})
     return render(request, 'myaccount/myaccount.html', {'user':myuser, 'isstudent': isstudent, 'istutor': istutor})
 
+<<<<<<< HEAD
+=======
+def myprofile(request, myuser_id):
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
+    myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
+    edit = False
+    myuser = MyUser.objects.get(user=request.user)  # myuser = get_object_or_404(MyUser, pk=myuser_id)
+    student = Student.objects.filter(myuser=myuser)
+    tutor = Tutor.objects.filter(myuser=myuser)
+    hourly_rate = 0
+    activated = False
+    if tutor:
+        hourly_rate = tutor[0].hourly_rate
+        activated = tutor[0].showProfile
+        show_tags = tutor[0].tag_set.all()
+    privateTutor = PrivateTutor.objects.filter(tutor=tutor)
+    if privateTutor:
+        form = PrivateTutorProfileForm(initial = {'last_name': myuser.user.last_name, 'first_name': myuser.user.first_name, 'email': myuser.user.email, 'phone': myuser.phone, 'content': myuser.profile_content, 'hourly_rate': hourly_rate})
+    else:
+        form = ProfileForm(initial = {'last_name': myuser.user.last_name, 'first_name': myuser.user.first_name, 'email': myuser.user.email, 'phone': myuser.phone, 'content': myuser.profile_content})
+    if request.method == "GET":
+        if 'show_or_not' in request.GET:
+            show_or_not = request.GET['show_or_not']
+            if show_or_not == '1':
+                tutor[0].showProfile = True
+                activated = True
+            else:
+                tutor[0].showProfile = False
+                activated = False
+            tutor[0].save()
+            logger.error("get show value")
+            logger.error(tutor[0].showProfile)
+        if 'edit' in request.GET:
+            edit_or_not = request.GET['edit']
+            logger.error("get edit value")
+            logger.error(edit_or_not)
+            if edit_or_not == '1':
+                edit = True
+            else:
+                edit = False
+        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor': tutor[0], 'tags': show_tags})
+    else:   # POST
+        logger.error("get post request")
+        if 'tags' in request.POST:
+            query = request.POST['tags']
+            tagset = query.split(',')
+            if tagset != ['']:
+                for tag_name in tagset:
+                    tag = Tag.objects.filter(name=tag_name)
+                    if tag:
+                        tag[0].tutors.add(tutor[0])
+                        tag[0].save()
+                    else:
+                        newTag = Tag.objects.create(name=tag_name)
+                        newTag.tutors.add(tutor[0])
+                        newTag.save()
+        if 'deleteTags' in request.POST:
+            delete_query = request.POST['deleteTags']
+            deletetagset = delete_query.split(',')
+            if deletetagset != ['']:
+                for tag_name in deletetagset:
+                    tag = Tag.objects.filter(name=tag_name)
+                    tag[0].tutors.remove(tutor[0])
+                    tag[0].save()
+        if privateTutor:
+            form = PrivateTutorProfileForm(request.POST)
+        else:
+            form = ProfileForm(request.POST)
+        if form.is_valid():
+            firstName = form.cleaned_data['first_name']
+            lastName = form.cleaned_data['last_name']
+            phone = form.cleaned_data['phone']
+            email = form.cleaned_data['email']
+            profile_content = form.cleaned_data['content']
+            if privateTutor:
+                tutor[0].hourly_rate = form.cleaned_data['hourly_rate']
+                tutor[0].save()
+                hourly_rate = tutor[0].hourly_rate
+            myuser.user.first_name = firstName
+            myuser.user.last_name = lastName
+            myuser.phone = phone
+            myuser.user.email = email
+            myuser.profile_content = profile_content
+            myuser.save()
+            myuser.user.save()
+        edit = False
+        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor':tutor[0], 'tags': show_tags})
+>>>>>>> e1d19afbfa0b9d7d7ee0e3ebb75e7c8d2264902c
 
 def mybooking(request, myuser_id):
     if not request.user.is_authenticated(): #visitor or client
@@ -290,7 +386,7 @@ def mybooking(request, myuser_id):
         HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     mystudent = Student.objects.filter(myuser=myuser)
-    mytutor = Tutor.objects.filter(myuser=myuser)
+    mytutor = Tutor.objects.get(myuser=myuser)
     isstudent = "0"
     istutor = "0"
     #booking is the record as a student, booked is the record as a tutor
@@ -304,6 +400,7 @@ def mybooking(request, myuser_id):
         mytutor = Tutor.objects.get(myuser=myuser)
         booked = TutorialSession.objects.filter(tutor=mytutor)
         istutor = "1"
+        return render(request, 'myaccount/mybooking.html',{'user': myuser, 'session_list': booking, "booked_list": booked, 'isstudent': isstudent,'istutor': istutor, 'tutor': mytutor})
     else:
         booked=""
     return render(request, 'myaccount/mybooking.html', {'user': myuser , 'session_list': booking, "booked_list": booked, 'isstudent': isstudent, 'istutor': istutor })
@@ -461,7 +558,7 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
     Transaction.objects.create(myuser=myuser, time=now.strftime(timeformat),
                                cashflow=tutorial_session.price * COMMISION, information=tutorial_session, type=2)
 
-    mytutor = Tutor.objects.filter(myuser=myuser)
+    mytutor = Tutor.objects.get(myuser=myuser)
     if mytutor:
         mytutor = Tutor.objects.get(myuser=myuser)
         booked = TutorialSession.objects.filter(tutor=mytutor)
@@ -471,7 +568,7 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
         istutor = "0"
     return render(request, 'myaccount/mybooking.html',
                       {'user': myuser, 'session_list': booking, "booked_list": booked, 'isstudent': "1",
-                       'istutor': istutor})
+                       'istutor': istutor, 'tutor': mytutor})
 
 def evaluate(request, myuser_id, tutorial_sessions_id):
     if not request.user.is_authenticated(): #visitor or client
@@ -515,7 +612,7 @@ def mywallet(request, myuser_id): #TODO filter thirty days!
         isstudent = "1"
     if Tutor.objects.filter(myuser=myuser):
         istutor = "1"
-    return render(request, 'myaccount/mywallet.html', {'user':myuser, 'student_list':student_list, 'tutor_list':tutor_list, 'msg': "", 'isstudent': isstudent, 'istutor': istutor })
+    return render(request, 'myaccount/mywallet.html', {'user':myuser, 'student_list':student_list, 'tutor_list':tutor_list, 'msg': "", 'isstudent': isstudent, 'istutor': istutor , 'tutor':mytutor})
 #def forget_password(request, myuser_id):
 
 ####mytransaction#####
@@ -538,13 +635,13 @@ def mytransaction(request, myuser_id): #TODO filter thirty days!
         isstudent = "1"
 
         #for each session in transaction, calculate the time now and the time that transaction happen, if it happens 30 days ago, lambda function returns false
-    if Tutor.objects.filter(myuser=myuser):
-        mytutor = Tutor.objects.get(myuser=myuser)
-        istutor = "1"
     list = filter(
         lambda session: nowtime - time.mktime(datetime.strptime(session.time, timeformat).timetuple()) <= refdelta,
         Transaction.objects.filter(myuser=myuser))
-
+    if Tutor.objects.filter(myuser=myuser):
+        mytutor = Tutor.objects.get(myuser=myuser)
+        istutor = "1"
+        return render(request, 'myaccount/mytransaction.html',{'user': myuser, 'list': list, 'isstudent': isstudent, 'istutor': istutor, 'tutor':mytutor})
     return render(request, 'myaccount/mytransaction.html', {'user':myuser, 'list': list, 'isstudent': isstudent, 'istutor': istutor })
 
 ####message####
@@ -565,12 +662,14 @@ def withdraw(request, myuser_id):
     myuser = MyUser.objects.get(user=request.user)  # myuser = get_object_or_404(MyUser, pk=myuser_id)
     student_list = ""
     tutor_list = ""
+    messages = ""
     if Student.objects.filter(myuser=myuser):
         mystudent = Student.objects.get(myuser=myuser)
         student_list = TutorialSession.objects.filter(student=mystudent)
     if Tutor.objects.filter(myuser=myuser):
         mytutor = Tutor.objects.get(myuser=myuser)
         tutor_list = TutorialSession.objects.filter(tutor=mytutor)
+        #return render(request, 'myaccount/mywallet.html',{'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages, 'tutor':mytutor})
     #filter1: not tutor
     if not Tutor.objects.filter(myuser=myuser):
         messages = "Only a tutor can withdraw money from wallet"
@@ -869,6 +968,7 @@ def search_tutor_tag(request,myuser_id ):
         "tutors": zipped
     }
     return render(request, 'searchtutors/index.html', variables)
+
 def selectAllTutors(request, tutor_set):
     tutors = Tutor.objects.all()
     for tut in tutors:
@@ -881,15 +981,28 @@ def tagFilter(request, tutor_set):
     if 'tags' in request.GET:
         query = request.GET['tags']
         tagset = query.split(',')
-        if tagset != ['']:
-            for tag_name in tagset:
+        if 'deleteTags' in request.GET:
+            delete_query = request.GET['deleteTags']
+            delete_tagset = delete_query.split(',')
+            ret_list = []
+            for item in tagset:
+                if item not in delete_tagset:
+                    ret_list.append(item)
+            logger.error("-----aaa")
+            logger.error(tagset)
+            logger.error(delete_tagset)
+            logger.error(ret_list)
+        else:
+            ret_list = tagset
+        if ret_list != ['']:
+            for tag_name in ret_list:
                 tag = Tag.objects.filter(name=tag_name)
                 if tag:
                     tutors = tag[0].tutors.all()
                     for tut in tutor_set:
                         tags = tut.tag_set.all()
                         for tag in tags:
-                            if tag.name in tagset and tut not in result_tutors:
+                            if tag.name in ret_list and tut not in result_tutors:
                                 result_tutors.append(tut)
                                 break
             tutor_set.clear()
@@ -1037,11 +1150,28 @@ def editProfile(request):
 def saveProfile(request):
     '''
 
-def tutorTimeslot(request, myuser_id):
+def tutorTimeslot(request, myuser_id, tutor_id):
     if not request.user.is_authenticated(): #visitor or client
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
         HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
-    mytutor = Tutor.objects.filter(myuser=myuser)
-    return render(request, 'myaccount/tutorTimeslot.html', {'user':myuser, 'tutorList': mytutor})
+    mytutor = get_object_or_404(Tutor, pk=tutor_id)
+    return render(request, 'myaccount/tutorTimeslot.html', {'user':myuser, 'tutor': mytutor})
+
+def tutorTimeslotSelecting(request, myuser_id, tutor_id):
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
+    myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
+    mytutor = get_object_or_404(Tutor, pk=tutor_id)
+    timeslot =  request.POST['newList'] # get new timeslot string
+    logger.error("----------------")
+    logger.error(timeslot)
+    mytutor.timeslot = timeslot
+    logger.error("----------------")
+    logger.error(mytutor.timeslot);
+    mytutor.save()
+    return render(request, 'myaccount/tutorTimeslot.html', {'user':myuser, 'tutor': mytutor})
+

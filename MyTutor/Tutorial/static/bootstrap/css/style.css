@@ -881,6 +881,7 @@ section, .section {
 .avater{
 	padding: 30px;
 	border-bottom: 1px solid #E8E8E8;
+	clear : both;
 }
 .best-tutor-info{
 	padding: 30px;
@@ -3171,13 +3172,34 @@ background-color: #fff !important;
 .infoPanel{
 	width : 70%;
 	padding : 20px;
-	margin-top : 20px;
-	margin-left : 40px;
+	padding-bottom : 80px;
+	margin-top : 40px;
+	margin-left : 60px;
 	text-align : left;
 	border : 2px solid #E8E8E8;
+	height : auto;
+	 clear: both;
 }
 .insideInfo{
 	text-align : left;
 	font-size : 14pt;
-	
+	margin-bottom : 10px;
+	font-family: Montserrat;
+	font-weight : 400;
+	color :#2F4F4F;
+}
+.insideImg{
+	float: left;
+	margin-right : 10px;
+	width : 350px;
+	height : auto;
+
+}
+.spanType{
+	color: 	#778899;
+	font-family: Montserrat;
+}
+
+.moneyButton{
+	float : right;
 }
