@@ -881,7 +881,7 @@ def search_tutor_tag(request,myuser_id ):
     
     logger.error(tutor_set)
     tagFilter(request, tutor_set)
-    logger.error("tag filtered")
+    logger.error("---tag filtered---")
     logger.error(tutor_set)
     
     courseFilter(request, tutor_set)
@@ -939,11 +939,12 @@ def tagFilter(request, tutor_set):
                     ret_list.append(item)
         else:
             ret_list = tagset
+        logger.error(ret_list)
+        logger.error("ret_List above")
         if ret_list != ['']:
             for tag_name in ret_list:
                 tag = Tag.objects.filter(name=tag_name)
                 if tag:
-                    tutors = tag[0].tutors.all()
                     for tut in tutor_set:
                         tags = tut.tag_set.all()
                         for tag in tags:
@@ -951,10 +952,14 @@ def tagFilter(request, tutor_set):
                                 result_tutors.append(tut)
                                 break
         else:
-            result_tutors = tutor_set
-            tutor_set.clear()
-            for ele in result_tutors:
-                tutor_set.append(ele)
+            logger.error("Chen Zihao is a cat!!")
+            for ele in tutor_set:
+                result_tutors.append(ele)
+        tutor_set.clear()
+        for ele in result_tutors:
+            tutor_set.append(ele)
+    logger.error("----tutor_set----")
+    logger.error(tutor_set)
 
 # tutor_set, show_tags and course is one-to-one set
 def courseFilter(request, tutor_set):
@@ -1113,12 +1118,11 @@ def tutorTimeslotSelecting(request, myuser_id, tutor_id):
         HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     mytutor = get_object_or_404(Tutor, pk=tutor_id)
-    timeslot =  request.POST['newList'] # get new timeslot string
-    logger.error("----------------")
-    logger.error(timeslot)
-    mytutor.timeslot = timeslot
-    logger.error("----------------")
-    logger.error(mytutor.timeslot);
+    if 'newList' in request.POST:
+        timeslot =  request.POST['newList'] # get new timeslot string
+        mytutor.timeslot = timeslot
+    if 'checked' in request.POST:
+        checked = request.POST['checked']
     mytutor.save()
-    return render(request, 'myaccount/tutorTimeslot.html', {'user':myuser, 'tutor': mytutor})
+    return render(request, 'myaccount/tutorTimeslot.html', {'user':myuser, 'tutor': mytutor, 'check':checked })
 

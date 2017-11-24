@@ -23,12 +23,35 @@
             </div>
             <h2 class="banner-parallax_t">{{ tutor.myuser.user.username }}</h2>
             <div class="banner-parallax_price"><span>${{tutor.hourly_rate }}</span> / per hour</div>
-            <a href="#" class="btn btn-default">See more information</a>
+              <div class="btn btn-default" id="moreInfo">See more information</a></div>
+
           </div>
         </div>
       </div>
     </section>
     <!--Tutor Information -->
+      <div class = "infoPanel" id="moreInfomation">
+
+        <div class="insideInfo insideImg" style="float: left; margin-right: 20px; margin-bottom: 10px;">
+                 <img src="/static/bootstrap/images/best-rooms/1.jpg" >
+        </div>
+        <label id="tags" style="font-size: 20pt; color: #2F4F4F;">Basic Information</label>
+
+        <div class="insideInfo">Username : <span class="spanType">{{tutor.myuser.user.username}}</span></div>
+        <div class="insideInfo">First name: <span class="spanType">{{tutor.myuser.user.first_name}}</span></div>
+        <div class="insideInfo">Last name: <span class="spanType">{{tutor.myuser.user.last_name}}</span></div>
+        <div class="insideInfo">Phone Number: <span class="spanType">{{tutor.myuser.phone}}</span></div>
+        <div class="insideInfo">Email: <span class="spanType">{{tutor.myuser.user.email}}</span></div>
+        <div class="insideInfo">About Me: <span class="spanType">{{tutor.myuser.profile_content}}</span></div>
+         {% if privateTutor %}
+         <div class="insideInfo">Hourly Price: <span class="spanType">{{tutor.hourly_rate}}</span></div>
+         {% endif %}
+
+        <div class="insideInfo">Tags:
+         <span class="spanType"></span>
+        </div>
+
+    </div>
     <div class="Timeslots">
         <section class="mission">
       <div class="container">
@@ -214,4 +237,16 @@
     <!--Time slot -->
 
 
+{% endblock %}
+
+{% block script %}
+    $(document).ready(function(){
+        $("#moreInfo").click(function(){
+            $("#moreInfomation").slideToggle();
+            $("#moreInfo").html("Less Information");
+        }); // End of moreInfo
+
+
+
+});
 {% endblock %}
