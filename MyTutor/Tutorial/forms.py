@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 class RegistrationForm(forms.Form):
-    CHOICES = (('Student', 'Student'), ('Private Tutor', 'Private Tutor'), ('Contracted Tutor', 'Contracted Tutor'))
+    CHOICES = (('Student', 'Student'), ('Private Tutor', 'Private Tutor'), ('Contracted Tutor', 'Contracted Tutor'), ('Student and Contracted Tutor', 'Student and Contracted Tutor'), ('Student and Private Tutor', 'Student and Private Tutor'))
     identity = forms.ChoiceField(label='Identity',choices=CHOICES)
     username = forms.CharField(label='Username', max_length=30)
     email = forms.EmailField(label='Email')

@@ -11,9 +11,7 @@ from datetime import date, datetime, time, timedelta
 from Tutorial.forms import *
 import time
 from Tutorial.models import *
-from decimal import Decimal
 from django.template import RequestContext
-import operator
 import logging
 import re
 # Get an instance of a logger
@@ -365,7 +363,7 @@ def myprofile(request, myuser_id):
                 return render(request, 'myaccount/myprofile.html',
                               {'user': myuser, 'form': passWordForm, 'edit': edit, 'tutor': tutor,
                                'privateTutor': privateTutor,
-                               'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor': tutor[0], 'tags': show_tags})
+                               'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor': t, 'tags': show_tags})
             else:
                 if 'newForm' in request.POST:
                     passWordForm = ResetPasswordForm(user=myuser)
@@ -873,12 +871,23 @@ def register_page(request):
             elif identity == 'Private Tutor':
                 tutor = Tutor.objects.create(myuser=myuser)
                 privateTutor = PrivateTutor.objects.create(tutor=tutor)
+            elif identity == 'Student and Contracted Tutor':
+                student = Student.objects.create(myuser=myuser)
+                tutor = Tutor.objects.create(myuser=myuser)
+                setattr(tutor, 'timeslot',
+                        '111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111')
+                tutor.save()
+                contractedTutor = ContractedTutor.objects.create(tutor=tutor)
+            elif identity == 'Student and Private Tutor':
+                student = Student.objects.create(myuser=myuser)
+                tutor = Tutor.objects.create(myuser=myuser)
+                privateTutor = PrivateTutor.objects.create(tutor=tutor)
             else:   # contracted tutor
                 tutor = Tutor.objects.create(myuser=myuser)
                 setattr(tutor,'timeslot','111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111')
                 tutor.save()
                 contractedTutor = ContractedTutor.objects.create(tutor=tutor)
-            #return render(request, 'home.html')
+            return render(request, 'registration/login.html')
     else:
         form = RegistrationForm()
     variables = {
