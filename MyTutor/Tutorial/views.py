@@ -184,8 +184,10 @@ def locksession(mytime):
 
             # modify timeslot string
             timeslot = list(tutor.timeslot)
-            logger.error("This is the index" + str(weekday * 24 * diff + int (hour_diff * diff) + 24 * diff) + " and " + str(weekday * 48 + hour_diff * 2 + 48))
+            logger.error("This is the index" + tutor.myuser.user.username + " " + str(len(timeslot)) + " " + str(weekday * 24 * diff + int (hour_diff * diff) + 24 * diff) + " and " + str(weekday * 48 + hour_diff * 2 + 48))
+            logger.error("Finally " + str(weekday * 24 * diff + int (hour_diff * diff) + 24 * diff))
             timeslot[weekday * 24 * diff + int (hour_diff * diff) + 24 * diff] = '3' #meaning this session has passed the state to be modified
+
             #weekday * 24 * diff is how many 24 hours has passed
             #int (hour_diff * diff) means starting from today to 'now', hong long has passed
             #24 * diff means 24 hours passed

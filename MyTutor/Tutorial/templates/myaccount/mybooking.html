@@ -13,25 +13,29 @@
 
     $(document).ready(function(){
 
-        $("#evaluateR").on('click', function(){
-            $(".infoPanel").css('display','block');
-});
+        $(".evaluateR").on('click', function(){
+        if($(".infoPanel").css('display')=='block'){
+            $(".infoPanel").css('display','none');
+        }else{
+             $(".infoPanel").css('display','block');
+        }
+
+        });
         $(".submitReview").on('click', function(){
-            var score = $("#Score").val()
+            var score = $(".Score").val()
             if (score < 0 && score > 5){
                 alert("Please enter an interger of 0~5!");
             }
-            var comment = $("#Comments").val();
+            var comment = $(".Comments").val();
             var showname;
-            if ($('#showname').is(':checked')){
+            if ($('.showname').is(':checked')){
                 showname="0"
             }else{
                 showname="1"
             }
-            alert(showname);
             comment = comment.replace(/ /g, "^space^");
-            $("#evaluateR").html("<input type=\"hidden\"  name=\"score\" value=\""+score+"\" ><input type=\"hidden\"  name=\"comment\" value=\""+comment+"\" ><input type=\"hidden\"  name=\"anonymous\" value=\""+showname+"\" >");
-            $("#evaluateR").submit();
+            $(".evaluateR").html("<input type=\"hidden\"  name=\"score\" value=\""+score+"\" ><input type=\"hidden\"  name=\"comment\" value=\""+comment+"\" ><input type=\"hidden\"  name=\"anonymous\" value=\""+showname+"\" >");
+            $(".evaluateR").submit();
         });
 
         $(".upcoming").on('click', function(){
@@ -51,15 +55,15 @@
 
 {% endblock %}
 {% block right %}
-<div class="upcoming btn btn-default" >Only show upcoming sessions</div>
+<div class="upcoming btn btn-default"  id="reviewPanel" >Only show upcoming sessions</div>
 <div id="content1" >
-    <div class="infoPanel" style="display: none;"  id="reviewPanel">
+    <div class="infoPanel" style="display: none;" >
         <label>Score(0~5)</label>
         <input type="text" class="Score" >
         <label>Comments</label>
         <input type="text" class="Comments"><br>
         <input type="checkbox" class="showname" /> Anonymous
-        <div  id="submitReview" class="btn btn-default">Submit</div>
+        <div  class="btn btn-default submitReview">Submit</div>
     </div>
 
     {% if isstudent != "" %} <!--should judge using isstudent instead of booklist non empty-->
@@ -107,8 +111,8 @@
                            "            <h3 class=\"service_title\">Can't Cancel</h3>" +
                            "          </div>");
                       }else if("{{ session.status }}" == '2'){
-                          document.write(" <form action= \"{% url 'Tutorial:evaluate' user.id session.id %}\" method=\"post\" id=\"evaluateR\" href=\" #reviewPanel\" >{% csrf_token %}{{uf.as_p}}<div class=\"col-lg-2 col-md-4 col-sm-6\"  style='color : #9CCC65;'>" +
-                           "            <h3 class=\"service_title\">To be evaluated</h3>" +
+                          document.write(" <form action= \"{% url 'Tutorial:evaluate' user.id session.id %}\" method=\"post\" class=\"evaluateR\" >{% csrf_token %}{{uf.as_p}}<div class=\"col-lg-2 col-md-4 col-sm-6\"  style='color : #9CCC65;'  >" +
+                           "            <h3 class=\"service_title\"><a href=\"#reviewPanel\">To be evaluated<a></h3>" +
                            "          </div></form>");
                       }else if("{{ session.status }}" == '3'){
                           document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +
