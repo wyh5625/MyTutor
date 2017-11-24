@@ -269,7 +269,7 @@ def tutorpage(request, myuser_id, tutor_id):
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     tutor = get_object_or_404(Tutor, pk=tutor_id)
     sessions = filter(
-        lambda session: session.status == 4,
+        lambda session: session.status == 4 and session.comment != "",
         TutorialSession.objects.filter(tutor=tutor))
     return render(request, 'searchtutors/tutorpage.html', {'user':myuser, 'tutor': tutor, 'sessions': sessions})
 
