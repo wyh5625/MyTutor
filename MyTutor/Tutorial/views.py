@@ -369,7 +369,7 @@ def myprofile(request, myuser_id):
                 ret_list = tagset
             if ret_list != ['']:
                 for tag_name in ret_list:
-                    if not bool(re.match(r'^\s*',tag_name)):
+                    if re.match(r'^\s+$',tag_name) == None and tag_name != "":
                         tag = Tag.objects.filter(name=tag_name)
                         if tag:
                             tag[0].tutors.add(tutor[0])
@@ -947,15 +947,9 @@ def tagFilter(request, tutor_set):
                     ret_list.append(item)
         else:
             ret_list = tagset
-<<<<<<< HEAD
         logger.error("ret_list ----")
         logger.error(ret_list)
         if ret_list and ret_list != ['']:
-=======
-        logger.error(ret_list)
-        logger.error("ret_List above")
-        if ret_list != ['']:
->>>>>>> b902669e4cd5500853e0d241e2290d3da660fe57
             for tag_name in ret_list:
                 tag = Tag.objects.filter(name=tag_name)
                 if tag:
@@ -965,12 +959,6 @@ def tagFilter(request, tutor_set):
                             if tag.name != "" and tag.name in ret_list and tut not in result_tutors:
                                 result_tutors.append(tut)
                                 break
-<<<<<<< HEAD
-            tutor_set.clear()
-            for ele in result_tutors:
-                tutor_set.append(ele)
-
-=======
         else:
             logger.error("Chen Zihao is a cat!!")
             for ele in tutor_set:
@@ -978,7 +966,7 @@ def tagFilter(request, tutor_set):
         tutor_set.clear()
         for ele in result_tutors:
             tutor_set.append(ele)
->>>>>>> b902669e4cd5500853e0d241e2290d3da660fe57
+
 
 
 # tutor_set, show_tags and course is one-to-one set
