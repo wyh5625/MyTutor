@@ -24,6 +24,7 @@ class MyUser(models.Model):
     wallet = models.ForeignKey(Wallet, on_delete = models.CASCADE)
     profile_content = models.CharField(max_length=2000, default="")
     phone = models.IntegerField(null = True)
+    image = models.ImageField(upload_to='profile_image', blank=True)
     def __str__(self):
         return self.user.username
 

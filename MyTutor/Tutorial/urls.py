@@ -1,5 +1,6 @@
 from django.conf.urls import url
-
+from django.conf import settings
+from django.conf.urls.static import static
 from . import views
 from django.contrib.auth.views import login, logout, password_reset, password_reset_done, password_reset_confirm,password_reset_complete
 from django.contrib.auth import views as auth_views
@@ -33,4 +34,4 @@ urlpatterns = [
 
     #url(r'^registerSuccess/$', views.register_page, name='registerSuccess'),
     #test
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

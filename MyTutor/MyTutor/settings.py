@@ -30,6 +30,8 @@ ALLOWED_HOSTS = []
 LOGIN_REDIRECT_URL = '/Tutorial/searchTutors/'
 # Application definition
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'Tutorial/media')
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

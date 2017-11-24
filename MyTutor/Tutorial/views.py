@@ -390,15 +390,18 @@ def myprofile(request, myuser_id):
                         tag[0].tutors.remove(tutor[0])
                         tag[0].save()
         if privateTutor:
-            form = PrivateTutorProfileForm(request.POST)
+            form = PrivateTutorProfileForm(request.POST, request.FILES)
         else:
-            form = ProfileForm(request.POST)
+            form = ProfileForm(request.POST, request.FILES)
         if form.is_valid():
             firstName = form.cleaned_data['first_name']
             lastName = form.cleaned_data['last_name']
             phone = form.cleaned_data['phone']
             email = form.cleaned_data['email']
             profile_content = form.cleaned_data['content']
+            image = '0'
+            if len(request.FILES) != 0:
+                image = request.FILES['image_file']
             if privateTutor:
                 tutor[0].hourly_rate = form.cleaned_data['hourly_rate']
                 tutor[0].save()
@@ -408,6 +411,8 @@ def myprofile(request, myuser_id):
             myuser.phone = phone
             myuser.user.email = email
             myuser.profile_content = profile_content
+            if image != '0':
+                myuser.image = image
             myuser.save()
             myuser.user.save()
             edit = False

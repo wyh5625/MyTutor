@@ -22,7 +22,7 @@
         </form>
 
         <div class="insideInfo insideImg" style="float: left; margin-right: 20px; margin-bottom: 10px;">
-                 <img src="/static/bootstrap/images/best-rooms/1.jpg" >
+                 <img src="{{ user.image.url }}" >
         </div>
         <label id="tags" style="font-size: 20pt; color: #2F4F4F;">Basic Information</label>
 
@@ -60,7 +60,7 @@
     </form>
 {% else %}
      <div class = "infoPanel">
-        <form method="POST" action="{% url 'Tutorial:myprofile' user.id %}" class="" />
+        <form method="POST" action="{% url 'Tutorial:myprofile' user.id %}" enctype='multipart/form-data' class="" />
             {{form.as_p}}
          <p style="font-weight:900;">Tags: <input type="text" id="subjectTags" placeholder="Press enter to add tags.">
              <span id="tags">

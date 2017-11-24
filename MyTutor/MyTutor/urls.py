@@ -17,7 +17,8 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.views.generic import RedirectView
-
+from django.conf import settings
+from django.conf.urls.static import static
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 	url(r'^Tutorial/', include('Tutorial.urls')),
@@ -32,4 +33,4 @@ urlpatterns = [
 	#rl(r'^Tutorial/login/$', auth_views.login, name='login'),
     #url(r'^Tutorial/logout/$', auth_views.logout, {'next_page': '/Tutorial/searchTutor/'}, name='logout'),
     #url(r'^Tutorial/searchTutors/', include('Tutorial.urls')),  #when someone clicks search tutor
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
