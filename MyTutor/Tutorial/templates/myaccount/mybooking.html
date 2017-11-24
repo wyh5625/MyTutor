@@ -28,8 +28,9 @@
             }else{
                 showname="1"
             }
+            alert(showname);
             comment = comment.replace(/ /g, "^space^");
-            $("#evaluateR").html("<input type=\"hidden\"  name=\"score\" value=\""+score+"\" ><input type=\"hidden\"  name=\"comment\" value=\""+score+"\" ><input type=\"hidden\"  name=\"anonymous\" value=\""+showname+"\" >");
+            $("#evaluateR").html("<input type=\"hidden\"  name=\"score\" value=\""+score+"\" ><input type=\"hidden\"  name=\"comment\" value=\""+comment+"\" ><input type=\"hidden\"  name=\"anonymous\" value=\""+showname+"\" >");
             $("#evaluateR").submit();
         });
 

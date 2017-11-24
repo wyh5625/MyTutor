@@ -636,7 +636,12 @@ def evaluate(request, myuser_id, tutorial_sessions_id):
         HttpResponseRedirect('/Tutorial/admin/')
 
     score = request.POST['score']
+    logger.error(score)
+
     comment = request.POST['comment']
+    logger.error(comment)
+    anonymous = request.POST['anonymous']
+    logger.error(str(anonymous) + " this is anonymous value")
     comment = comment.replace('^space^', ' ')
     logger.error(comment)
     if len(comment) > 200:
@@ -647,6 +652,7 @@ def evaluate(request, myuser_id, tutorial_sessions_id):
     score = int (float (score))
     session.score = score
     session.comment = comment
+    session.anonymous = anonymous
     session.status = 4
     session.save()
     tutor = session.tutor
@@ -705,7 +711,7 @@ def mytransaction(request, myuser_id): #TODO filter thirty days!
 
         #for each session in transaction, calculate the time now and the time that transaction happen, if it happens 30 days ago, lambda function returns false
     list = filter(
-        lambda session: nowtime - time.mktime(datetime.strptime(session.time, timeformat).timetuple()) <= refdelta,
+        lambda session: nowtime - time.mktime(datetime.strptime(session.time, timeformat).timetuple()) <= refdelta and session.cashflow > 0,
         Transaction.objects.filter(myuser=myuser))
     if Tutor.objects.filter(myuser=myuser):
         mytutor = Tutor.objects.get(myuser=myuser)
