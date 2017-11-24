@@ -1035,11 +1035,11 @@ def priceFilter(request, tutor_set):
     if 'lowPrice' in request.GET and 'highPrice' in request.GET:
         premin = request.GET['lowPrice']
         premax = request.GET['highPrice']
-        if premin != "":
+        if premin != "" and re.match(r'^[0-9]*$',premin) != None:
             min = int(request.GET['lowPrice'])
         else:
             min = 0
-        if premax != "":
+        if premax != "" and re.match(r'^[0-9]*$',premax) != None:
             max = int(request.GET['highPrice'])
         else:
             max = 500000
