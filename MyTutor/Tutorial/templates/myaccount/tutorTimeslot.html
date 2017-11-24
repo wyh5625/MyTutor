@@ -24,6 +24,10 @@
             var d= "<form action=\"{% url 'Tutorial:tutorTimeslotSelecting' user.id tutor.id %}\" method=\"post\" name=\"frm\">{% csrf_token %}<table width=\"100%\" class = 'slotTable col-md-9' style='margin-left: 10%; '><tbody>";
             var date = new Date();
             var week = date.getDay();
+            for (var i = 0; i < week;i++){
+                date.setTime(date.getTime()-24*60*60*1000);
+            }
+
             var year = date.getYear();
             var month = date.getMonth();
             var strDate = date.getDate();
@@ -39,7 +43,7 @@
             if (month == 13){
                 month = 12;
             }
-            for (var i =0;i < hour_num;i++){
+            for (var i =0;i < hour_num+1;i++){
                 d += "<tr class=\"titleTime row\">";
                 if(i == 0){
                      d+= "<td rowspan=\"1\" class=\"hour_\" height=\"10%\" width=\"4%\"  style=\"background-color : #003400 ; color : white;margin : 1px; border-collapse: separate; border : 1px solid #989898; line-height : 2;\">Time/Date</td>";
@@ -82,7 +86,7 @@
 
                     d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"4%\" style=\"background-color : #003400 ; color : white;margin : 1px; border-collapse: separate; border : 1px solid #eee;\">"+time48+"</td>";
                     var c = 0;
-                    for (var j = 0;j<15;j ++ ){
+                    for (var j = 0;j<14;j ++ ){
                          //alert(i -1+ 48*week + c);
                         //alert(time48);
                         var which = i-1+c;
