@@ -954,11 +954,11 @@ def tagFilter(request, tutor_set):
                             if tag.name in ret_list and tut not in result_tutors:
                                 result_tutors.append(tut)
                                 break
-        else:
-            result_tutors = tutor_set
             tutor_set.clear()
             for ele in result_tutors:
                 tutor_set.append(ele)
+        
+
 
 # tutor_set, show_tags and course is one-to-one set
 def courseFilter(request, tutor_set):
