@@ -305,10 +305,13 @@ def myprofile(request, myuser_id):
     tutor = Tutor.objects.filter(myuser=myuser)
     hourly_rate = 0
     activated = False
+    t = None
+    show_tags = []
     if tutor:
         hourly_rate = tutor[0].hourly_rate
         activated = tutor[0].showProfile
         show_tags = tutor[0].tag_set.all()
+        t = tutor[0]
     privateTutor = PrivateTutor.objects.filter(tutor=tutor)
     if privateTutor:
         form = PrivateTutorProfileForm(initial = {'last_name': myuser.user.last_name, 'first_name': myuser.user.first_name, 'email': myuser.user.email, 'phone': myuser.phone, 'content': myuser.profile_content, 'hourly_rate': hourly_rate})
@@ -335,7 +338,7 @@ def myprofile(request, myuser_id):
                 edit = True
             else:
                 edit = False
-        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor': tutor[0], 'tags': show_tags})
+        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor': t, 'tags': show_tags})
     else:   # POST
         logger.error("get post request")
         if 'changePassWord' in request.POST:
@@ -357,7 +360,7 @@ def myprofile(request, myuser_id):
             return render(request, 'myaccount/myprofile.html',
                           {'user': myuser, 'form': passWordForm, 'edit': edit, 'resetPassword': resetPassword,
                            'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate,
-                           'profileActivated': activated, 'tutor': tutor[0], 'tags': show_tags})
+                           'profileActivated': activated, 'tutor': t, 'tags': show_tags})
         if 'tags' in request.POST:
             query = request.POST['tags']
             tagset = query.split(',')
@@ -421,7 +424,7 @@ def myprofile(request, myuser_id):
             edit = False
         else:
             edit = True
-        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor':tutor[0], 'tags': show_tags})
+        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor':t, 'tags': show_tags})
 
 def mybooking(request, myuser_id):
     if not request.user.is_authenticated(): #visitor or client
@@ -647,6 +650,7 @@ def mywallet(request, myuser_id): #TODO filter thirty days!
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     student_list = ""
     tutor_list = ""
+    mytutor = None
     if Student.objects.filter(myuser=myuser):
         mystudent = Student.objects.get(myuser=myuser)
         student_list = TutorialSession.objects.filter(student=mystudent)
