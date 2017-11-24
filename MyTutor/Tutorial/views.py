@@ -268,7 +268,10 @@ def tutorpage(request, myuser_id, tutor_id):
         HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     tutor = get_object_or_404(Tutor, pk=tutor_id)
-    return render(request, 'searchtutors/tutorpage.html', {'user':myuser, 'tutor': tutor})
+    sessions = filter(
+        lambda session: session.status == 4,
+        TutorialSession.objects.filter(tutor=tutor))
+    return render(request, 'searchtutors/tutorpage.html', {'user':myuser, 'tutor': tutor, 'sessions': sessions})
 
 ####my account####
 ####my account####
@@ -623,6 +626,11 @@ def evaluate(request, myuser_id, tutorial_sessions_id):
     session.comment = comment
     session.status = 4
     session.save()
+    tutor = session.tutor
+    #only if a tutor is evaluated, will this be executed, but NOT directly after booking
+    tutor.average = (tutor.average * tutor.reviewd_times + score) / (tutor.reviewd_times + 1)
+    tutor.reviewd_times = tutor.reviewd_times + 1
+    tutor.save()
     return mybooking(request, myuser_id)
 
 
