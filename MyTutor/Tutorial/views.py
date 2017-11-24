@@ -15,6 +15,7 @@ from decimal import Decimal
 from django.template import RequestContext
 import operator
 import logging
+import re
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 from django.contrib.auth import views as auth_views
@@ -366,20 +367,22 @@ def myprofile(request, myuser_id):
                         ret_list.append(item)
             else:
                 ret_list = tagset
-            logger.error(delete_tagset)
             if ret_list != ['']:
-                for tag_name in tagset:
-                    tag = Tag.objects.filter(name=tag_name)
-                    if tag:
-                        tag[0].tutors.add(tutor[0])
-                        tag[0].save()
-                    else:
-                        newTag = Tag.objects.create(name=tag_name)
-                        newTag.tutors.add(tutor[0])
-                        newTag.save()
+                for tag_name in ret_list:
+                    if not bool(re.match(r'^\s*',tag_name)):
+                        tag = Tag.objects.filter(name=tag_name)
+                        if tag:
+                            tag[0].tutors.add(tutor[0])
+                            tag[0].save()
+                        else:
+                            newTag = Tag.objects.create(name=tag_name)
+                            newTag.tutors.add(tutor[0])
+                            newTag.save()
         if 'deleteTags' in request.POST:
             delete_query = request.POST['deleteTags']
             deletetagset = delete_query.split(',')
+            logger.error("deletetagset")
+            logger.error(deletetagset)
             if deletetagset != ['']:
                 for tag_name in deletetagset:
                     tag = Tag.objects.filter(name=tag_name)
@@ -933,6 +936,7 @@ def tagFilter(request, tutor_set):
     logger.error("-----tags-----")
     if 'tags' in request.GET:
         query = request.GET['tags']
+        logger.error(query)
         tagset = query.split(',')
         if 'deleteTags' in request.GET:
             delete_query = request.GET['deleteTags']
@@ -943,7 +947,9 @@ def tagFilter(request, tutor_set):
                     ret_list.append(item)
         else:
             ret_list = tagset
-        if ret_list != ['']:
+        logger.error("ret_list ----")
+        logger.error(ret_list)
+        if ret_list and ret_list != ['']:
             for tag_name in ret_list:
                 tag = Tag.objects.filter(name=tag_name)
                 if tag:
@@ -951,13 +957,13 @@ def tagFilter(request, tutor_set):
                     for tut in tutor_set:
                         tags = tut.tag_set.all()
                         for tag in tags:
-                            if tag.name in ret_list and tut not in result_tutors:
+                            if tag.name != "" and tag.name in ret_list and tut not in result_tutors:
                                 result_tutors.append(tut)
                                 break
             tutor_set.clear()
             for ele in result_tutors:
                 tutor_set.append(ele)
-        
+
 
 
 # tutor_set, show_tags and course is one-to-one set
