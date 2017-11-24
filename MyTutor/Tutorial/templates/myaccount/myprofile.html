@@ -22,11 +22,7 @@
         </form>
 
         <div class="insideInfo insideImg" style="float: left; margin-right: 20px; margin-bottom: 10px;">
-            {% if user.image %}
-                 <img src="{{ user.image.url }}" >
-            {% else %}
-                <img src="/static/bootstrap/images/best-rooms/1.jpg" >
-            {% endif %}
+            <img src="{{ user.image.url }}" >
         </div>
         <label id="tags" style="font-size: 20pt; color: #2F4F4F;">Basic Information</label>
 
@@ -39,11 +35,10 @@
          {% if privateTutor %}
          <div class="insideInfo">Hourly Price: <span class="spanType">{{hourly_rate}}</span></div>
          {% endif %}
-        {% if tutor %}
+
         <div class="insideInfo">Tags:
          <span class="spanType">{% for tag in tags %} {{tag}}, {% endfor %}</span>
         </div>
-        {% endif %}
 
     </div>
     <form method="POST" action="{% url 'Tutorial:myprofile' user.id %}" class="" />
@@ -67,7 +62,6 @@
      <div class = "infoPanel">
         <form method="POST" action="{% url 'Tutorial:myprofile' user.id %}" enctype='multipart/form-data' class="" />
             {{form.as_p}}
-         {% if tutor %}
          <p style="font-weight:900;">Tags: <input type="text" id="subjectTags" placeholder="Press enter to add tags.">
              <span id="tags">
                  {% for tag in tags %}
@@ -77,7 +71,6 @@
                   </script>
                  {% endfor %}
          </p>
-         {% endif %}
             <input type="submit" value="Save" class = "btn btn-default" style="float : right; margin : 10px;"/>
         </form>
         <form method="GET" action="{% url 'Tutorial:myprofile' user.id %}" class="" />

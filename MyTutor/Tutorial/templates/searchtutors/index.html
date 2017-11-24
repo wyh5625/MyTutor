@@ -130,7 +130,14 @@
               {%for Tutor,Tags in tutors%}
             <li class="col-lg-4 col-md-4 col-sm-6 col-xs-12 best-tutor_li">
               <div class="best-tutor_img">
-                <a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}"><img src="/static/bootstrap/images/best-rooms/1.jpg" alt=""></a>
+
+                <a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}">
+                    {% if Tutor.myuser.image %}
+                        <img src="{{ Tutor.myuser.image.url }}" alt="">
+                    {% else %}
+                        <img src="/static/bootstrap/images/best-rooms/1.jpg" alt="">
+                    {% endif %}
+                </a>
                 <div class="best-tutor_overlay">
                   <div class="overlay_icn"><a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}"></a></div>
                 </div>
