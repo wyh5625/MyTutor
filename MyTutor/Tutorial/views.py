@@ -252,14 +252,26 @@ def endsession(mytime):
                                            cashflow=slot.price,
                                            information=slot, type=4)
 
-                company = MyTutor.objects.get(pk=1)
-                company.wallet.balance = company.wallet.balance + Decimal(str(slot.price * (COMMISION - 1)))
-                company.wallet.save()
+                if slot.price != 0:
+                    company = MyUser.objects.get(username='MyTutor')
+                    # company = Tutor.objects.get(myuser=company_user)
+                    company.wallet.balance = company.wallet.balance + Decimal(str(slot.price * (COMMISION - 1)))
+                    Transaction.create(myuser=company, time=mytime, cashflow=Decimal(str(slot.price * (COMMISION - 1))), information=slot, type=4)
+                    company.wallet.save()
                 ## mytutor receives commision fee
     return
 
 
-
+def mytutor(request):
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
+    if request.user.username != 'MyTutor':
+        return index(request, company.id)
+    company = MyUser.objects.get(user=request.user)
+    list = Transaction.objects.filter(myuser=company)
+    return render(request, 'mytutor.html', {'user':company, 'list': list})
 
 def tutorpage(request, myuser_id, tutor_id):
     if not request.user.is_authenticated(): #visitor or client
@@ -305,10 +317,13 @@ def myprofile(request, myuser_id):
     tutor = Tutor.objects.filter(myuser=myuser)
     hourly_rate = 0
     activated = False
+    t = None
+    show_tags = []
     if tutor:
         hourly_rate = tutor[0].hourly_rate
         activated = tutor[0].showProfile
         show_tags = tutor[0].tag_set.all()
+        t = tutor[0]
     privateTutor = PrivateTutor.objects.filter(tutor=tutor)
     if privateTutor:
         form = PrivateTutorProfileForm(initial = {'last_name': myuser.user.last_name, 'first_name': myuser.user.first_name, 'email': myuser.user.email, 'phone': myuser.phone, 'content': myuser.profile_content, 'hourly_rate': hourly_rate})
@@ -335,7 +350,7 @@ def myprofile(request, myuser_id):
                 edit = True
             else:
                 edit = False
-        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor': tutor[0], 'tags': show_tags})
+        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor': t, 'tags': show_tags})
     else:   # POST
         logger.error("get post request")
         if 'changePassWord' in request.POST:
@@ -357,7 +372,7 @@ def myprofile(request, myuser_id):
             return render(request, 'myaccount/myprofile.html',
                           {'user': myuser, 'form': passWordForm, 'edit': edit, 'resetPassword': resetPassword,
                            'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate,
-                           'profileActivated': activated, 'tutor': tutor[0], 'tags': show_tags})
+                           'profileActivated': activated, 'tutor': t, 'tags': show_tags})
         if 'tags' in request.POST:
             query = request.POST['tags']
             tagset = query.split(',')
@@ -421,7 +436,7 @@ def myprofile(request, myuser_id):
             edit = False
         else:
             edit = True
-        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor':tutor[0], 'tags': show_tags})
+        return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor':t, 'tags': show_tags})
 
 def mybooking(request, myuser_id):
     if not request.user.is_authenticated(): #visitor or client
@@ -647,6 +662,7 @@ def mywallet(request, myuser_id): #TODO filter thirty days!
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     student_list = ""
     tutor_list = ""
+    mytutor = None
     if Student.objects.filter(myuser=myuser):
         mystudent = Student.objects.get(myuser=myuser)
         student_list = TutorialSession.objects.filter(student=mystudent)
@@ -718,7 +734,7 @@ def withdraw(request, myuser_id):
         tutor_list = TutorialSession.objects.filter(tutor=mytutor)
         #return render(request, 'myaccount/mywallet.html',{'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages, 'tutor':mytutor})
     #filter1: not tutor
-    if not Tutor.objects.filter(myuser=myuser):
+    if not Tutor.objects.filter(myuser=myuser) and myuser.user.username != 'MyTutor': #mytutor can use withdraw
         messages = "Only a tutor can withdraw money from wallet"
         return render(request, 'myaccount/mywallet.html',
                       {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
@@ -1031,11 +1047,11 @@ def priceFilter(request, tutor_set):
     if 'lowPrice' in request.GET and 'highPrice' in request.GET:
         premin = request.GET['lowPrice']
         premax = request.GET['highPrice']
-        if premin != "":
+        if premin != "" and re.match(r'^[0-9]*$',premin) != None:
             min = int(request.GET['lowPrice'])
         else:
             min = 0
-        if premax != "":
+        if premax != "" and re.match(r'^[0-9]*$',premax) != None:
             max = int(request.GET['highPrice'])
         else:
             max = 500000

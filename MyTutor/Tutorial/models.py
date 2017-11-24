@@ -14,17 +14,12 @@ class Wallet(models.Model):
             myuser = MyUser.objects.get(wallet = self)
             return myuser.user.username + "'s wallet"
 
-class MyTutor(models.Model):
-    wallet = models.ForeignKey(Wallet, on_delete = models.CASCADE)
-    def __str__(self):
-        return "MyTutor"
-
 class MyUser(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE )
     wallet = models.ForeignKey(Wallet, on_delete = models.CASCADE)
     profile_content = models.CharField(max_length=2000, default="")
     phone = models.IntegerField(null = True)
-    image = models.ImageField(upload_to='profile_image', blank=True)
+    image = models.ImageField(upload_to='profile_image', default='/static/bootstrap/images/best-rooms/1.jpg')
     def __str__(self):
         return self.user.username
 
