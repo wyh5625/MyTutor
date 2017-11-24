@@ -552,8 +552,11 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
 
 
     Transaction.objects.create(myuser=myuser, time=now.strftime(timeformat), cashflow=tutor.hourly_rate * COMMISION * (-1), information = newSession, type = 3)
+    sessions = filter(
+        lambda session: session.status == 4 and session.comment != "",
+        TutorialSession.objects.filter(tutor=tutor))
 
-    return render(request, 'searchtutors/tutorpage.html', {'success': "aa", 'tutor': tutor, 'user': myuser})
+    return render(request, 'searchtutors/tutorpage.html', {'success': "aa", 'tutor': tutor, 'user': myuser,'sessions': sessions})
 
 
 

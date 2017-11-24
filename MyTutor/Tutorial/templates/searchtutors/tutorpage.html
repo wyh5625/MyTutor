@@ -32,7 +32,14 @@
         <div class="insideInfo">Username : <span class="spanType">{{tutor.myuser.user.username}}</span></div>
         <div class="insideInfo">First name: <span class="spanType">{{tutor.myuser.user.first_name}}</span></div>
         <div class="insideInfo">Last name: <span class="spanType">{{tutor.myuser.user.last_name}}</span></div>
-        <div class="insideInfo">Average review score: <span class="spanType">{{tutor.average}}</span></div>
+          <script>
+              if ("{{tutor.reviewed_times}}" > 3){
+                document.write("<div class=\"insideInfo\">Average review score: <span class=\"spanType\">{{tutor.average}}</span></div>");
+              }else{
+                document.write("<div class=\"insideInfo\">Average review score: <span class=\"spanType\">N/A</span></div>");
+              }
+          </script>
+
         <div class="insideInfo">Email: <span class="spanType">{{tutor.myuser.user.email}}</span></div>
         <div class="insideInfo">About Me: <span class="spanType">{{tutor.myuser.profile_content}}</span></div>
          {% if privateTutor %}
@@ -43,6 +50,17 @@
          <span class="spanType"></span>
         </div>
 
+          <hr/>
+          <label>Comments</label>
+          {% for session in sessions %}
+          <script>
+            if ("{{session.showname}}" == "1"){
+                document.write("<div class=\"insideInfo\">User[{{session.student}}]: <span class=\"spanType\">{{session.comment}}</span></div>");
+            }else{
+                document.write("<div class=\"insideInfo\">Anonymous: <span class=\"spanType\">{{session.comment}}</span></div>");
+            }
+            </script>
+          {% endfor %}
     </div>
     <div class="Timeslots">
         <section class="mission">
