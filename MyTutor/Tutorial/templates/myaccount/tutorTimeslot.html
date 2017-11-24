@@ -1,132 +1,164 @@
 {% extends "myaccount/myaccount.html" %}
 {% block title %}: Tutor timeslot selecting{% endblock %}
 {% block right %}
-    <div id="timeSlots" ></div>
-    <script>
-        var list = "{{ tutor.timeslot}}";
-        var d= "<form action=\"{% url 'Tutorial:tutorTimeslotSelecting' user.id tutor.id %}\" method=\"post\" name=\"frm\">{% csrf_token %}<table width=\"100%\" class = 'slotTable col-md-9' style='margin-top: 0;'><tbody>";
-        var date = new Date();
-        var week = date.getDay();
-        var year = date.getYear();
-        var month = date.getMonth();
-        var strDate = date.getDate();
-        var months = new Array(8);
-        var days = new Array(8);
-        var hour_num;
-        if("{{tutor.hourly_rate}}" == 0){
-            hour_num = 48;
-        }else{
-            hour_num = 24;
-        }
-        month ++;
-        if (month == 13){
-            month = 12;
-        }
-        for (var i =0;i < hour_num;i++){
-            d += "<tr class=\"titleTime row\">";
-            if(i == 0){
-                 d+= "<td rowspan=\"1\" class=\"hour_\" height=\"10%\" width=\"4%\"  style=\"background-color : #003400 ; color : white;margin : 1px; border-collapse: separate; border : 2px solid #989898; line-height : 2;\">Time/Date</td>";
-                for (var j = 0;j<15;j++){
-                    if (month >= 1 && month <= 9) {
-                        month = "0" + month;
-                    }
-                    if (strDate >= 0 && strDate <= 9) {
-                        strDate = "0" + strDate;
-                    }
-                    d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"6%\" style=\"background-color : #003400 ; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee;\">"+month + " - " +strDate+"</td>";
-                    months[j] = month;
-                    days[j] = strDate;
-                    date.setTime(date.getTime()+24*60*60*1000);
-                    month = date.getMonth() + 1;
-                    strDate = date.getDate();
-                }
+    <div style="width: 100%; ">
+        <div class="checkBox col-md-9" style="border: 1px solid #e0e0e0; padding : 10px; margin-top: 20px; margin-bottom: 20px; margin-left : 10%; ">
+
+            <table>
+                <tr>
+                    <td><input type="checkbox" id="checkAvailable" /><span style="margin-left : 10px;margin-right: 20px;">Available</span></td>
+                    <td style="background-color : #E8E8E8 ; color : white;margin : 1px; border-collapse: separate; border : 5px solid transparent; width : 10%;"></td>
+                    <td>Not Available</td>
+                     <td style="background-color : #9CCC65 ; color : white;margin : 1px; border-collapse: separate; border : 5px solid transparent; width : 10%;"></td>
+                    <td>Available</td>
+                     <td style="background-color : #FF7F50  ; color : white;margin : 1px; border-collapse: separate; border : 5px solid transparent; width : 10%;"></td>
+                    <td>Booked</td>
+                     <td style="background-color : #6495ED ; color : white;margin : 1px; border-collapse: separate; border : 5px solid transparent; width : 10%;"></td>
+                    <td>Attended</td>
+                </tr>
+            </table>
+        </div>
+        <div id="timeSlots" ></div>
+        <script>
+            var list = "{{ tutor.timeslot}}";
+            var d= "<form action=\"{% url 'Tutorial:tutorTimeslotSelecting' user.id tutor.id %}\" method=\"post\" name=\"frm\">{% csrf_token %}<table width=\"100%\" class = 'slotTable col-md-9' style='margin-left: 10%; '><tbody>";
+            var date = new Date();
+            var week = date.getDay();
+            var year = date.getYear();
+            var month = date.getMonth();
+            var strDate = date.getDate();
+            var months = new Array(8);
+            var days = new Array(8);
+            var hour_num;
+            if("{{tutor.hourly_rate}}" == 0){
+                hour_num = 48;
             }else{
-                var time48;
-                if(hour_num == 48){
-                    if ((i-1) % 2 == 0){
-                        time48 = (i-1) / 2 + ":00";
-                    }else{
-                        time48 = (i-1) / 2 - 0.5+ ":30";
-                    }
-                    if (time48.length < 5){
-                        var temp;
-                        temp = "0";
-                        temp += time48;
-                        time48 = temp;
+                hour_num = 24;
+            }
+            month ++;
+            if (month == 13){
+                month = 12;
+            }
+            for (var i =0;i < hour_num;i++){
+                d += "<tr class=\"titleTime row\">";
+                if(i == 0){
+                     d+= "<td rowspan=\"1\" class=\"hour_\" height=\"10%\" width=\"4%\"  style=\"background-color : #003400 ; color : white;margin : 1px; border-collapse: separate; border : 1px solid #989898; line-height : 2;\">Time/Date</td>";
+                    for (var j = 0;j<15;j++){
+                        if (month >= 1 && month <= 9) {
+                            month = "0" + month;
+                        }
+                        if (strDate >= 0 && strDate <= 9) {
+                            strDate = "0" + strDate;
+                        }
+                        d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"6%\" style=\"background-color : #003400 ; color : white;margin : 1px; border-collapse: separate; border : 1px solid #eee;\">"+month + " - " +strDate+"</td>";
+                        months[j] = month;
+                        days[j] = strDate;
+                        date.setTime(date.getTime()+24*60*60*1000);
+                        month = date.getMonth() + 1;
+                        strDate = date.getDate();
                     }
                 }else{
-                    if (i <= 9){
-                        var temp = "0" + i;
+                    var time48;
+                    if(hour_num == 48){
+                        if ((i-1) % 2 == 0){
+                            time48 = (i-1) / 2 + ":00";
+                        }else{
+                            time48 = (i-1) / 2 - 0.5+ ":30";
+                        }
+                        if (time48.length < 5){
+                            var temp;
+                            temp = "0";
+                            temp += time48;
+                            time48 = temp;
+                        }
                     }else{
-                        var temp = i;
+                        if (i <= 9){
+                            var temp = "0" + i;
+                        }else{
+                            var temp = i;
+                        }
+                        time48 = temp + ":00";
                     }
-                    time48 = temp + ":00";
+
+                    d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"4%\" style=\"background-color : #003400 ; color : white;margin : 1px; border-collapse: separate; border : 1px solid #eee;\">"+time48+"</td>";
+                    var c = 0;
+                    for (var j = 0;j<15;j ++ ){
+                         //alert(i -1+ 48*week + c);
+                        //alert(time48);
+                        var which = i-1+c;
+                        if (list[which] == '0')
+                           { d+= "<td rowspan=\"1\" id=\""+which+"\" height=\"10%\" width=\"4%\" style=\"background-color : #E8E8E8; color : white;margin : 1px; border-collapse: separate; border : 1px solid #eee; line-height : 2\" class=\"clickTD\"></td>";}
+                        else if (list[i - 1 + c ] == '2')
+                            {d+= "<td rowspan=\"1\" id=\""+which+"\" height=\"10%\" width=\"4%\" style=\"background-color : #FF7F50   ; color : white;margin : 1px; border-collapse: separate; border : 1px solid #eee; line-height : 2\" class=\"clickTD\"></td>";}
+                        else if (list[i - 1 + c ] == '3')
+                            {d+= "<td rowspan=\"1\" id=\""+which+"\" height=\"10%\" width=\"4%\" style=\"background-color : #6495ED ; color : white;margin : 1px; border-collapse: separate; border : 1px solid #eee; line-height : 2\" class=\"clickTD\"></td>";}
+                        else
+                            {d+= "<td rowspan=\"1\" id=\""+which+"\" height=\"10%\" width=\"4%\" style=\"background-color : #9CCC65; color : white;margin : 1px; border-collapse: separate; border : 1px solid #eee; line-height : 2\" class=\"clickTD\"></td>";}
+                        c += hour_num;
+                    }
+
                 }
-
-                d+= "<td rowspan=\"1\" class=\"hour_\"+i height=\"10%\" width=\"4%\" style=\"background-color : #003400 ; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee;\">"+time48+"</td>";
-                var c = 0;
-                for (var j = 0;j<15;j ++ ){
-                     //alert(i -1+ 48*week + c);
-                    //alert(time48);
-                    var which = i-1+c;
-                    if (list[which] == '0')
-                       { d+= "<td rowspan=\"1\" id=\""+which+"\" height=\"10%\" width=\"4%\" style=\"background-color : #E8E8E8; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee; line-height : 2\" onclick=\"select(this)\"></td>";}
-                    else if (list[i - 1 + c ] == '2')
-                        {d+= "<td rowspan=\"1\" id=\""+which+"\" height=\"10%\" width=\"4%\" style=\"background-color : #FF7F50   ; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee; line-height : 2\" ></td>";}
-                    else if (list[i - 1 + c ] == '3')
-                        {d+= "<td rowspan=\"1\" id=\""+which+"\" height=\"10%\" width=\"4%\" style=\"background-color : #6495ED ; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee; line-height : 2\" ></td>";}
-                    else
-                        {d+= "<td rowspan=\"1\" id=\""+which+"\" height=\"10%\" width=\"4%\" style=\"background-color : #9CCC65; color : white;margin : 1px; border-collapse: separate; border : 5px solid #eee; line-height : 2\" ></td>";}
-                    c += hour_num;
-                }
-
+                d += "</tr>";
             }
-            d += "</tr>";
-        }
-        d += "</tbody></table></form>";
-        document.getElementById('timeSlots').innerHTML= d;
-
-
-
-
-
-    </script>
-
-
-
-    <script type="text/javascript">
-        var temp = "{{tutor.timeslot}}";
-        var newList = temp.toString();
-        $("td").mousedown(function() {
-            $(this).css('background-color', 'blue');
-            temp = $(this).attr('id');
-            var id = parseInt(temp);
-            if (newList[id] == '0'){
-                newList=newList.substring(0,id) + '1' + newList.substring(id+1,newList.length);
-            }
-
-           $("td").mouseup(onMouseUp);
-            $("td").mouseover(onMouseOver);
-        })
-
-        function onMouseUp(){
-        /* Act on the event */
-            $("td").unbind('mouseover',onMouseOver);
-            $("td").unbind('mouseup',onMouseUp);
-            $(this).html("<input type=\"hidden\" name='newList' value= \""+newList+"\">");
-            document.frm.submit();
-        }
-
-        function onMouseOver (argument) {
-            $(this).css('background-color','blue');
-            var temp = $(this).attr('id');
-            var id = parseInt(temp);
-            if (newList[id] == '0'){
-                newList=newList.substring(0,id) + '1' + newList.substring(id+1,newList.length);
-            }
-            //alert(id);
-
-        }
-
+            d += "</tbody></table></form>";
+            document.getElementById('timeSlots').innerHTML= d;
         </script>
+        <script type="text/javascript">
+            var temp = "{{tutor.timeslot}}";
+            var newList = temp.toString();
+            var c = "{{check}}";
+            if (c == "1"){
+                $('#checkAvailable').attr('checked','checked');
+            }
+            $(".clickTD").mousedown(function() {
+                $(this).css('background-color', 'blue');
+                temp = $(this).attr('id');
+                var id = parseInt(temp);
+                if($('#checkAvailable').is(':checked')) {
+                    if (newList[id] == '1'){
+                        newList=newList.substring(0,id) + '0' + newList.substring(id+1,newList.length);
+                    }
+                }else{
+                    if (newList[id] == '0'){
+                        newList=newList.substring(0,id) + '1' + newList.substring(id+1,newList.length);
+                    }
+                }
+
+               $(".clickTD").mouseup(onMouseUp);
+                $(".clickTD").mouseover(onMouseOver);
+            })
+
+            function onMouseUp(){
+            /* Act on the event */
+                $(".clickTD").unbind('mouseover',onMouseOver);
+                $(".clickTD").unbind('mouseup',onMouseUp);
+                var checked = "";
+                if($('#checkAvailable').is(':checked')){
+                    checked = "1";
+                }else{
+                    checked = "0";
+                }
+                $(this).html("<input type=\"hidden\" name='newList' value= \""+newList+"\"><input type = 'hidden' name='checked' value=\""+checked+"\">");
+                document.frm.submit();
+            }
+
+            function onMouseOver (argument) {
+                $(this).css('background-color','blue');
+                var temp = $(this).attr('id');
+                var id = parseInt(temp);
+                if($('#checkAvailable').is(':checked')) {
+                    if (newList[id] == '1'){
+                        newList=newList.substring(0,id) + '0' + newList.substring(id+1,newList.length);
+                    }
+                }else{
+                    if (newList[id] == '0'){
+                        newList=newList.substring(0,id) + '1' + newList.substring(id+1,newList.length);
+                    }
+                }
+
+            }
+
+            </script>
+
+    </div>
 {% endblock %}

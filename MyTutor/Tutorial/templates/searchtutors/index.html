@@ -137,16 +137,17 @@
               </div>
               <div class="best-tutor-info">
                   <div class="best-tutor_t"><a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}">{{ Tutor.myuser.user.username }}</a></div>
-                <div class="best-tutor_t"><a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}">{{Tutor.myuser.user.first_name}} {{Tutor.myuser.user.last_name}}</a></div>
-                <div class="best-tutor_t">Tags :
-                  {% for Tag in Tags %}
-                     <span>{{Tag}} , </span>
-                  {% endfor %}
-                    </div>
+                  <div class="best-tutor_t"><a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}">{{Tutor.myuser.user.first_name}} {{Tutor.myuser.user.last_name}}</a></div>
+                  <div class="best-tutor_t">Tags :
+                      {% for Tag in Tags %}
+                         <span>{{Tag}} , </span>
+                      {% endfor %}
+                  </div>
 
                 <div class="best-tutor_rate">
                   <span>${{Tutor.hourly_rate}}</span>
                 </div>
+                  <div class="best-tutor_t"><a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}"><div class="btn btn-default" >Profile</div></a></div>
               </div>
             </li>
               {% endfor %}
