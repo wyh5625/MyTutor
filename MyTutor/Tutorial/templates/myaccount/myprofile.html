@@ -22,7 +22,11 @@
         </form>
 
         <div class="insideInfo insideImg" style="float: left; margin-right: 20px; margin-bottom: 10px;">
+            {% if user.image %}
                  <img src="{{ user.image.url }}" >
+            {% else %}
+                <img src="/static/bootstrap/images/best-rooms/1.jpg" >
+            {% endif %}
         </div>
         <label id="tags" style="font-size: 20pt; color: #2F4F4F;">Basic Information</label>
 
