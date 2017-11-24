@@ -14,11 +14,6 @@ class Wallet(models.Model):
             myuser = MyUser.objects.get(wallet = self)
             return myuser.user.username + "'s wallet"
 
-class MyTutor(models.Model):
-    wallet = models.ForeignKey(Wallet, on_delete = models.CASCADE)
-    def __str__(self):
-        return "MyTutor"
-
 class MyUser(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE )
     wallet = models.ForeignKey(Wallet, on_delete = models.CASCADE)

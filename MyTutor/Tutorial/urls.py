@@ -9,6 +9,7 @@ app_name = 'Tutorial'
 urlpatterns = [
     url(r'^$', views.login, name='home'),
     url(r'^admin/$', views.adminpage, name='adminpage'),
+    url(r'^mytutor/$', views.mytutor, name='mytutor'),
     url(r'^admin/triggersession$', views.triggersession, name='triggersession'),
     url(r'^(?P<myuser_id>[0-9]+)/$', views.index, name='index'),
     url(r'^(?P<myuser_id>[0-9]+)/searchTutors/(?P<tutor_id>[0-9]+)/$', views.tutorpage, name='tutorpage'),

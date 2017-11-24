@@ -250,14 +250,26 @@ def endsession(mytime):
                                            cashflow=slot.price,
                                            information=slot, type=4)
 
-                company = MyTutor.objects.get(pk=1)
-                company.wallet.balance = company.wallet.balance + Decimal(str(slot.price * (COMMISION - 1)))
-                company.wallet.save()
+                if slot.price != 0:
+                    company = MyUser.objects.get(username='MyTutor')
+                    # company = Tutor.objects.get(myuser=company_user)
+                    company.wallet.balance = company.wallet.balance + Decimal(str(slot.price * (COMMISION - 1)))
+                    Transaction.create(myuser=company, time=mytime, cashflow=Decimal(str(slot.price * (COMMISION - 1))), information=slot, type=4)
+                    company.wallet.save()
                 ## mytutor receives commision fee
     return
 
 
-
+def mytutor(request):
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
+    if request.user.username != 'MyTutor':
+        return index(request, company.id)
+    company = MyUser.objects.get(user=request.user)
+    list = Transaction.objects.filter(myuser=company)
+    return render(request, 'mytutor.html', {'user':company, 'list': list})
 
 def tutorpage(request, myuser_id, tutor_id):
     if not request.user.is_authenticated(): #visitor or client
@@ -720,7 +732,7 @@ def withdraw(request, myuser_id):
         tutor_list = TutorialSession.objects.filter(tutor=mytutor)
         #return render(request, 'myaccount/mywallet.html',{'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages, 'tutor':mytutor})
     #filter1: not tutor
-    if not Tutor.objects.filter(myuser=myuser):
+    if not Tutor.objects.filter(myuser=myuser) and myuser.user.username != 'MyTutor': #mytutor can use withdraw
         messages = "Only a tutor can withdraw money from wallet"
         return render(request, 'myaccount/mywallet.html',
                       {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
