@@ -23,8 +23,7 @@
             </div>
             <h2 class="banner-parallax_t">{{ tutor.myuser.user.first_name }} {{ tutor.myuser.user.last_name }}</h2>
             <div class="banner-parallax_price"><span>${{tutor.hourly_rate }}</span> / per hour</div>
-              <div class="btn btn-default" id="moreInfo">See more information</a></div>
-
+              <div class="btn btn-default" id="moreInfo">See more information</div>
           </div>
         </div>
       </div>
@@ -33,7 +32,7 @@
       <div class = "infoPanel" id="moreInfomation" style="margin : auto; margin-bottom: 20px; display: none;">
 
         <div class="insideInfo insideImg" style="float: left; margin-right: 20px; margin-bottom: 10px;">
-                 <img src="/static/bootstrap/images/best-rooms/1.jpg" >
+                 <img src="{{ tutor.myuser.image.url }}" >
         </div>
         <label id="tags" style="font-size: 20pt; color: #2F4F4F;">Basic Information</label>
 
@@ -246,12 +245,7 @@
                 $("#moreInfomation").css('display','block');
             }else{
                 $("#moreInfomation").slideToggle();
-
             }
-
         }); // End of moreInfo
-
-
-
 });
 {% endblock %}

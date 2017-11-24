@@ -19,7 +19,7 @@ class MyUser(models.Model):
     wallet = models.ForeignKey(Wallet, on_delete = models.CASCADE)
     profile_content = models.CharField(max_length=2000, default="")
     phone = models.IntegerField(null = True)
-    image = models.ImageField(upload_to='profile_image', default='/static/bootstrap/images/best-rooms/1.jpg')
+    image = models.ImageField(upload_to='profile_image', default='profile_image/default.jpg')
     def __str__(self):
         return self.user.username
 
@@ -42,7 +42,7 @@ class Tutor(models.Model):
     # 0-unavailable, 1-available, half an hour per digit, 336 timeslots is a week
     hourly_rate = models.IntegerField(default=0) #todo: eight digit for student so can tell if he have
     university = models.ForeignKey(University, on_delete=models.CASCADE, null=True)
-    showProfile = models.BooleanField(default=True)
+    showProfile = models.BooleanField(default=False)
     average = models.DecimalField(max_digits=2, decimal_places=1, default=0)
     reviewd_times = models.IntegerField(default=0) #this means no one has done evaluation for him yet
     def __str__(self):
