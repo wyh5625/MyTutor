@@ -48,6 +48,8 @@ class Tutor(models.Model):
     hourly_rate = models.IntegerField(default=0) #todo: eight digit for student so can tell if he have
     university = models.ForeignKey(University, on_delete=models.CASCADE, null=True)
     showProfile = models.BooleanField(default=True)
+    average = models.DecimalField(max_digits=2, decimal_places=1, default=0)
+    reviewd_times = models.IntegerField(default=0) #this means no one has done evaluation for him yet
     def __str__(self):
         if self.myuser is None:
             return "null"
@@ -91,7 +93,7 @@ class TutorialSession(models.Model):
     student =  models.ForeignKey(Student, on_delete=models.CASCADE)
     price = models.IntegerField(default=0) #TODO: notice that this price does not include commission fee
     score = models.DecimalField(max_digits=2, decimal_places=1, default=-1)  # TODO: if unevaluated, will use score = -1
-    comment = models.CharField(max_length=200, default="")
+    comment = models.CharField(max_length=200, default="") #TODO: score should be integer, need to detect tonight
     #TODO: intensive change: now has done: when booking, store into price,  when cancel, check price instead of hourly rate, when end, money of price added instead of hourly rate
     def __str__(self):
         return self.starttime + "-student-" + self.student.myuser.user.username + "-tutor-" + self.tutor.myuser.user.username

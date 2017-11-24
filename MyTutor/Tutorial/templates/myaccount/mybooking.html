@@ -73,7 +73,7 @@
                            "            <h3 class=\"service_title\">Can't Cancel</h3>" +
                            "          </div>");
                       }else if("{{ session.status }}" == '2'){
-                          document.write(" <form action= \"{% url 'Tutorial:evaluate' user.id session.id %}\" method=\"post\" id=\"evaluateR\" >{% csrf_token %}{{uf.as_p}}<div class=\"col-lg-2 col-md-4 col-sm-6\" onclick = 'Evaluate(this)'>" +
+                          document.write(" <form action= \"{% url 'Tutorial:evaluate' user.id session.id %}\" method=\"post\" id=\"evaluateR\" >{% csrf_token %}{{uf.as_p}}<div class=\"col-lg-2 col-md-4 col-sm-6\" onclick = 'Evaluate(this)' style='color : #9CCC65;'>" +
                            "            <h3 class=\"service_title\">To be evaluated</h3>" +
                            "          </div></form>");
                       }else if("{{ session.status }}" == '3'){
@@ -158,7 +158,7 @@
                            "          </div>");
                       }else if("{{ session.status }}" == '2'){
                           document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6 \">" +
-                           "            <h3 class=\"service_title evaluate\" onclick='Evaluate()'>To be evaluated</h3>" +
+                           "            <h3 class=\"service_title evaluate\" onclick='Evaluate()' >To be evaluated</h3>" +
                            "          </div>");
                       }else if("{{ session.status }}" == '3'){
                           document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +

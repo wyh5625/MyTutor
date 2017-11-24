@@ -268,7 +268,10 @@ def tutorpage(request, myuser_id, tutor_id):
         HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     tutor = get_object_or_404(Tutor, pk=tutor_id)
-    return render(request, 'searchtutors/tutorpage.html', {'user':myuser, 'tutor': tutor})
+    sessions = filter(
+        lambda session: session.status == 4 and session.comment != "",
+        TutorialSession.objects.filter(tutor=tutor))
+    return render(request, 'searchtutors/tutorpage.html', {'user':myuser, 'tutor': tutor, 'sessions': sessions})
 
 ####my account####
 ####my account####
@@ -426,18 +429,16 @@ def mybooking(request, myuser_id):
     if not MyUser.objects.filter(user=request.user):
         HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
-    mystudent = Student.objects.filter(myuser=myuser)
-    mytutor = Tutor.objects.get(myuser=myuser)
     isstudent = "0"
     istutor = "0"
     #booking is the record as a student, booked is the record as a tutor
-    if mystudent:
+    if Student.objects.filter(myuser=myuser):
         mystudent = Student.objects.get(myuser = myuser)
         booking = TutorialSession.objects.filter(student=mystudent)
         isstudent = "1"
     else:
         booking= ""
-    if mytutor:
+    if Tutor.objects.filter(myuser=myuser):
         mytutor = Tutor.objects.get(myuser=myuser)
         booked = TutorialSession.objects.filter(tutor=mytutor)
         istutor = "1"
@@ -630,6 +631,11 @@ def evaluate(request, myuser_id, tutorial_sessions_id):
     session.comment = comment
     session.status = 4
     session.save()
+    tutor = session.tutor
+    #only if a tutor is evaluated, will this be executed, but NOT directly after booking
+    tutor.average = (tutor.average * tutor.reviewd_times + score) / (tutor.reviewd_times + 1)
+    tutor.reviewd_times = tutor.reviewd_times + 1
+    tutor.save()
     return mybooking(request, myuser_id)
 
 
