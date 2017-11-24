@@ -652,7 +652,7 @@ def evaluate(request, myuser_id, tutorial_sessions_id):
     score = int (float (score))
     session.score = score
     session.comment = comment
-    session.anonymous = anonymous
+    session.showname  = anonymous
     session.status = 4
     session.save()
     tutor = session.tutor
@@ -711,7 +711,7 @@ def mytransaction(request, myuser_id): #TODO filter thirty days!
 
         #for each session in transaction, calculate the time now and the time that transaction happen, if it happens 30 days ago, lambda function returns false
     list = filter(
-        lambda session: nowtime - time.mktime(datetime.strptime(session.time, timeformat).timetuple()) <= refdelta and session.cashflow > 0,
+        lambda session: nowtime - time.mktime(datetime.strptime(session.time, timeformat).timetuple()) <= refdelta and session.cashflow != 0,
         Transaction.objects.filter(myuser=myuser))
     if Tutor.objects.filter(myuser=myuser):
         mytutor = Tutor.objects.get(myuser=myuser)
@@ -1173,8 +1173,10 @@ def orderFilter(request, tutor_set):
         if order != "RandomOrder":
             if order == "Rate high to low":
                 tutor_set.sort(key=operator.attrgetter('hourly_rate'), reverse=True)
-            else:
+            elif order == "Rate high to low":
                 tutor_set.sort(key=operator.attrgetter('hourly_rate'))
+            else: #tutor sorted by avg
+                tutor_set.sort(key=operator.attrgetter('average'), reverse=True)
     else:
         tutor_set.sort(key=operator.attrgetter('hourly_rate'))
 

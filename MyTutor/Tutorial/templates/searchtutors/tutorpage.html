@@ -33,7 +33,7 @@
         <div class="insideInfo">First name: <span class="spanType">{{tutor.myuser.user.first_name}}</span></div>
         <div class="insideInfo">Last name: <span class="spanType">{{tutor.myuser.user.last_name}}</span></div>
           <script>
-              if ("{{tutor.reviewed_times}}" > 3){
+              if ("{{tutor.reviewed_times}}" >= 3){
                 document.write("<div class=\"insideInfo\">Average review score: <span class=\"spanType\">{{tutor.average}}</span></div>");
               }else{
                 document.write("<div class=\"insideInfo\">Average review score: <span class=\"spanType\">N/A</span></div>");
