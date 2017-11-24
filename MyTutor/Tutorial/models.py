@@ -44,7 +44,7 @@ class Tutor(models.Model):
     university = models.ForeignKey(University, on_delete=models.CASCADE, null=True)
     showProfile = models.BooleanField(default=True)
     average = models.DecimalField(max_digits=2, decimal_places=1, default=0)
-    reviewd_times = models.IntegerField(default=0) #this means no one has done evaluation for him yet
+    reviewed_times = models.IntegerField(default=0) #this means no one has done evaluation for him yet
     def __str__(self):
         if self.myuser is None:
             return "null"

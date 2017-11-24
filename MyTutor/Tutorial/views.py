@@ -248,16 +248,17 @@ def endsession(mytime):
                 notification = Notification(content=content, myuser=slot.student.myuser)
                 notification.save()
 
-                Transaction.objects.create(myuser=slot.tutor.myuser, time=mytime,
-                                           cashflow=slot.price,
-                                           information=slot, type=4)
-
                 if slot.price != 0:
-                    company = MyUser.objects.get(username='MyTutor')
+                    logger.error("This is transaction mytutor")
+                    company_user = User.objects.get(username='MyTutor')
+                    company = MyUser.objects.get(user=company_user)
                     # company = Tutor.objects.get(myuser=company_user)
                     company.wallet.balance = company.wallet.balance + Decimal(str(slot.price * (COMMISION - 1)))
-                    Transaction.create(myuser=company, time=mytime, cashflow=Decimal(str(slot.price * (COMMISION - 1))), information=slot, type=4)
+                    Transaction.objects.create(myuser=company, time=mytime, cashflow=Decimal(str(slot.price * (COMMISION - 1))), information=slot, type=4)
                     company.wallet.save()
+                    Transaction.objects.create(myuser=slot.tutor.myuser, time=mytime,
+                                               cashflow=slot.price,
+                                               information=slot, type=4)
                 ## mytutor receives commision fee
     return
 
@@ -642,14 +643,15 @@ def evaluate(request, myuser_id, tutorial_sessions_id):
         comment = comment[:200]
     logger.error("check it")
     session = TutorialSession.objects.get(pk=tutorial_sessions_id)
+    score = int (float (score))
     session.score = score
     session.comment = comment
     session.status = 4
     session.save()
     tutor = session.tutor
     #only if a tutor is evaluated, will this be executed, but NOT directly after booking
-    tutor.average = (tutor.average * tutor.reviewd_times + score) / (tutor.reviewd_times + 1)
-    tutor.reviewd_times = tutor.reviewd_times + 1
+    tutor.average = (tutor.average * tutor.reviewed_times + score) / (tutor.reviewed_times + 1)
+    tutor.reviewed_times = tutor.reviewed_times + 1
     tutor.save()
     return mybooking(request, myuser_id)
 
@@ -734,7 +736,7 @@ def withdraw(request, myuser_id):
         tutor_list = TutorialSession.objects.filter(tutor=mytutor)
         #return render(request, 'myaccount/mywallet.html',{'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages, 'tutor':mytutor})
     #filter1: not tutor
-    if not Tutor.objects.filter(myuser=myuser) and myuser.user.username != 'MyTutor': #mytutor can use withdraw
+    if not Tutor.objects.filter(myuser=myuser): #mytutor can use withdraw
         messages = "Only a tutor can withdraw money from wallet"
         return render(request, 'myaccount/mywallet.html',
                       {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
@@ -760,10 +762,55 @@ def withdraw(request, myuser_id):
     myuser.wallet.save()
     messages = "Withdrawal success!" #TODO: remember that tutorialsession should keep track of hourly rate, and it records depost & withdraw
 
+
     Transaction.objects.create(myuser=myuser, time=datetime.now().strftime("%Y%m%d%H%M"),
                                cashflow=cashflow * (-1), type=1)
     return render(request, 'myaccount/mywallet.html',
                   {'user': myuser, 'student_list': student_list, 'tutor_list': tutor_list, 'msg': messages})
+
+
+def tutorwithdraw(request):
+    logger.error("It is tutorwithdraw")
+    if not request.user.is_authenticated(): #visitor or client
+        return render(request, 'home.html')
+    if not MyUser.objects.filter(user=request.user):
+        HttpResponseRedirect('/Tutorial/admin/')
+    myuser = MyUser.objects.get(user=request.user)  # myuser = get_object_or_404(MyUser, pk=myuser_id)
+    amount = request.POST.get('withdraw', False)
+    #filter2: not number
+    try:
+        cashflow = Decimal(amount)
+    except Exception as e:
+        messages = "Please enter a valid number"
+        logger.error("I am Mytutor")
+        list = Transaction.objects.filter(myuser=myuser)
+        return render(request, 'mytutor.html', {'user': myuser, 'list': list, 'msg': messages})
+    #filter3: not possitive
+    logger.error("It is tutorwithdraw1")
+    if cashflow <= 0:
+        messages = "Please enter a positive number"
+        logger.error("I am Mytutor")
+        list = Transaction.objects.filter(myuser=myuser)
+        return render(request, 'mytutor.html', {'user': myuser, 'list': list, 'msg': messages})
+    #filter4: not enough moneyD
+    logger.error("It is tutorwithdraw2")
+    if cashflow > myuser.wallet.balance:
+        messages = "You don't have enough money in your account"
+        logger.error("I am Mytutor")
+        list = Transaction.objects.filter(myuser=myuser)
+        request.POST['withdraw'] = 0
+        return render(request, 'mytutor.html', {'user': myuser, 'list': list, 'msg': messages})
+    logger.error("It is tutorwithdraw4")
+
+    myuser.wallet.balance = myuser.wallet.balance - cashflow
+    myuser.wallet.save()
+    messages = "Withdrawal success!" #TODO: remember that tutorialsession should keep track of hourly rate, and it records depost & withdraw
+    Transaction.objects.create(myuser=myuser, time=datetime.now().strftime("%Y%m%d%H%M"),
+                               cashflow=cashflow * (-1), type=1)
+
+    logger.error("I am Mytutor")
+    list = Transaction.objects.filter(myuser=myuser)
+    return render(request, 'mytutor.html', {'user': myuser, 'list': list, 'msg': messages})
 
 
 def deposit(request, myuser_id):

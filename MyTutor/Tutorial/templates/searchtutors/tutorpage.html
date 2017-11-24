@@ -14,13 +14,6 @@
       <div class="banner-parallax">
         <div class="container">
           <div class="text-center">
-            <div class="banner-parallax_raiting">
-              <a href="#"><span class="star __selected"></span></a>
-              <a href="#"><span class="star __selected"></span></a>
-              <a href="#"><span class="star __selected"></span></a>
-              <a href="#"><span class="star"></span></a>
-              <a href="#"><span class="star"></span></a>
-            </div>
             <h2 class="banner-parallax_t">{{ tutor.myuser.user.first_name }} {{ tutor.myuser.user.last_name }}</h2>
             <div class="banner-parallax_price"><span>${{tutor.hourly_rate }}</span> / per hour</div>
               <div class="btn btn-default" id="moreInfo">See more information</a></div>
@@ -40,7 +33,7 @@
         <div class="insideInfo">Username : <span class="spanType">{{tutor.myuser.user.username}}</span></div>
         <div class="insideInfo">First name: <span class="spanType">{{tutor.myuser.user.first_name}}</span></div>
         <div class="insideInfo">Last name: <span class="spanType">{{tutor.myuser.user.last_name}}</span></div>
-        <div class="insideInfo">Phone Number: <span class="spanType">{{tutor.myuser.phone}}</span></div>
+        <div class="insideInfo">Average review score: <span class="spanType">{{tutor.average}}</span></div>
         <div class="insideInfo">Email: <span class="spanType">{{tutor.myuser.user.email}}</span></div>
         <div class="insideInfo">About Me: <span class="spanType">{{tutor.myuser.profile_content}}</span></div>
          {% if privateTutor %}
@@ -55,7 +48,7 @@
     <div class="Timeslots">
         <section class="mission">
       <div class="container">
-        <h2 class="h2" style="margin-bottom : 10px;">Timeslot</h2>
+        <h2 class="h2" style="margin-bottom : 10px;">Tutor page</h2>
       </div>
     </section>
     <!--Time slot -->
