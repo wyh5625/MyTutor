@@ -22,17 +22,19 @@
                 alert("Please enter an interger of 0~5!");
             }
             var comment = $("#Comments").val();
-            var showname = $("#showname").val();
-            if (showname="on"){
+            var showname;
+            if ($('#showname').is(':checked')){
                 showname="0"
             }else{
                 showname="1"
             }
+            alert(showname);
             comment = comment.replace(/ /g, "^space^");
-            $("#evaluateR").html("<input type=\"hidden\"  name=\"score\" value=\""+score+"\" ><input type=\"hidden\"  name=\"comment\" value=\""+score+"\" ><input type=\"hidden\"  name=\"anonymous\" value=\""+showname+"\" >");
+            $("#evaluateR").html("<input type=\"hidden\"  name=\"score\" value=\""+score+"\" ><input type=\"hidden\"  name=\"comment\" value=\""+comment+"\" ><input type=\"hidden\"  name=\"anonymous\" value=\""+showname+"\" >");
             $("#evaluateR").submit();
         });
 
+        //$("#upcoming").
 
     });
 
@@ -47,6 +49,7 @@
         <input type="checkbox" id="showname" /> Anonymous
         <div  id="submitReview" class="btn btn-default">Submit</div>
     </div>
+    <input type="checkbox" id="upcoming" /> Only show upcoming sessions
     {% if isstudent != "" %} <!--should judge using isstudent instead of booklist non empty-->
     <section class="section">
       <div class="container">
@@ -154,6 +157,7 @@
         </div>
           {% if booked_list != "" %}
           {% for session in  booked_list %}
+
                <div class="row">
           <div class="col-lg-3 col-md-4 col-sm-6">
             <h3 class="service_title">{{ session.starttime }}</h3>

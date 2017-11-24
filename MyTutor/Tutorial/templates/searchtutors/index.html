@@ -8,7 +8,6 @@
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <div class="parallax-text">
                 <h2 class="parallax_t __white">Search For Tutor</h2>
-                <!--h2 class="parallax_t __green">喵喵喵喵喵哼╭(╯^╰)╮</h2-->
                 <p>Please verify the searching tags</p>
                   <select class="form-control __plannerSelect" onchange="modeChange(this)" name="selectMode">
                       <option value="1" selected='selected'id="byTags">Search by tags</option>
@@ -72,10 +71,17 @@
                       </div>
                   </div>
                     <div class="row">
-                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                            <input type="button" class="btn btn-default" value="Random Order" id="Rate" >
-                            <input type="hidden" name="order" value="RandomOrder" id="RateOrder">
-                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                          <div class="form-group">
+                              <label>Order</label>
+                               <select class="form-control __plannerSelect" name="order">
+                                  <option  value="Random"></option>
+                                  <option  value="Rate high to low">Rate high to low</option>
+                                   <option  value="Rate low to high">Rate low to high</option>
+                                   <option  value="High average">High average</option>
+                                </select>
+                            </div>
+                          </div>
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                             <input type="button"  class="btn btn-default" value="Show Price Range" id="priceRange">
                     </div>
@@ -239,22 +245,7 @@
 
     });
 
-    $("#Rate").click( function(){
 
-            if (document.getElementById("Rate").value == 'Rate high to low'){
-                document.getElementById("Rate").value = 'Rate low to high';
-                document.getElementById("RateOrder").value = 'Rate low to high';
-             }else if (document.getElementById("Rate").value == 'Rate low to high'){
-               document.getElementById("Rate").value = 'Random Order';
-                document.getElementById("RateOrder").value = 'Random';
-            }else{
-                 document.getElementById("Rate").value = 'Rate high to low';
-                document.getElementById("RateOrder").value = 'Rate high to low';
-            }
-
-
-
-    });
 
     $(document).on('click', '#deleteTags', function(){
 
