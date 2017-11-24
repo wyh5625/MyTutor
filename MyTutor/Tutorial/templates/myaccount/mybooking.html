@@ -50,7 +50,7 @@
     {% if isstudent != "" %} <!--should judge using isstudent instead of booklist non empty-->
     <section class="section">
       <div class="container">
-        <div class="title-main"><h2 class="h2">Booking Record[student]<span class="title-secondary">啦啦啦啦啦啦啦啦啦啦啦╭(╯^╰)╮</span></h2></div>
+        <div class="title-main"><h2 class="h2">Booking Record[student]<!--span class="title-secondary">啦啦啦啦啦啦啦啦啦啦啦╭(╯^╰)╮</span--></h2></div>
          <div class="row">
           <div class="col-lg-3 col-md-4 col-sm-6">
             <h3 class="service_title"><i class="fa fa-calendar"></i> Time</h3>
@@ -136,7 +136,7 @@
     {% if istutor == "1" %}
     <section class="section">
       <div class="container">
-        <div class="title-main"><h2 class="h2">Booking Record[tutor]<span class="title-secondary">啦啦啦啦啦啦啦啦啦啦啦╭(╯^╰)╮</span></h2></div>
+        <div class="title-main"><h2 class="h2">Booking Record[tutor]<!--span class="title-secondary">啦啦啦啦啦啦啦啦啦啦啦╭(╯^╰)╮</span--></h2></div>
 
         <div class="row">
           <div class="col-lg-3 col-md-4 col-sm-6">
@@ -177,7 +177,7 @@
                            "          </div>");
                       }else if("{{ session.status }}" == '2'){
                           document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6 \">" +
-                           "            <h3 class=\"service_title evaluate\" onclick='Evaluate()' >To be evaluated</h3>" +
+                           "            <h3 class=\"service_title\" >To be evaluated</h3>" +
                            "          </div>");
                       }else if("{{ session.status }}" == '3'){
                           document.write(" <div class=\"col-lg-2 col-md-4 col-sm-6\">" +

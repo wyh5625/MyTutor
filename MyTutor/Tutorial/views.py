@@ -50,7 +50,7 @@ class SearchedTutor(object):
 
 #####homepage###
 def home(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated() or request.user.is_anonymous():
         #every function will have this, to make sure guest cannot visit personal account by manipulating url
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
@@ -98,10 +98,10 @@ def password_reset_complete(request):
 ####search tutor####
 def index(request, myuser_id):
     show_tags = []
-    if not request.user.is_authenticated(): #visitor or client
+    if not request.user.is_authenticated() or request.user.is_anonymous(): #visitor or client
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
-        HttpResponseRedirect('/Tutorial/admin/')
+        return HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user)  # myuser = get_object_or_404(MyUser, pk=myuser_id)
     #fixme I do this to make sure you are the person you should be, you cannot be someone else
     #fixme  but I haven't tried how to also relink the url i.e. if id = 2 enter 3/..., the content can be
@@ -262,10 +262,10 @@ def endsession(mytime):
 
 
 def mytutor(request):
-    if not request.user.is_authenticated(): #visitor or client
+    if not request.user.is_authenticated() or request.user.is_anonymous(): #visitor or client
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
-        HttpResponseRedirect('/Tutorial/admin/')
+        return HttpResponseRedirect('/Tutorial/admin/')
     if request.user.username != 'MyTutor':
         return index(request, company.id)
     company = MyUser.objects.get(user=request.user)
@@ -273,10 +273,10 @@ def mytutor(request):
     return render(request, 'mytutor.html', {'user':company, 'list': list})
 
 def tutorpage(request, myuser_id, tutor_id):
-    if not request.user.is_authenticated(): #visitor or client
+    if not request.user.is_authenticated() or request.user.is_anonymous(): #visitor or client
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
-        HttpResponseRedirect('/Tutorial/admin/')
+        return HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     tutor = get_object_or_404(Tutor, pk=tutor_id)
     sessions = filter(
@@ -287,10 +287,10 @@ def tutorpage(request, myuser_id, tutor_id):
 ####my account####
 ####my account####
 def myaccount(request, myuser_id):
-    if not request.user.is_authenticated(): #visitor or client
+    if not request.user.is_authenticated() or request.user.is_anonymous(): #visitor or client
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
-        HttpResponseRedirect('/Tutorial/admin/')
+        return HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     isstudent = "0"
     istutor = "0"
@@ -305,10 +305,10 @@ def myaccount(request, myuser_id):
 
 def myprofile(request, myuser_id):
     logger.error("------render profile")
-    if not request.user.is_authenticated(): #visitor or client
-        return render(request, 'home.html')
+    if not request.user.is_authenticated() or request.user.is_anonymous(): #visitor or client
+        return HttpResponseRedirect('/Tutorial/login/')
     if not MyUser.objects.filter(user=request.user):
-        HttpResponseRedirect('/Tutorial/admin/')
+        return HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     edit = False
     myuser = MyUser.objects.get(user=request.user)  # myuser = get_object_or_404(MyUser, pk=myuser_id)
@@ -438,10 +438,10 @@ def myprofile(request, myuser_id):
         return render(request, 'myaccount/myprofile.html', {'user':myuser, 'form': form, 'edit': edit, 'tutor': tutor, 'privateTutor': privateTutor, 'hourly_rate': hourly_rate, 'profileActivated': activated, 'tutor':t, 'tags': show_tags})
 
 def mybooking(request, myuser_id):
-    if not request.user.is_authenticated(): #visitor or client
-        return render(request, 'home.html')
+    if not request.user.is_authenticated() or request.user.is_anonymous(): #visitor or client
+        return HttpResponseRedirect('/Tutorial/login/')
     if not MyUser.objects.filter(user=request.user):
-        HttpResponseRedirect('/Tutorial/admin/')
+        return HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
     isstudent = "0"
     istutor = "0"
@@ -462,10 +462,10 @@ def mybooking(request, myuser_id):
     return render(request, 'myaccount/mybooking.html', {'user': myuser , 'session_list': booking, "booked_list": booked, 'isstudent': isstudent, 'istutor': istutor })
 
 def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyymmddhhmm string)
-    if not request.user.is_authenticated(): #visitor or client
+    if not request.user.is_authenticated() or request.user.is_anonymous(): #visitor or client
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
-        HttpResponseRedirect('/Tutorial/admin/')
+        return HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = MyUser.objects.get(pk=myuser_id)
 
     begintime = request.POST['starttime']
@@ -561,10 +561,10 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
 
 
 def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tutor_id):
-    if not request.user.is_authenticated(): #visitor or client
+    if not request.user.is_authenticated() or request.user.is_anonymous(): #visitor or client
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
-        HttpResponseRedirect('/Tutorial/admin/')
+        return HttpResponseRedirect('/Tutorial/admin/')
     #begintime = request.POST['starttime']
     tutorial_session =get_object_or_404(TutorialSession, pk=tutorial_sessions_id)
     tutor = tutorial_session.tutor
@@ -630,7 +630,7 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
                        'istutor': istutor, 'tutor': mytutor})
 
 def evaluate(request, myuser_id, tutorial_sessions_id):
-    if not request.user.is_authenticated(): #visitor or client
+    if not request.user.is_authenticated() or request.user.is_anonymous(): #visitor or client
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
         HttpResponseRedirect('/Tutorial/admin/')
@@ -658,7 +658,7 @@ def evaluate(request, myuser_id, tutorial_sessions_id):
 
 
 def mywallet(request, myuser_id): #TODO filter thirty days!
-    if not request.user.is_authenticated(): #visitor or client
+    if not request.user.is_authenticated() or request.user.is_anonymous(): #visitor or client
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
         HttpResponseRedirect('/Tutorial/admin/')
@@ -683,8 +683,11 @@ def mywallet(request, myuser_id): #TODO filter thirty days!
 
 ####mytransaction#####
 def mytransaction(request, myuser_id): #TODO filter thirty days!
-    if not request.user.is_authenticated(): #visitor or client
-        return render(request, 'home.html')
+    if not request.user.is_authenticated() or request.user.is_anonymous(): #visitor or client
+        home(request) #return render(request, 'home.html')
+    #if request.user == AnonymousUser:
+    #    logger.error("I am anonymous!")
+    #    return HttpResponseRedirect('/Tutorial/login/')auth
     if not MyUser.objects.filter(user=request.user):
         HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
@@ -712,7 +715,7 @@ def mytransaction(request, myuser_id): #TODO filter thirty days!
 
 ####message####
 def message(request, myuser_id):
-    if not request.user.is_authenticated(): #visitor or client
+    if not request.user.is_authenticated() or request.user.is_anonymous(): #visitor or client
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
         HttpResponseRedirect('/Tutorial/admin/')
@@ -721,7 +724,7 @@ def message(request, myuser_id):
     return render(request, 'message/message.html', {'user': myuser, 'messages': messages})
 
 def withdraw(request, myuser_id):
-    if not request.user.is_authenticated(): #visitor or client
+    if not request.user.is_authenticated() or request.user.is_anonymous(): #visitor or client
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
         HttpResponseRedirect('/Tutorial/admin/')
@@ -815,7 +818,7 @@ def tutorwithdraw(request):
 
 
 def deposit(request, myuser_id):
-    if not request.user.is_authenticated(): #visitor or client
+    if not request.user.is_authenticated() or request.user.is_anonymous(): #visitor or client
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
         HttpResponseRedirect('/Tutorial/admin/')
@@ -1197,7 +1200,7 @@ def saveProfile(request):
     '''
 
 def tutorTimeslot(request, myuser_id, tutor_id):
-    if not request.user.is_authenticated(): #visitor or client
+    if not request.user.is_authenticated() or request.user.is_anonymous(): #visitor or client
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
         HttpResponseRedirect('/Tutorial/admin/')
@@ -1206,7 +1209,7 @@ def tutorTimeslot(request, myuser_id, tutor_id):
     return render(request, 'myaccount/tutorTimeslot.html', {'user':myuser, 'tutor': mytutor})
 
 def tutorTimeslotSelecting(request, myuser_id, tutor_id):
-    if not request.user.is_authenticated(): #visitor or client
+    if not request.user.is_authenticated() or request.user.is_anonymous(): #visitor or client
         return render(request, 'home.html')
     if not MyUser.objects.filter(user=request.user):
         HttpResponseRedirect('/Tutorial/admin/')
