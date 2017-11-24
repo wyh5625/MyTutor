@@ -418,18 +418,16 @@ def mybooking(request, myuser_id):
     if not MyUser.objects.filter(user=request.user):
         HttpResponseRedirect('/Tutorial/admin/')
     myuser = MyUser.objects.get(user=request.user) #myuser = get_object_or_404(MyUser, pk=myuser_id)
-    mystudent = Student.objects.filter(myuser=myuser)
-    mytutor = Tutor.objects.get(myuser=myuser)
     isstudent = "0"
     istutor = "0"
     #booking is the record as a student, booked is the record as a tutor
-    if mystudent:
+    if Student.objects.filter(myuser=myuser):
         mystudent = Student.objects.get(myuser = myuser)
         booking = TutorialSession.objects.filter(student=mystudent)
         isstudent = "1"
     else:
         booking= ""
-    if mytutor:
+    if Tutor.objects.filter(myuser=myuser):
         mytutor = Tutor.objects.get(myuser=myuser)
         booked = TutorialSession.objects.filter(tutor=mytutor)
         istutor = "1"
