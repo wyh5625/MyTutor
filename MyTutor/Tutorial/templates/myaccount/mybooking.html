@@ -16,7 +16,7 @@
         $("#evaluateR").on('click', function(){
             $(".infoPanel").css('display','block');
 });
-        $("#submitReview").on('click', function(){
+        $(".submitReview").on('click', function(){
             var score = $("#Score").val()
             if (score < 0 && score > 5){
                 alert("Please enter an interger of 0~5!");
@@ -34,22 +34,34 @@
             $("#evaluateR").submit();
         });
 
-        //$("#upcoming").
+        $(".upcoming").on('click', function(){
+            if ($('.upcoming').html() == "Only show upcoming sessions"){
+                $("#content1").css('display','none');
+                $("#content2").css('display','block');
+                $('.upcoming').html("Show all sessions");
+            }else{
+                $("#content2").css('display','none');
+                $("#content1").css('display','block');
+                $('.upcoming').html("Only show upcoming sessions");
+            }
+
+        });
 
     });
 
 {% endblock %}
 {% block right %}
-<div id="content">
+<div class="upcoming btn btn-default" >Only show upcoming sessions</div>
+<div id="content1" >
     <div class="infoPanel" style="display: none;">
         <label>Score(0~5)</label>
-        <input type="text" id="Score" >
+        <input type="text" class="Score" >
         <label>Comments</label>
-        <input type="text" id="Comments"><br>
-        <input type="checkbox" id="showname" /> Anonymous
+        <input type="text" class="Comments"><br>
+        <input type="checkbox" class="showname" /> Anonymous
         <div  id="submitReview" class="btn btn-default">Submit</div>
     </div>
-    <input type="checkbox" id="upcoming" /> Only show upcoming sessions
+
     {% if isstudent != "" %} <!--should judge using isstudent instead of booklist non empty-->
     <section class="section">
       <div class="container">
@@ -220,5 +232,105 @@
           {% endif %}
       </div>
     </section>
+</div>
     {% endif %}
+
+
+
+<div id="content2" style="display : none;" >
+    <div class="infoPanel" style="display: none;">
+        <label>Score(0~5)</label>
+        <input type="text" class="Score" >
+        <label>Comments</label>
+        <input type="text" class="Comments"><br>
+        <input type="checkbox" class="showname" /> Anonymous
+        <div  class="submitReview" class="btn btn-default">Submit</div>
+    </div>
+    {% if isstudent != "" %} <!--should judge using isstudent instead of booklist non empty-->
+    <section class="section">
+      <div class="container">
+        <div class="title-main"><h2 class="h2">Booking Record[student]<!--span class="title-secondary">啦啦啦啦啦啦啦啦啦啦啦╭(╯^╰)╮</span--></h2></div>
+         <div class="row">
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-calendar"></i> Time</h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-user-circle"></i> Tutor</h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-money"></i> Rate</h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-life-ring"></i>Status </h3>
+          </div>
+         </div>
+          {% if session_list != "" %}
+          {% for session in  session_list %}
+            {% if session.status == 0 %}
+               <div class="row">
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <h3 class="service_title">{{ session.starttime }}</h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"> {{ session.tutor }}</h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"> ${{ session.price }}</h3>
+          </div>
+           <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title">Upcoming</h3>
+          </div>
+        </div>
+          {% endif %}
+          {% endfor %}
+          {% endif %}
+      </div>
+    </section>
+    {% endif %}
+    {% if istutor == "1" %}
+    <section class="section">
+      <div class="container">
+        <div class="title-main"><h2 class="h2">Booking Record[tutor]<!--span class="title-secondary">啦啦啦啦啦啦啦啦啦啦啦╭(╯^╰)╮</span--></h2></div>
+
+        <div class="row">
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-calendar"></i> Time</h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-user-circle"></i> Student</h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-money"></i> Rate</h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"><i class="fa fa-life-ring"></i>Status </h3>
+          </div>
+        </div>
+          {% if booked_list != "" %}
+          {% for session in  booked_list %}
+
+            {% if session.status == 0 %}
+               <div class="row">
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <h3 class="service_title">{{ session.starttime }}</h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"> {{ session.student }}</h3>
+          </div>
+          <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title"> ${{ session.price }}</h3>
+          </div>
+           <div class="col-lg-2 col-md-4 col-sm-6">
+            <h3 class="service_title">Upcoming</h3>
+          </div>
+
+        </div>
+          {% endif %}
+          {% endfor %}
+          {% endif %}
+      </div>
+    </section>
+</div>
+    {% endif %}
+
 {% endblock %}
