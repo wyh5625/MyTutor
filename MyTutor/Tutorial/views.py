@@ -1,6 +1,7 @@
 from ast import literal_eval
 from django.contrib import auth
 from django.template import RequestContext
+from django.shortcuts import redirect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404, render, render_to_response
@@ -902,7 +903,7 @@ def register_page(request):
                 setattr(tutor,'timeslot','111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111')
                 tutor.save()
                 contractedTutor = ContractedTutor.objects.create(tutor=tutor)
-            return render(request, 'registration/login.html')
+            return redirect('../login')
     else:
         form = RegistrationForm()
     variables = {
@@ -912,42 +913,6 @@ def register_page(request):
         'registration/register.html',
         variables, RequestContext(request)
     )
-
-def reset_password(request):
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            user = User.objects.create_user(
-                username=form.cleaned_data['username'],
-                password=form.cleaned_data['password1'],
-                email=form.cleaned_data['email'],
-                last_name = form.cleaned_data['last_name'],
-                first_name = form.cleaned_data['first_name']
-            )
-            wallet = Wallet.objects.create()
-            myuser = MyUser.objects.create(user=user, wallet=wallet)
-            identity = form.cleaned_data['identity']
-            if identity == 'Student':
-                student = Student.objects.create(myuser=myuser)
-            elif identity == 'Private Tutor':
-                tutor = Tutor.objects.create(myuser=myuser)
-                privateTutor = PrivateTutor.objects.create(tutor=tutor)
-            else:   # contracted tutor
-                tutor = Tutor.objects.create(myuser=myuser)
-                setattr(tutor,'timeslot','111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111')
-                tutor.save()
-                contractedTutor = ContractedTutor.objects.create(tutor=tutor)
-            #return render(request, 'home.html')
-        else:
-            form = RegistrationForm()
-        variables = {
-            'form': form
-        }
-        return render_to_response(
-            'registration/register.html',
-            variables, RequestContext(request)
-        )
-
 
 def search_tutor_name(request,myuser_id ): #TODO don't know what should admin be able to see lol
     tutors=Tutor.objects.filter(showProfile=True)
