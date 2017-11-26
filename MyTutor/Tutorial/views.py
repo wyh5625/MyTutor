@@ -111,8 +111,9 @@ def index(request, myuser_id):
     for tut in all_tutors:
         show_tags.append(tut.tag_set.all())
     private_tutors = PrivateTutor.objects.all()
+    courses= Course.objects.all()
     zipped = zip(all_tutors, show_tags)
-    params = {"user": myuser, "latest_Tutor_list": all_tutors, "tutors": zipped}
+    params = {"user": myuser, "latest_Tutor_list": all_tutors, "tutors": zipped, 'courses': courses}
     return render(request, 'searchtutors/index.html', params)
 
 def adminpage(request):
@@ -557,8 +558,8 @@ def selectbooking(request, myuser_id, tutor_id ):	#receive data: starttime (yyyy
     sessions = filter(
         lambda session: session.status == 4 and session.comment != "",
         TutorialSession.objects.filter(tutor=tutor))
-
-    return render(request, 'searchtutors/tutorpage.html', {'success': "aa", 'tutor': tutor, 'user': myuser,'sessions': sessions})
+    courses = Course.objects.all()
+    return render(request, 'searchtutors/tutorpage.html', {'success': "aa", 'tutor': tutor, 'user': myuser,'sessions': sessions, 'courses': courses})
 
 
 
@@ -619,7 +620,7 @@ def cancelbooking(request, myuser_id, tutorial_sessions_id): #, student_id, tuto
     Transaction.objects.create(myuser=myuser, time=now.strftime(timeformat),
                                cashflow=tutorial_session.price * COMMISION, information=tutorial_session, type=2)
 
-    mytutor = Tutor.objects.get(myuser=myuser)
+    mytutor = Tutor.objects.filter(myuser=myuser)
     if mytutor:
         mytutor = Tutor.objects.get(myuser=myuser)
         booked = TutorialSession.objects.filter(tutor=mytutor)
@@ -883,7 +884,7 @@ def register_page(request):
             if identity == 'Student':
                 student = Student.objects.create(myuser=myuser)
             elif identity == 'Private Tutor':
-                tutor = Tutor.objects.create(myuser=myuser)
+                tutor = Tutor.objects.create(myuser=myuser, hourly_rate = 100)
                 privateTutor = PrivateTutor.objects.create(tutor=tutor)
             elif identity == 'Student and Contracted Tutor':
                 student = Student.objects.create(myuser=myuser)
@@ -894,7 +895,7 @@ def register_page(request):
                 contractedTutor = ContractedTutor.objects.create(tutor=tutor)
             elif identity == 'Student and Private Tutor':
                 student = Student.objects.create(myuser=myuser)
-                tutor = Tutor.objects.create(myuser=myuser)
+                tutor = Tutor.objects.create(myuser=myuser, hourly_rate = 100)
                 privateTutor = PrivateTutor.objects.create(tutor=tutor)
             else:   # contracted tutor
                 tutor = Tutor.objects.create(myuser=myuser)
@@ -1015,8 +1016,10 @@ def search_tutor_tag(request,myuser_id ):
 
     #logger.error(t_set)
     zipped = zip(tutor_set,show_tags)
+    courses = Course.objects.all()
     variables = {
-        "tutors": zipped
+        "tutors": zipped,
+        'courses':courses
     }
     return render(request, 'searchtutors/index.html', variables)
 

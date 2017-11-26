@@ -83,6 +83,7 @@ class ProfileForm(forms.Form):
     email = forms.EmailField(label='Email')
     content = forms.CharField(widget=forms.Textarea,label='About Me', max_length=2000)
     image_file = forms.FileField(label='Image', required = False)
+
 '''
 class UserProfileForm(forms.Form):
     last_name = forms.CharField(label='Family Name', max_length=30)

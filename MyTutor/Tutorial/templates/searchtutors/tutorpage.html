@@ -16,6 +16,14 @@
           <div class="text-center">
             <h2 class="banner-parallax_t">{{ tutor.myuser.user.first_name }} {{ tutor.myuser.user.last_name }}</h2>
             <div class="banner-parallax_price"><span>${{tutor.hourly_rate }}</span> / per hour</div>
+              <script>
+              if ("{{tutor.reviewed_times}}" >= 3){
+                document.write("<div class=\"banner-parallax_t\">Average review score: <span class=\"spanType\">{{tutor.average}}</span></div>");
+              }else{
+                document.write("<div class=\"banner-parallax_t\">Average review score: <span class=\"spanType\">N/A</span></div>");
+              }
+          </script>
+              <div class="banner-parallax_price"><span>University: </span>{{ tutor.university}}</div>
               <div class="btn btn-default" id="moreInfo">See more information</div>
           </div>
         </div>

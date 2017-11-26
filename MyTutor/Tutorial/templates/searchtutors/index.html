@@ -34,7 +34,12 @@
                         <label>University course</label>
                         <select class="form-control __plannerSelect" name="course">
                               <option  value=""></option>
-                              <option  value="COMP 3297">COMP 3297</option>
+                                {% for course in courses %}
+                                <script>
+                                    var c = "{{course}}";
+                                    document.write("<option  value=\""+c +"\">{{course}}</option>")
+                              </script>
+                            {% endfor %}
                         </select>
                       </div>
                     </div>
@@ -161,6 +166,13 @@
                 <div class="best-tutor_rate">
                   <span>${{Tutor.hourly_rate}}</span>
                 </div>
+                   <script>
+                      if ("{{Tutor.reviewed_times}}" >= 3){
+                        document.write("<div class=\"best-tutor_t\">Average review score: <span class=\"spanType\">{{Tutor.average}}</span></div>");
+                      }else{
+                        document.write("<div class=\"best-tutor_t\">Average review score: <span class=\"spanType\">N/A</span></div>");
+                      }
+                  </script>
                   <div class="best-tutor_t"><a href="{% url 'Tutorial:tutorpage' user.id Tutor.id %}"><div class="btn btn-default" >Profile</div></a></div>
               </div>
             </li>
